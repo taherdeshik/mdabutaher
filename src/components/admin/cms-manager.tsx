@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import type { SectionProps } from "./types";
 import { Badge, Button, Card, CardHead, Field, Input, Modal, Select, Stat, Textarea } from "./admin-ui";
+import { SmartImage } from "@/components/ui/smart-image";
+import { imageMap } from "@/content/media";
 import { postTypeLabels } from "./admin-labels";
 import { bn, formatBnDate } from "@/lib/utils";
 import type { Post, PostStatus, PostType } from "@/lib/command-types";
@@ -261,12 +263,29 @@ function PostEditor({
         <Field label="বিস্তারিত (প্রতি প্যারাগ্রাফের মাঝে খালি লাইন)"><Textarea value={body} onChange={(e) => setBody(e.target.value)} className="min-h-[140px]" placeholder="প্রথম প্যারাগ্রাফ…&#10;&#10;দ্বিতীয় প্যারাগ্রাফ…" /></Field>
         <div className="grid gap-3 sm:grid-cols-3">
           <Field label="স্লাগ (URL)"><Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="auto-generate" className="font-latin text-[0.7rem]" /></Field>
-          <Field label="ছবি কী">
-            <Select value={image} onChange={(e) => setImage(e.target.value)}>
-              {["campaign", "water", "education", "community", "books", "digital", "medical", "relief"].map((i) => <option key={i} value={i}>{i}</option>)}
-            </Select>
+          <Field label="ছবি (কী বা /media/... পাথ)">
+            <Input
+              list="cms-image-options"
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
+              placeholder="campaign অথবা /media/legacy/foo.webp"
+              className="font-latin text-[0.68rem]"
+            />
+            <datalist id="cms-image-options">
+              {Object.keys(imageMap).map((k) => <option key={k} value={k} />)}
+            </datalist>
           </Field>
           <Field label="ট্যাগ (কমা দিয়ে)"><Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="প্রচারণা, শিক্ষা" /></Field>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
+          <div className="w-24 shrink-0 overflow-hidden rounded-lg border border-white/10">
+            <SmartImage imageKey={image} alt="নির্বাচিত ছবি" className="aspect-[16/10]" label="পোস্টের ছবি" sizes="96px" />
+          </div>
+          <p className="text-[0.6rem] leading-relaxed text-cream/40">
+            কী = <span className="font-latin text-cream/60">src/content/media.ts</span>-এর রেজিস্ট্রি। নতুন ছবি{" "}
+            <span className="font-latin text-cream/60">public/media/</span>-এ রেখে সরাসরি{" "}
+            <span className="font-latin text-cream/60">/media/...</span> পাথও দেওয়া যায়।
+          </p>
         </div>
         {type === "news" ? <Field label="গণমাধ্যম / উৎস"><Input value={outlet} onChange={(e) => setOutlet(e.target.value)} placeholder="যেমন: জাগো নিউজ" /></Field> : null}
         {type === "event" ? (

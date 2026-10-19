@@ -84,11 +84,36 @@ The visual archive is **real campaign photography**, not stock. It is produced o
 3. converts both sets to WebP with `scripts/optimize-audit.mjs` (screenshots → `audit/screenshots/`),
    committing the result back to the working branch.
 
-To add or swap a photo:
+### Adding images — the short version
 
-1. Drop the file in `public/media/` (e.g. `public/media/water-tank.webp`); keep width ≤ 1200 px.
-2. Register a semantic key in `src/content/media.ts`: `water: "/media/water-tank.webp"`.
-3. Use `imageKey="water"` in components, or reference the key from `src/content/gallery.ts`.
+Images live in `public/media/…` and are referenced in **two ways**:
+
+| Way | Example | Where it works |
+|---|---|---|
+| Registry key | `"water"` | anywhere `SmartImage` is used |
+| Direct path | `"/media/campaign/iftar-2027.webp"` | anywhere `SmartImage` is used |
+
+`imageFor()` passes through paths that start with `/`, `http(s)://` or `data:`, so **you do not have
+to edit `media.ts` for a new photo** — drop the file under `public/media/` and use its path.
+
+1. **Content files** (`src/content/activity…`, `blog.ts`, `news.ts`, `events.ts`): set the item's
+   `image` field to a key or a direct path.
+2. **Blog / news / event posts from the command center**: `/admin` → কনটেন্ট স্টুডিও → নতুন পোস্ট →
+   **ছবি** field. Type a registry key (autocomplete lists every key) or a path such as
+   `/media/legacy/IMG_20211212_115118.webp`. The form shows a live thumbnail; publishing the post
+   carries the image to `/news`, `/news/[id]`, `/blog`, `/blog/[slug]` and the ticker.
+3. **Gallery** (`src/content/gallery.ts`): each tile needs a **unique key** registered in
+   `media.ts`; captions and tags live in the gallery file. Posters/videos use the same pattern.
+4. **Home sections** use the key directly, e.g. `<SmartImage imageKey="water" …>`; pass `imageKey`
+   or `src` explicitly in components.
+
+Image specs that keep the site fast: WebP (or JPEG fallback), **1600–2000 px on the long edge**,
+≤ 300 KB, 16:10 for cards, 16:9 for article headers, 4:5 for portraits. Always supply meaningful
+`alt` text — the admin form derives it from the title, content files set it from the item title.
+If a path is wrong, `SmartImage` shows its designed placeholder instead of a broken image.
+
+To add or swap a photo the long way: drop the file in `public/media/`, register a semantic key in
+`src/content/media.ts` (`water: "/media/water-tank.webp"`), then use `imageKey="water"`.
 
 **Hero portrait:** the home-page portrait is `public/media/candidate/hero-portrait.webp`
 (1080×1350, 4:5, retouched from the campaign studio shoot of 19 Oct 2026) and is mapped to the
@@ -97,10 +122,12 @@ To add or swap a photo:
 face in the upper third, and keep the WebP ≤ 250 KB. The card adds its own night-green gradients at
 the top and bottom, so do not bake dark edges into the file.
 
-**Signature:** `public/media/signature/abu-taher-signature.png` — the name set in the calligraphic
-Bengali face **Galada** with a hand-computed ink swash and a gold terminal, in the spirit of Arabic
-calligraphy. It is transparent (2044×772) and mapped to the `signature` key. Regenerate with
-`node scripts/make-signature.mjs`; the font and its OFL licence live in `scripts/assets/`.
+**Signature:** `public/media/signature/abu-taher-signature-2026.png` — the campaign's supplied
+calligraphic artwork (Bengali name, Arabic-calligraphy styling), keyed to true transparency
+(2298×589) and mapped to the `signature` key. The source export had a checkerboard baked into the
+pixels; regenerate the clean asset with
+`node scripts/clean-signature.mjs path/to/source.jpeg` (luminance → alpha, ink colour preserved).
+The block in the about section adds the স্বাক্ষর label and sizes the image (`h-14` → `h-20`).
 
 `galleryPhotos`, `galleryPosters` and `galleryVideos` in `src/content/gallery.ts` drive the `/gallery`
 page (filters, captions, keyboard-navigable lightbox). Each photo needs a unique key — the gallery

@@ -69,11 +69,11 @@ export function AboutPreview() {
 
             <div className="mt-7 flex items-end gap-4 border-t border-forest/10 pt-4">
               <Image
-                src={imageFor("signature") ?? "/media/signature/abu-taher-signature.png"}
+                src={imageFor("signature") ?? "/media/signature/abu-taher-signature-2026.png"}
                 alt="আবু হাসান মোহাম্মদ তাহেরের স্বাক্ষর"
-                width={2044}
-                height={772}
-                className="h-20 w-auto object-contain sm:h-24"
+                width={2298}
+                height={589}
+                className="h-16 w-auto object-contain sm:h-24"
               />
               <span className="mb-2 shrink-0 text-[0.6rem] uppercase tracking-[0.18em] text-muted">স্বাক্ষর</span>
             </div>
