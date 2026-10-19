@@ -18,10 +18,10 @@ const pages = [
   ['election', '/election/'],
   ['blog-list', '/bloglist/'],
   ['contact', '/contact/'],
-  ...['2','3','4','5','6','7'].map(n => [`campaign-${n}`, `/campion/${n}/details/`]),
-  ...['2','3','4','8'].map(n => [`activity-${n}`, `/activities/${n}/details/`]),
-  ...['1','2','3','4','8'].map(n => [`news-${n}`, `/media-news/${n}/details/`]),
-  ...['1','4','8','12','16','20','24','28'].map(n => [`blog-${n}`, `/blog/${n}/details/`]),
+  ...['3','4','6'].map(n => [`campaign-${n}`, `/campion/${n}/details/`]),
+  ...['2','3','4'].map(n => [`activity-${n}`, `/activities/${n}/details/`]),
+  ...['1','3','4'].map(n => [`news-${n}`, `/media-news/${n}/details/`]),
+  ...['1','8','16','24'].map(n => [`blog-${n}`, `/blog/${n}/details/`]),
 ];
 
 const outDir = path.resolve('audit/screenshots');
@@ -56,8 +56,8 @@ for (const [name, route] of pages) {
   const desktop = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
   const mobile = await browser.newPage({ ...devices['iPhone 13'] });
   try {
-    const res = await desktop.goto(BASE + route, { waitUntil: 'networkidle', timeout: 60000 });
-    await desktop.waitForTimeout(1200);
+    const res = await desktop.goto(BASE + route, { waitUntil: 'domcontentloaded', timeout: 45000 });
+    await desktop.waitForTimeout(2500);
     await desktop.screenshot({ path: path.join(outDir, `${name}-desktop.png`), fullPage: true });
     const meta = await desktop.evaluate(() => ({
       title: document.title,
@@ -78,8 +78,8 @@ for (const [name, route] of pages) {
     meta.imgs = meta.imgs.map(u => manifest.images[u] || u);
     manifest.pages.push(meta);
 
-    await mobile.goto(BASE + route, { waitUntil: 'networkidle', timeout: 60000 });
-    await mobile.waitForTimeout(1000);
+    await mobile.goto(BASE + route, { waitUntil: 'domcontentloaded', timeout: 45000 });
+    await mobile.waitForTimeout(1800);
     await mobile.screenshot({ path: path.join(outDir, `${name}-mobile.png`), fullPage: true });
     console.log('captured', name);
   } catch (e) { console.log('FAILED', name, String(e).slice(0, 160)); }
