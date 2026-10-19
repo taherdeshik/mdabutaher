@@ -396,7 +396,7 @@ export async function POST(req: NextRequest) {
                 : typeof payload.body === "string"
                   ? str(payload.body, 6000).split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)
                   : existing?.body || [],
-              image: str(payload.image, 40) || existing?.image || "campaign",
+              image: str(payload.image, 240) || existing?.image || "campaign",
               status: (str(payload.status, 12) || existing?.status || "draft") as Post["status"],
               date: str(payload.date, 10) || existing?.date || todayIso(),
               tags: payload.tags !== undefined ? strList(payload.tags, 6) : existing?.tags || [],

@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Eye,
   FileText,
+  ImageIcon,
   Megaphone,
   Newspaper,
   Pencil,
@@ -72,6 +73,18 @@ export function CmsManager({ data, send }: SectionProps) {
             </div>
           }
         />
+        <details className="border-b border-white/[0.06] px-4 py-2 sm:px-5">
+          <summary className="flex cursor-pointer list-none items-center gap-1.5 text-[0.64rem] text-cream/55 transition-colors hover:text-cream/80 [&::-webkit-details-marker]:hidden">
+            <ImageIcon className="h-3 w-3 text-gold/70" />
+            ছবি যোগ বা বদলাবেন কীভাবে?
+            <span className="text-cream/25">৩ ধাপ</span>
+          </summary>
+          <ol className="mt-2 grid gap-1.5 text-[0.62rem] leading-relaxed text-cream/45 sm:grid-cols-3 sm:gap-4">
+            <li><span className="text-gold/70">১.</span> ছবিটি <span className="font-latin text-cream/70">public/media/…</span> ফোল্ডারে রাখুন — WebP/JPEG, লম্বা দিক ১৬০০–২০০০ px, ৩০০ KB-এর নিচে।</li>
+            <li><span className="text-gold/70">২.</span> পোস্ট ফর্মের <b className="text-cream/70">ছবি</b> ঘরে রেজিস্ট্রি কী (যেমন <span className="font-latin text-cream/70">water</span>) বা সরাসরি <span className="font-latin text-cream/70">/media/…</span> পাথ লিখুন; নিচে প্রিভিউ দেখা যাবে।</li>
+            <li><span className="text-gold/70">৩.</span> সেভ বা প্রকাশ করুন — কার্ড, বিস্তারিত পেজ, ব্লগ তালিকা ও টিকারে একই ছবি ব্যবহৃত হবে।</li>
+          </ol>
+        </details>
         <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.06] px-4 py-2.5 sm:px-5">
           <div className="flex rounded-lg border border-white/10 bg-white/[0.03] p-0.5">
             {(["all", "news", "event", "blog"] as const).map((t) => (
@@ -261,22 +274,22 @@ function PostEditor({
         <Field label="শিরোনাম"><Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="পোস্টের শিরোনাম" /></Field>
         <Field label="সংক্ষিপ্তসার"><Input value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="এক-দুই বাক্যে সারসংক্ষেপ" /></Field>
         <Field label="বিস্তারিত (প্রতি প্যারাগ্রাফের মাঝে খালি লাইন)"><Textarea value={body} onChange={(e) => setBody(e.target.value)} className="min-h-[140px]" placeholder="প্রথম প্যারাগ্রাফ…&#10;&#10;দ্বিতীয় প্যারাগ্রাফ…" /></Field>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Field label="স্লাগ (URL)"><Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="auto-generate" className="font-latin text-[0.7rem]" /></Field>
-          <Field label="ছবি (কী বা /media/... পাথ)">
-            <Input
-              list="cms-image-options"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              placeholder="campaign অথবা /media/legacy/foo.webp"
-              className="font-latin text-[0.68rem]"
-            />
-            <datalist id="cms-image-options">
-              {Object.keys(imageMap).map((k) => <option key={k} value={k} />)}
-            </datalist>
-          </Field>
           <Field label="ট্যাগ (কমা দিয়ে)"><Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="প্রচারণা, শিক্ষা" /></Field>
         </div>
+        <Field label="ছবি (রেজিস্ট্রি কী অথবা /media/... পাথ)">
+          <Input
+            list="cms-image-options"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            placeholder="campaign অথবা /media/legacy/foo.webp"
+            className="font-latin text-[0.68rem]"
+          />
+          <datalist id="cms-image-options">
+            {Object.keys(imageMap).map((k) => <option key={k} value={k} />)}
+          </datalist>
+        </Field>
         <div className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
           <div className="w-24 shrink-0 overflow-hidden rounded-lg border border-white/10">
             <SmartImage imageKey={image} alt="নির্বাচিত ছবি" className="aspect-[16/10]" label="পোস্টের ছবি" sizes="96px" />
