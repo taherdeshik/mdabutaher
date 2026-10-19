@@ -9,7 +9,10 @@ import { ChatWidget } from "./chat-widget";
 
 export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const bare = pathname?.startsWith("/admin") || pathname?.startsWith("/login");
+  const bare =
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/login") ||
+    pathname === "/manifesto/print";
 
   if (bare) return <>{children}</>;
 

@@ -37,7 +37,7 @@ export default function ManifestoPage() {
             <div><p className="font-latin text-xl font-bold text-gold">৩২</p><p className="text-[0.6rem] text-cream/50">অঙ্গীকার</p></div>
             <div><p className="font-latin text-xl font-bold text-gold">৫</p><p className="text-[0.6rem] text-cream/50">বছরের রোডম্যাপ</p></div>
           </div>
-          <a href="/api/manifesto.pdf" className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-gold px-4 py-2.5 text-[0.8rem] font-bold text-night transition-transform hover:scale-[1.01]">
+          <a href="/manifesto/print" className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-gold px-4 py-2.5 text-[0.8rem] font-bold text-night transition-transform hover:scale-[1.01]">
             <Download className="h-4 w-4" /> ম্যানিফেস্টো ডাউনলোড (PDF)
           </a>
           <p className="mt-2 text-center text-[0.6rem] text-cream/35">প্রকাশিত: ১ সেপ্টেম্বর ২০২৬ · সংস্করণ ১.০</p>
