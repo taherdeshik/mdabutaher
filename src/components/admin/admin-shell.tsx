@@ -24,8 +24,7 @@ import {
   Wallet,
   X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { bn } from "@/lib/utils";
+import { bn, cn, formatBnDate } from "@/lib/utils";
 import type { SectionId, Send, Snapshot } from "./types";
 import { Button, Input } from "./admin-ui";
 import { SituationRoom } from "./situation-room";
@@ -377,7 +376,7 @@ export function AdminShell() {
           <p className="mt-1 font-latin text-2xl font-extrabold leading-none text-cream">
             {bn(Math.max(0, data.kpis.daysLeft))} <span className="text-[0.66rem] font-medium text-cream/45">দিন</span>
           </p>
-          <p className="mt-1 text-[0.56rem] text-cream/35">{data.settings.pollingDate} · টার্নআউট লক্ষ্য {bn(data.settings.turnoutAssumption)}%</p>
+          <p className="mt-1 text-[0.56rem] text-cream/35">{formatBnDate(data.settings.pollingDate)} · টার্নআউট লক্ষ্য {bn(data.settings.turnoutAssumption)}%</p>
         </div>
         <button onClick={logout} className="mt-2 flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-[0.68rem] text-cream/35 transition-colors hover:bg-white/[0.05] hover:text-rose-300">
           <LogOut className="h-3.5 w-3.5" /> লগআউট

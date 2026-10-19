@@ -16,7 +16,7 @@ import {
 import type { SectionProps } from "./types";
 import { Badge, Button, Card, CardHead, Field, Input, Modal, Progress, Select, Stat } from "./admin-ui";
 import { expenseModeLabels, formatMoney, pct } from "./admin-labels";
-import { bn } from "@/lib/utils";
+import { bn, formatBnDate } from "@/lib/utils";
 import type { Expense, ExpenseMode } from "@/lib/command-types";
 
 const categories = ["সভা ও উঠান বৈঠক", "মাইকিং", "পোস্টার ও ব্যানার", "যাতায়াত", "খাবার", "ডিজিটাল প্রচার", "এজেন্ট ফি", "অফিস", "অন্যান্য"];
@@ -172,7 +172,7 @@ export function MoneyBoard({ data, send }: SectionProps) {
             <tbody className="divide-y divide-white/[0.04]">
               {filtered.map((e) => (
                 <tr key={e.id} className="text-[0.67rem] transition-colors hover:bg-white/[0.025]">
-                  <td className="whitespace-nowrap px-4 py-2.5 font-latin text-cream/45">{e.date}</td>
+                  <td className="whitespace-nowrap px-4 py-2.5 font-latin text-cream/45">{formatBnDate(e.date, { month: "short" })}</td>
                   <td className="px-3 py-2.5"><Badge tone={e.category.includes("পোস্টার") ? "gold" : e.category.includes("সভা") ? "sky" : "muted"}>{e.category}</Badge></td>
                   <td className="max-w-[260px] truncate px-3 py-2.5 text-cream/60">{e.description}</td>
                   <td className="px-3 py-2.5">
