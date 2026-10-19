@@ -40,14 +40,15 @@ function isoParts(iso: string) {
  * জানুয়ারী), which caused React hydration mismatches. Formatting the parts
  * ourselves keeps server and client output byte-identical.
  */
-export function formatBnDate(iso: string, opts: { weekday?: "long" | "short"; day?: "numeric"; month?: "long" | "short" | "numeric"; year?: "numeric" } = {}) {
+export function formatBnDate(iso: string, opts: { weekday?: "long" | "short"; day?: "numeric" | "2-digit"; month?: "long" | "short" | "numeric"; year?: "numeric" } = {}) {
   const { year, month, day } = isoParts(iso);
   const monthName = opts.month === "short" ? bnMonthsShort[month - 1] : bnMonthsLong[month - 1];
   const includeYear = "year" in opts ? opts.year !== undefined : true;
   const weekday = opts.weekday ? bnWeekdays[new Date(Date.UTC(year, month - 1, day)).getUTCDay()] : "";
+  const dayLabel = opts.day === "2-digit" ? bn(day).padStart(2, "০") : bn(day);
   return [
     weekday ? `${weekday},` : "",
-    `${bn(day)} ${monthName}${includeYear ? `, ${bn(year)}` : ""}`,
+    `${dayLabel} ${monthName}${includeYear ? `, ${bn(year)}` : ""}`,
   ].filter(Boolean).join(" ");
 }
 
@@ -80,7 +81,7 @@ export function initials(name: string) {
 export function slugify(input: string) {
   return input
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/[^\p{L}\p{M}\p{N}]+/gu, "-")
     .replace(/^-+|-+$/g, "");
 }
 

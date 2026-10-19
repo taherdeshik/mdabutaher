@@ -1,8 +1,10 @@
 "use client";
 
 import { animate, motion, useInView, useReducedMotion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { bn } from "@/lib/utils";
+
+const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 export function Counter({
   value,
@@ -20,7 +22,17 @@ export function Counter({
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
   const reduce = useReducedMotion();
-  const [display, setDisplay] = useState(0);
+  // SSR must render the final number so no-JS and crawlers see real data.
+  const [display, setDisplay] = useState(value);
+  const reset = useRef(false);
+
+  // Runs after hydration but before paint, so the count-up still starts at 0
+  // without ever flashing the final value.
+  useIsoLayoutEffect(() => {
+    if (reset.current) return;
+    reset.current = true;
+    setDisplay(0);
+  }, []);
 
   useEffect(() => {
     if (!inView) return;

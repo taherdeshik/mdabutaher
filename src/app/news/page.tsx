@@ -6,6 +6,7 @@ import { Section, SectionHeading } from "@/components/ui/section";
 import { SmartImage } from "@/components/ui/smart-image";
 import { Reveal } from "@/components/ui/reveal";
 import { news } from "@/content/news";
+import { cmsNews } from "@/lib/cms";
 import { formatBnDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -14,8 +15,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/news" },
 };
 
-export default function NewsPage() {
-  const [lead, ...rest] = news;
+export const dynamic = "force-dynamic";
+
+export default async function NewsPage() {
+  const items = [...(await cmsNews()), ...news];
+  const [lead, ...rest] = items;
   return (
     <>
       <PageHero
@@ -28,7 +32,7 @@ export default function NewsPage() {
         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur">
           <Newspaper className="h-8 w-8 text-gold" />
           <div>
-            <p className="font-latin text-lg font-bold">{news.length}+</p>
+            <p className="font-latin text-lg font-bold">{items.length}+</p>
             <p className="text-[0.65rem] text-cream/50">গণমাধ্যমে প্রকাশিত</p>
           </div>
         </div>

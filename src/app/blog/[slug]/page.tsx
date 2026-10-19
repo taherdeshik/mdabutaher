@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { posts } from "@/content/blog";
+import { posts as staticPosts } from "@/content/blog";
+import { cmsBlogPosts, findCmsBlogPost } from "@/lib/cms";
 import { PageHero } from "@/components/ui/page-hero";
 import { BlogArticle } from "@/components/features/blog-article";
 
-export function generateStaticParams() { return posts.map((p) => ({ slug: p.slug })); }
+export const dynamic = "force-dynamic";
+
+export function generateStaticParams() { return staticPosts.map((p) => ({ slug: p.slug })); }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const p = posts.find((x) => x.slug === slug);
+  const fromCms = await findCmsBlogPost(slug);
+  const p = fromCms || staticPosts.find((x) => x.slug === slug);
   if (!p) return { title: "লেখা পাওয়া যায়নি" };
   return {
     title: p.title,
@@ -20,7 +24,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = posts.find((x) => x.slug === slug);
+  const fromCms = await findCmsBlogPost(slug);
+  const post = fromCms || staticPosts.find((x) => x.slug === slug);
   if (!post) notFound();
   return (
     <>

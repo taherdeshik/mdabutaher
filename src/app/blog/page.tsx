@@ -3,7 +3,8 @@ import { BookOpen, PenLine, TrendingUp, Users } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { BlogExplorer } from "@/components/features/blog-explorer";
-import { posts } from "@/content/blog";
+import { posts as staticPosts } from "@/content/blog";
+import { cmsBlogPosts } from "@/lib/cms";
 import { bn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/blog" },
 };
 
-export default function BlogPage() {
+export const dynamic = "force-dynamic";
+
+export default async function BlogPage() {
+  const posts = [...(await cmsBlogPosts()), ...staticPosts];
   const views = posts.reduce((s, p) => s + p.views, 0);
   return (
     <>
@@ -43,7 +47,7 @@ export default function BlogPage() {
 
       <Section tone="light" className="py-10 sm:py-14">
         <div className="container-x">
-          <BlogExplorer />
+          <BlogExplorer items={posts} />
         </div>
       </Section>
     </>

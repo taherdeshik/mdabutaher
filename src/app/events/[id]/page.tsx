@@ -3,11 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, CheckCircle2, Clock, MapPin, Share2, Users } from "lucide-react";
 import { events } from "@/content/events";
+import { findCmsEvent } from "@/lib/cms";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { EventRegister } from "@/components/features/event-register";
 import { Reveal } from "@/components/ui/reveal";
 import { bn } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return events.map((e) => ({ id: e.id }));
@@ -15,7 +18,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const event = events.find((e) => e.id === id);
+  const event = events.find((e) => e.id === id) ?? (await findCmsEvent(id));
   if (!event) return { title: "ইভেন্ট পাওয়া যায়নি" };
   return {
     title: event.title,
@@ -26,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const event = events.find((e) => e.id === id);
+  const event = events.find((e) => e.id === id) ?? (await findCmsEvent(id));
   if (!event) notFound();
 
   const d = new Date(`${event.date}T00:00:00`);

@@ -4,21 +4,21 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalendarDays, Clock, MapPin, Search, Users } from "lucide-react";
-import { events, eventTypes } from "@/content/events";
+import { events, eventTypes, type CampaignEvent } from "@/content/events";
 import { cn, bn } from "@/lib/utils";
 
-export function EventList() {
+export function EventList({ items = events }: { items?: CampaignEvent[] }) {
   const [type, setType] = useState<string>("সব");
   const [query, setQuery] = useState("");
   const [when, setWhen] = useState<"upcoming" | "past">("upcoming");
 
   const filtered = useMemo(() => {
-    return events
+    return items
       .filter((e) => (when === "upcoming" ? e.status !== "past" : e.status === "past"))
       .filter((e) => type === "সব" || e.type === type)
       .filter((e) => !query || e.title.includes(query) || e.venue.includes(query) || e.ward.includes(query))
       .sort((a, b) => (when === "upcoming" ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date)));
-  }, [type, query, when]);
+  }, [items, type, query, when]);
 
   return (
     <div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Radio } from "lucide-react";
 
@@ -13,6 +14,23 @@ const tickerItems = [
 ];
 
 export function NewsTicker() {
+  const [live, setLive] = useState<{ text: string; href: string }[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/site/ticker", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (!cancelled && json?.ok && Array.isArray(json.data)) setLive(json.data.slice(0, 6));
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const items = [...live, ...tickerItems];
+
   return (
     <div className="relative z-30 overflow-hidden border-b border-white/10 bg-forest text-cream">
       <div className="flex items-stretch">
@@ -25,7 +43,7 @@ export function NewsTicker() {
           <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-forest to-transparent" />
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-forest to-transparent" />
           <div className="flex w-max animate-marquee items-center gap-8 py-2 pl-4 group-hover:[animation-play-state:paused]">
-            {[...tickerItems, ...tickerItems].map((item, i) => (
+            {[...items, ...items].map((item, i) => (
               <Link
                 key={i}
                 href={item.href}

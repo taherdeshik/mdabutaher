@@ -3,12 +3,13 @@ import { eventRegistrationSchema, fieldErrors } from "@/lib/validation";
 import { fail, ok, rateLimit, tooMany } from "@/lib/api";
 import { makeId, mutate, pushLead, read } from "@/lib/store";
 import { events } from "@/content/events";
+import { findCmsEvent } from "@/lib/cms";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const event = events.find((e) => e.id === id);
+  const event = events.find((e) => e.id === id) ?? (await findCmsEvent(id));
   if (!event) return fail("ইভেন্ট পাওয়া যায়নি", 404);
   const db = await read();
   const live = db.registrations.filter((r) => r.eventId === id).reduce((s, r) => s + 1 + r.guests, 0);
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const limit = rateLimit(req, "event-reg", 10, 60_000);
   if (!limit.allowed) return tooMany();
   const { id } = await params;
-  const event = events.find((e) => e.id === id);
+  const event = events.find((e) => e.id === id) ?? (await findCmsEvent(id));
   if (!event) return fail("ইভেন্ট পাওয়া যায়নি", 404);
   if (event.status === "past") return fail("এই ইভেন্টটি সম্পন্ন হয়েছে", 409);
 

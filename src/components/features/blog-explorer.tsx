@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Bookmark, Clock, Eye, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
-import { posts, blogCategories, allTags, type Post } from "@/content/blog";
+import { posts as staticPosts, blogCategories, allTags, type Post } from "@/content/blog";
 import { SmartImage } from "@/components/ui/smart-image";
 import { cn, bn, formatBnDate } from "@/lib/utils";
 
@@ -58,19 +58,19 @@ function PostCard({ post, featured = false, index = 0 }: { post: Post; featured?
   );
 }
 
-export function BlogExplorer() {
+export function BlogExplorer({ items = staticPosts }: { items?: Post[] }) {
   const [cat, setCat] = useState("সব");
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState<string | null>(null);
   const [sort, setSort] = useState<"new" | "popular">("new");
 
   const filtered = useMemo(() => {
-    const list = posts
+    const list = items
       .filter((p) => cat === "সব" || p.category === cat)
       .filter((p) => !tag || p.tags.includes(tag))
       .filter((p) => !query || p.title.includes(query) || p.excerpt.includes(query) || p.tags.some((t) => t.includes(query)));
     return [...list].sort((a, b) => (sort === "new" ? b.date.localeCompare(a.date) : b.views - a.views));
-  }, [cat, query, tag, sort]);
+  }, [items, cat, query, tag, sort]);
 
   return (
     <div>
@@ -78,7 +78,7 @@ export function BlogExplorer() {
       {!query && !tag && cat === "সব" && (
         <div className="mb-6">
           <p className="eyebrow mb-3"><span className="inline-block h-px w-6 bg-gold-deep" /> সম্পাদকের পছন্দ</p>
-          <PostCard post={posts[0]} featured index={0} />
+          <PostCard post={items[0]} featured index={0} />
         </div>
       )}
 

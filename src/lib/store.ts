@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import type { AuditEntry, CommandCollections } from "@/lib/command-types";
+import { seedCollections } from "@/content/command-seed";
 
 /**
  * Lightweight JSON persistence for the demo build.
@@ -110,7 +112,7 @@ export interface PollVote {
   fingerprint: string;
 }
 
-export interface DBShape {
+export interface DBShape extends CommandCollections {
   appointments: Appointment[];
   feedback: Feedback[];
   messages: Message[];
@@ -119,30 +121,70 @@ export interface DBShape {
   volunteers: Volunteer[];
   leads: Lead[];
   pollVotes: PollVote[];
+  meta: { seeded: boolean };
 }
 
-const EMPTY: DBShape = {
-  appointments: [],
-  feedback: [],
-  messages: [],
-  subscribers: [],
-  registrations: [],
-  volunteers: [],
-  leads: [],
-  pollVotes: [],
-};
+function emptyDB(): DBShape {
+  return {
+    appointments: [],
+    feedback: [],
+    messages: [],
+    subscribers: [],
+    registrations: [],
+    volunteers: [],
+    leads: [],
+    pollVotes: [],
+    settings: {
+      pollingDate: "2027-01-15",
+      rollDate: "2026-11-05",
+      nominationDate: "2026-12-10",
+      scrutinyDate: "2026-12-13",
+      withdrawalDate: "2026-12-17",
+      symbolDate: "2026-12-18",
+      resultDate: "2027-01-15",
+      turnoutAssumption: 72,
+      spendCap: 1000000,
+      unionVoters: 26540,
+    },
+    wards: [],
+    booths: [],
+    households: [],
+    visits: [],
+    team: [],
+    tasks: [],
+    expenses: [],
+    challenges: [],
+    posts: [],
+    audit: [],
+    meta: { seeded: false },
+  };
+}
+
+let seedCache: CommandCollections | null = null;
+function commandSeed() {
+  if (!seedCache) seedCache = seedCollections();
+  return structuredClone(seedCache);
+}
 
 const DB_PATH = process.env.CIVIC_DATA_FILE || path.join(process.cwd(), "data", "db.json");
 
 let queue: Promise<unknown> = Promise.resolve();
 
 async function readFile(): Promise<DBShape> {
+  const base = emptyDB();
   try {
     const raw = await fs.readFile(DB_PATH, "utf8");
     const parsed = JSON.parse(raw) as Partial<DBShape>;
-    return { ...structuredClone(EMPTY), ...parsed };
+    const db = { ...base, ...parsed, meta: { seeded: Boolean(parsed.meta?.seeded) } };
+    if (!db.meta.seeded) {
+      const seed = commandSeed();
+      Object.assign(db, seed);
+    }
+    return db;
   } catch {
-    return structuredClone(EMPTY);
+    const db = base;
+    Object.assign(db, commandSeed());
+    return db;
   }
 }
 
@@ -173,6 +215,20 @@ export function mutate<T>(fn: (db: DBShape) => T | Promise<T>): Promise<T> {
 export function makeId(prefix: string) {
   const rand = crypto.randomBytes(3).toString("hex").toUpperCase();
   return `${prefix}-${Date.now().toString(36).toUpperCase()}-${rand}`;
+}
+
+export function pushAudit(db: DBShape, actor: string, action: string, detail: string) {
+  const entry: AuditEntry = {
+    id: makeId("AUD"),
+    at: new Date().toISOString(),
+    actor,
+    action,
+    detail,
+  };
+  db.audit.unshift(entry);
+  db.audit = db.audit.slice(0, 200);
+  db.meta.seeded = true;
+  return entry;
 }
 
 export function trackingId() {

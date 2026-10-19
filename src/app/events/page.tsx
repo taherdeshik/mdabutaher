@@ -4,6 +4,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { EventList } from "@/components/features/event-list";
 import { events } from "@/content/events";
+import { cmsEvents } from "@/lib/cms";
 import { bn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -12,9 +13,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/events" },
 };
 
-export default function EventsPage() {
-  const upcoming = events.filter((e) => e.status === "upcoming").length;
-  const seats = events.filter((e) => e.status === "upcoming").reduce((s, e) => s + (e.capacity - e.registered), 0);
+export const dynamic = "force-dynamic";
+
+export default async function EventsPage() {
+  const allEvents = [...(await cmsEvents()), ...events];
+  const upcoming = allEvents.filter((e) => e.status === "upcoming").length;
+  const seats = allEvents.filter((e) => e.status === "upcoming").reduce((s, e) => s + (e.capacity - e.registered), 0);
   return (
     <>
       <PageHero
@@ -39,7 +43,7 @@ export default function EventsPage() {
               <Download className="h-3.5 w-3.5" /> সব ইভেন্ট ক্যালেন্ডারে
             </a>
           </div>
-          <EventList />
+          <EventList items={allEvents} />
         </div>
       </Section>
     </>

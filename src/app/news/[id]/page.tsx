@@ -3,25 +3,30 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, ExternalLink, Newspaper } from "lucide-react";
 import { news } from "@/content/news";
+import { cmsNews, findCmsNews } from "@/lib/cms";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { SmartImage } from "@/components/ui/smart-image";
 import { formatBnDate } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() { return news.map((n) => ({ id: n.id })); }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const n = news.find((x) => x.id === id);
+  const fromCms = await findCmsNews(id);
+  const n = fromCms || news.find((x) => x.id === id);
   if (!n) return { title: "সংবাদ পাওয়া যায়নি" };
   return { title: n.title, description: n.summary, alternates: { canonical: `/news/${n.id}` } };
 }
 
 export default async function NewsDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const n = news.find((x) => x.id === id);
+  const all = [...(await cmsNews()), ...news];
+  const n = all.find((x) => x.id === id);
   if (!n) notFound();
-  const more = news.filter((x) => x.id !== n.id).slice(0, 3);
+  const more = all.filter((x) => x.id !== n.id).slice(0, 3);
 
   return (
     <>
