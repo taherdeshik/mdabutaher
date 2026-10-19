@@ -102,8 +102,9 @@ to edit `media.ts` for a new photo** — drop the file under `public/media/` and
    **ছবি** field. Type a registry key (autocomplete lists every key) or a path such as
    `/media/legacy/IMG_20211212_115118.webp`. The form shows a live thumbnail; publishing the post
    carries the image to `/news`, `/news/[id]`, `/blog`, `/blog/[slug]` and the ticker.
-3. **Gallery** (`src/content/gallery.ts`): each tile needs a **unique key** registered in
-   `media.ts`; captions and tags live in the gallery file. Posters/videos use the same pattern.
+3. **Gallery** (`src/content/gallery.ts`): each tile has a unique `key` field — a registry key or a
+   direct `/media/...` path; captions and tags live in the gallery file. Posters/videos use the same
+   pattern.
 4. **Home sections** use the key directly, e.g. `<SmartImage imageKey="water" …>`; pass `imageKey`
    or `src` explicitly in components.
 
@@ -112,6 +113,7 @@ Image specs that keep the site fast: WebP (or JPEG fallback), **1600–2000 px o
 `alt` text — the admin form derives it from the title, content files set it from the item title.
 If a path is wrong, `SmartImage` shows its designed placeholder instead of a broken image.
 
+External images need their host in `next.config.ts` → `images.remotePatterns` (`https` only).
 To add or swap a photo the long way: drop the file in `public/media/`, register a semantic key in
 `src/content/media.ts` (`water: "/media/water-tank.webp"`), then use `imageKey="water"`.
 
@@ -127,7 +129,7 @@ calligraphic artwork (Bengali name, Arabic-calligraphy styling), keyed to true t
 (2298×589) and mapped to the `signature` key. The source export had a checkerboard baked into the
 pixels; regenerate the clean asset with
 `node scripts/clean-signature.mjs path/to/source.jpeg` (luminance → alpha, ink colour preserved).
-The block in the about section adds the স্বাক্ষর label and sizes the image (`h-14` → `h-20`).
+The block in the about section adds the স্বাক্ষর label and sizes the image `h-16` (mobile) / `h-24` (desktop).
 
 `galleryPhotos`, `galleryPosters` and `galleryVideos` in `src/content/gallery.ts` drive the `/gallery`
 page (filters, captions, keyboard-navigable lightbox). Each photo needs a unique key — the gallery
