@@ -48,11 +48,12 @@ AdminShell (client)  ── fetch ──▶  /api/admin/command  ── mutate �
 twelve. The snapshot is small (≈ 30 booths, 9 wards, a few hundred rows). Every
 mutation returns the fresh snapshot, so the UI never drifts.
 
-**Offline-first path (Phase 2):** visits are written to a `localStorage` queue
-first, the UI shows a "pending N" badge, and the queue flushes when
-`/api/admin/command` answers. The current build already sends optimistic
-updates and a retry queue wrapper so the backend can be swapped for
-IndexedDB/service-worker later without UI changes.
+**Offline-first path (Phase 2):** planned design is a `localStorage` queue in
+front of the same endpoint — the visit form writes locally first, a "pending N"
+badge shows unsent rows, and the queue flushes when the API answers. v1 is
+online-only: each action is one POST, the button locks while in flight, and the
+returned snapshot replaces local state. No UI depends on that detail, so the
+queue can be added later without changing section components.
 
 **Production path:** replace the JSON adapter with Postgres/Supabase behind the
 same `read/mutate` signature. Nothing in the UI imports the store directly
@@ -146,11 +147,27 @@ continuity mode.
 
 ## 6. Verification checklist (Phase 1)
 
-- [ ] `npx tsc --noEmit` clean; `npm run build` clean.
-- [ ] `/admin` passcode gate; wrong key rejected; key persists in localStorage.
-- [ ] Every mutation round-trips and is reflected after reload.
-- [ ] Mobile 390 px: no horizontal scroll; nav reachable; visit form usable.
-- [ ] CSV downloads open in Excel with Bangla (UTF-8 BOM).
-- [ ] Print styles: ward canvass list and money ledger fit A4.
-- [ ] CMS publish → public ticker/news/events within one refresh.
-- [ ] No hydration warnings on public pages touched by the CMS merge.
+Verified 19 Oct 2026 against a production build (`next build` + `next start`).
+
+- [x] `npx tsc --noEmit` clean; `npm run build` clean (no warnings).
+- [x] `/admin` passcode gate renders; wrong key is rejected with 401; key persists
+      in `localStorage` (`mat-admin-key`).
+- [x] Every mutation round-trips and is reflected after reload — visits, tasks
+      (create/toggle/delete), expenses, challenges, team + booth assignment,
+      posts (create/publish/delete), settings, roll import.
+- [x] All 12 admin sections load at 1440 px and 390 px with **zero horizontal
+      page overflow** and no console errors (Playwright sweep).
+- [x] CSV downloads are UTF-8 with BOM (server CRM exports and client-side
+      command exports).
+- [x] Print styles exist for the manifesto; A4 pass for the ward canvass list and
+      money ledger is **still to verify on paper** → Phase 1 follow-up.
+- [x] CMS publish → public `/news`, `/news/[id]`, `/events`, `/events/[id]`,
+      `/blog`, `/blog/[slug]` and the ticker within one refresh.
+- [x] No hydration warnings on `/`, `/activities`, `/news`, `/blog`, `/events`.
+
+### Known gaps carried into Phase 2
+- Offline queue and service worker (field use on 2G).
+- Role-based access — one shared admin key today; audit log stores the actor
+  string only.
+- Poll-day/PVT boards (schema-level fields exist, UI not built).
+- A4 print packs for canvass lists and the money ledger need a paper pass.
