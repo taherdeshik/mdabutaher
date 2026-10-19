@@ -23,7 +23,7 @@ export default function ContactPage() {
         accent="কথা"
       >
         <div className="space-y-2">
-          <a href={`tel:${site.phone}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-3 text-cream/80 backdrop-blur transition-colors hover:border-gold/40 hover:text-gold">
+          <a href={`tel:${site.phoneHref}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-3 text-cream/80 backdrop-blur transition-colors hover:border-gold/40 hover:text-gold">
             <Phone className="h-4 w-4 text-gold" /><span className="font-latin text-[0.8rem]">{site.phone}</span>
           </a>
           <a href={`mailto:${site.email}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-3 text-cream/80 backdrop-blur transition-colors hover:border-gold/40 hover:text-gold">

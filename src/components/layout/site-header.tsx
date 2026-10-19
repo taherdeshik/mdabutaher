@@ -79,7 +79,7 @@ export function SiteHeader() {
             <span>{site.union}, {site.upazila}, {site.district}</span>
           </div>
           <div className="flex items-center gap-5">
-            <a href={`tel:${site.phone.replace(/[^+\d]/g, "")}`} className="inline-flex items-center gap-1.5 transition-colors hover:text-gold">
+            <a href={`tel:${site.phoneHref}`} className="inline-flex items-center gap-1.5 transition-colors hover:text-gold">
               <Phone className="h-3 w-3" /> {site.phone}
             </a>
             <Link href="/feedback" className="inline-flex items-center gap-1.5 transition-colors hover:text-gold">
@@ -281,7 +281,7 @@ export function SiteHeader() {
               </div>
 
               <div className="border-t border-forest/10 px-5 py-4">
-                <a href={`tel:${site.phone}`} className="flex items-center gap-2 text-sm font-semibold text-forest">
+                <a href={`tel:${site.phoneHref}`} className="flex items-center gap-2 text-sm font-semibold text-forest">
                   <Phone className="h-4 w-4" /> {site.phone}
                 </a>
                 <p className="mt-1 text-[0.7rem] text-muted">{site.officeHours}</p>

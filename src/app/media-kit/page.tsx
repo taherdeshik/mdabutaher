@@ -131,7 +131,7 @@ export default function MediaKitPage() {
             <div className="rounded-2xl bg-forest p-5 text-cream">
               <h3 className="text-[0.95rem] font-bold text-gold">প্রেস যোগাযোগ</h3>
               <p className="mt-1 text-[0.72rem] leading-relaxed text-cream/60">সাক্ষাৎকার, তথ্য যাচাই বা ছবির অনুরোধে সরাসরি যোগাযোগ করুন।</p>
-              <a href={`tel:${site.phone.replace(/[^+\d]/g, "")}`} className="mt-3 flex items-center gap-2 text-[0.8rem] font-semibold"><Phone className="h-3.5 w-3.5 text-gold" /> {site.phone}</a>
+              <a href={`tel:${site.phoneHref}`} className="mt-3 flex items-center gap-2 text-[0.8rem] font-semibold"><Phone className="h-3.5 w-3.5 text-gold" /> {site.phone}</a>
               <a href={`mailto:${site.email}`} className="mt-1.5 flex items-center gap-2 text-[0.8rem] font-semibold"><Mail className="h-3.5 w-3.5 text-gold" /> {site.email}</a>
               <p className="mt-3 border-t border-white/10 pt-3 text-[0.68rem] text-cream/45">
                 {site.officeHours} · {site.office}

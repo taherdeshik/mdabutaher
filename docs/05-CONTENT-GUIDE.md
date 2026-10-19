@@ -97,6 +97,11 @@ To add or swap a photo:
 face in the upper third, and keep the WebP ≤ 250 KB. The card adds its own night-green gradients at
 the top and bottom, so do not bake dark edges into the file.
 
+**Signature:** `public/media/signature/abu-taher-signature.png` — the name set in the calligraphic
+Bengali face **Galada** with a hand-computed ink swash and a gold terminal, in the spirit of Arabic
+calligraphy. It is transparent (2044×772) and mapped to the `signature` key. Regenerate with
+`node scripts/make-signature.mjs`; the font and its OFL licence live in `scripts/assets/`.
+
 `galleryPhotos`, `galleryPosters` and `galleryVideos` in `src/content/gallery.ts` drive the `/gallery`
 page (filters, captions, keyboard-navigable lightbox). Each photo needs a unique key — the gallery
 prints a duplicate/missing warning through `node` checks in code review.

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Quote, ShieldCheck } from "lucide-react";
 import { bio, site, values } from "@/content/site";
@@ -5,6 +6,7 @@ import { Section, SectionHeading, Badge } from "@/components/ui/section";
 import { SmartImage } from "@/components/ui/smart-image";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
+import { imageFor } from "@/content/media";
 
 export function AboutPreview() {
   return (
@@ -62,10 +64,18 @@ export function AboutPreview() {
                 পূর্ণ পরিচিতি
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </Link>
-              <div className="flex items-center gap-3 border-l border-forest/10 pl-4">
-                <span className="font-display text-2xl italic text-forest/70" style={{ fontFamily: "Georgia, serif" }}>Abu Taher</span>
-                <span className="text-[0.62rem] uppercase tracking-[0.16em] text-muted">স্বাক্ষর</span>
-              </div>
+              <span className="text-[0.7rem] text-muted">মহাদান ইউনিয়নের জন্য একটি পরিকল্পিত ভবিষ্যৎ</span>
+            </div>
+
+            <div className="mt-7 flex items-end gap-4 border-t border-forest/10 pt-4">
+              <Image
+                src={imageFor("signature") ?? "/media/signature/abu-taher-signature.png"}
+                alt="আবু হাসান মোহাম্মদ তাহেরের স্বাক্ষর"
+                width={2044}
+                height={772}
+                className="h-20 w-auto object-contain sm:h-24"
+              />
+              <span className="mb-2 shrink-0 text-[0.6rem] uppercase tracking-[0.18em] text-muted">স্বাক্ষর</span>
             </div>
           </div>
         </div>

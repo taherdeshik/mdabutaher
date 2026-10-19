@@ -15,9 +15,9 @@ export const site = {
   intro:
     "মহাদান ইউনিয়নের মাটি, মানুষ আর মায়ের দোয়া — এই তিনটিই আমার শক্তি। গত দুই দশকে শিক্ষা, নিরাপদ পানি, দুর্যোগ ব্যবস্থাপনা ও সামাজিক অবক্ষয় রোধে যে কাজগুলো করেছি, তা কোনো পদ-পদবির জন্য নয়; মানুষের প্রয়োজনে।",
   founded: "১৯৭৮",
-  phone: "+8801712-345678",
-  phoneAlt: "+8801912-345678",
-  email: "hello@mdabutaher.com",
+  phone: "+880 1711-203997",
+  phoneHref: "+8801711203997",
+  email: "taher.stone@gmail.com",
   office: "কর্পাড়ী মোড়, বাদশা মার্কেট (২য় তলা), মহাদান, সরিষাবাড়ী, জামালপুর",
   officeHours: "শনি – বৃহস্পতি · সকাল ১০টা – বিকাল ৫টা",
   officeHoursNote: "শুক্রবার: শুধু পূর্বনির্ধারিত সাক্ষাৎ",
@@ -25,7 +25,7 @@ export const site = {
   socials: [
     { label: "Facebook", href: "https://www.facebook.com/1728275587459199", handle: "Md Abu Taher" },
     { label: "YouTube", href: "https://www.youtube.com/", handle: "Abu Taher Campaign" },
-    { label: "WhatsApp", href: "https://wa.me/8801712345678", handle: "সরাসরি বার্তা" },
+    { label: "WhatsApp", href: "https://wa.me/8801711203997", handle: "সরাসরি বার্তা" },
   ],
   quickLinks: {
     emergency: "৯৯৯",

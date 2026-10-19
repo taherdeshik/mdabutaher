@@ -27,6 +27,7 @@ export const imageMap: Record<string, string> = {
   // Retouched studio portrait supplied by the campaign (Oct 2026).
   hero: "/media/candidate/hero-portrait.webp",
   heroPortrait: "/media/candidate/hero-portrait.webp",
+  signature: "/media/signature/abu-taher-signature.png",
   community: "/media/legacy/sarishabari_pic-1235-c175e898.webp",
   water: "/media/legacy/284557816_10228246788222787_2385912760104853652_-608dd608.webp",
   relief: "/media/legacy/IMG_20211212_115118-30dbe4f6.webp",

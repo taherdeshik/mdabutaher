@@ -77,7 +77,7 @@ export default function AboutPage() {
                 ))}
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
-                <a href={`tel:${site.phone}`} className="flex-1 rounded-xl bg-forest px-3 py-2.5 text-center text-[0.78rem] font-semibold text-cream">সরাসরি কল</a>
+                <a href={`tel:${site.phoneHref}`} className="flex-1 rounded-xl bg-forest px-3 py-2.5 text-center text-[0.78rem] font-semibold text-cream">সরাসরি কল</a>
                 <a href="/appointment" className="flex-1 rounded-xl border border-forest/15 px-3 py-2.5 text-center text-[0.78rem] font-semibold text-forest">সময় নিন</a>
               </div>
             </div>

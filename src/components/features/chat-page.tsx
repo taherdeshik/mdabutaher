@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUp, Bot, Clock, MessageCircle, Paperclip, Phone, ShieldCheck, Sparkles, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { site } from "@/content/site";
 
 type Msg = { id: string; role: "user" | "agent"; text: string; ts: number };
 
@@ -65,7 +66,7 @@ export function ChatPage() {
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <a href="tel:+8801712345678" className="grid h-8 w-8 place-items-center rounded-full hover:bg-white/10" aria-label="কল"><Phone className="h-4 w-4" /></a>
+            <a href={`tel:${site.phoneHref}`} className="grid h-8 w-8 place-items-center rounded-full hover:bg-white/10" aria-label="কল"><Phone className="h-4 w-4" /></a>
           </div>
         </div>
 

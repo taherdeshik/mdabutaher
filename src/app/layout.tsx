@@ -52,7 +52,7 @@ const jsonLd = {
       jobTitle: `${site.role} — ${site.union}`,
       description: site.intro,
       url,
-      telephone: site.phone,
+      telephone: site.phoneHref,
       email: site.email,
       address: {
         "@type": "PostalAddress",

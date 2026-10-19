@@ -57,7 +57,7 @@ export default function AppointmentPage() {
                   <Clock className="mt-0.5 h-4 w-4 shrink-0 text-emerald" />
                   <span>{site.officeHours}<br /><span className="text-[0.72rem]">{site.officeHoursNote}</span></span>
                 </p>
-                <a href={`tel:${site.phone}`} className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-forest px-4 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-forest-2">
+                <a href={`tel:${site.phoneHref}`} className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-forest px-4 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-forest-2">
                   <Phone className="h-4 w-4" /> <span className="font-latin">{site.phone}</span>
                 </a>
                 <a href={site.mapUrl} target="_blank" rel="noopener noreferrer" className="mt-2 flex items-center justify-center gap-2 rounded-xl border border-forest/12 px-4 py-2.5 text-[0.8rem] font-semibold text-forest transition-colors hover:bg-cream">

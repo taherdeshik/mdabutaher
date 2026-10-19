@@ -22,7 +22,7 @@ export function CtaBand() {
               একটি ফোন, একটি বার্তা — <br className="hidden sm:block" />পরিবর্তনের শুরু আপনার হাতেই
             </h2>
           </div>
-          <a href={`tel:${site.phone}`} className="group inline-flex items-center gap-3 rounded-full bg-night px-5 py-3 text-cream shadow-lg transition-transform hover:scale-[1.02]">
+          <a href={`tel:${site.phoneHref}`} className="group inline-flex items-center gap-3 rounded-full bg-night px-5 py-3 text-cream shadow-lg transition-transform hover:scale-[1.02]">
             <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10"><Phone className="h-4 w-4" /></span>
             <span className="text-left">
               <span className="block text-[0.6rem] uppercase tracking-[0.18em] text-cream/50">সরাসরি কল</span>

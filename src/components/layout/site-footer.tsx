@@ -56,7 +56,7 @@ export function SiteFooter() {
             </p>
 
             <div className="mt-6 space-y-3 text-sm text-cream/70">
-              <a href={`tel:${site.phone.replace(/[^+\d]/g, "")}`} className="flex items-center gap-3 transition-colors hover:text-gold">
+              <a href={`tel:${site.phoneHref}`} className="flex items-center gap-3 transition-colors hover:text-gold">
                 <span className="grid h-8 w-8 place-items-center rounded-full bg-white/5"><Phone className="h-3.5 w-3.5" /></span>
                 {site.phone}
               </a>

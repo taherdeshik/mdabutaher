@@ -9,6 +9,7 @@ import { Section } from "@/components/ui/section";
 import { EventRegister } from "@/components/features/event-register";
 import { Reveal } from "@/components/ui/reveal";
 import { bn } from "@/lib/utils";
+import { site } from "@/content/site";
 
 export const dynamic = "force-dynamic";
 
@@ -149,7 +150,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
 
             <div className="rounded-2xl border border-forest/10 bg-white p-4">
               <p className="text-[0.62rem] font-bold uppercase tracking-[0.14em] text-muted">দ্রুত যোগাযোগ</p>
-              <a href="tel:+8801712345678" className="mt-2 flex items-center justify-between rounded-xl bg-cream/60 px-3 py-2 text-[0.78rem] font-semibold text-forest">কল করুন <span className="font-latin text-[0.72rem] text-muted">01712-345678</span></a>
+              <a href={`tel:${site.phoneHref}`} className="mt-2 flex items-center justify-between rounded-xl bg-cream/60 px-3 py-2 text-[0.78rem] font-semibold text-forest">কল করুন <span className="font-latin text-[0.72rem] text-muted">{site.phone}</span></a>
               <a href="/chat" className="mt-1.5 flex items-center justify-between rounded-xl bg-cream/60 px-3 py-2 text-[0.78rem] font-semibold text-forest">লাইভ চ্যাট <span className="text-[0.68rem] text-muted">২৪/৭ →</span></a>
             </div>
           </div>
