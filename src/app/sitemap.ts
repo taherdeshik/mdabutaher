@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
     "", "/about", "/manifesto", "/campaign", "/events", "/activities", "/news",
     "/blog", "/gallery", "/polls", "/appointment", "/appointment/status", "/feedback",
-    "/feedback/board", "/chat", "/contact", "/privacy",
+    "/feedback/board", "/chat", "/contact", "/media-kit", "/privacy",
   ].map((p) => ({ url: base + p, lastModified: now, changeFrequency: "weekly" as const, priority: p === "" ? 1 : 0.8 }));
 
   return [

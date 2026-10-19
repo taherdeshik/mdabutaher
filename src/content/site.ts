@@ -64,6 +64,7 @@ export const site = {
         { label: "সংবাদ", href: "/news", desc: "গণমাধ্যমে আমরা" },
         { label: "ব্লগ", href: "/blog", desc: "ভাবনা, বিশ্লেষণ ও আপডেট" },
         { label: "গ্যালারি", href: "/gallery", desc: "ছবি, পোস্টার ও ভিডিও" },
+        { label: "মিডিয়া কিট", href: "/media-kit", desc: "প্রেস ছবি ও জীবনী" },
       ],
     },
     { label: "যোগাযোগ", href: "/contact" },

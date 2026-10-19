@@ -135,7 +135,7 @@ export const volunteerRoles = [
 
 export const campaignResources = [
   { title: "প্রচারণা ক্যালেন্ডার (ICS)", desc: "সব ইভেন্ট আপনার ফোনের ক্যালেন্ডারে যোগ করুন।", href: "/api/calendar/ics", icon: "calendar" },
-  { title: "স্বেচ্ছাসেবক গাইড", desc: "দলপ্রধানের জন্য ১২ পাতার হ্যান্ডবুক (PDF)।", href: "/volunteer-guide", icon: "book" },
+  { title: "স্বেচ্ছাসেবক গাইড", desc: "ভূমিকা, দায়িত্ব ও যোগাযোগের নিয়ম।", href: "/campaign#volunteer", icon: "book" },
   { title: "মিডিয়া কিট", desc: "লোগো, ছবি, জীবনী ও প্রেস রিলিজ।", href: "/media-kit", icon: "folder" },
-  { title: "ম্যানিফেস্টো PDF", desc: "৮টি স্তম্ভের পূর্ণাঙ্গ অঙ্গীকার।", href: "/manifesto", icon: "file" },
+  { title: "ম্যানিফেস্টো PDF", desc: "৮টি স্তম্ভের পূর্ণাঙ্গ অঙ্গীকার।", href: "/manifesto/print", icon: "file" },
 ];
