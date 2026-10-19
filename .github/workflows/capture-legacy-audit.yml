@@ -1,0 +1,22 @@
+name: Capture legacy site audit
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/capture-legacy-audit.yml', 'scripts/capture-audit.mjs']
+permissions:
+  contents: write
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm i playwright@1.49.1 --no-audit --no-fund && npx playwright install --with-deps chromium
+      - run: node scripts/capture-audit.mjs
+      - run: |
+          git config user.name "audit-bot"
+          git config user.email "audit-bot@users.noreply.github.com"
+          git add audit public/media/legacy
+          git commit -m "chore(audit): capture legacy site screenshots and images" || echo "nothing to commit"
+          git push
