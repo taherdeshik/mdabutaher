@@ -90,6 +90,13 @@ To add or swap a photo:
 2. Register a semantic key in `src/content/media.ts`: `water: "/media/water-tank.webp"`.
 3. Use `imageKey="water"` in components, or reference the key from `src/content/gallery.ts`.
 
+**Hero portrait:** the home-page portrait is `public/media/candidate/hero-portrait.webp`
+(1080×1350, 4:5, retouched from the campaign studio shoot of 19 Oct 2026) and is mapped to the
+`hero` key in `src/content/media.ts`. To regenerate the retouch from a new source photo:
+`node scripts/retouch-hero.mjs path/to/portrait.jpg` (needs `sharp`). Keep the 4:5 ratio, place the
+face in the upper third, and keep the WebP ≤ 250 KB. The card adds its own night-green gradients at
+the top and bottom, so do not bake dark edges into the file.
+
 `galleryPhotos`, `galleryPosters` and `galleryVideos` in `src/content/gallery.ts` drive the `/gallery`
 page (filters, captions, keyboard-navigable lightbox). Each photo needs a unique key — the gallery
 prints a duplicate/missing warning through `node` checks in code review.

@@ -137,7 +137,8 @@ export function Hero() {
             <div className="absolute -inset-3 rounded-[2.4rem] bg-gradient-to-b from-gold/10 to-transparent" />
             <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-forest-2 shadow-[0_40px_80px_-30px_rgba(0,0,0,.7)]">
               <SmartImage imageKey="hero" alt={`${site.name} — ${site.role}`} className="aspect-[4/5]" label="প্রার্থীর ছবি" priority sizes="(max-width: 1024px) 90vw, 40vw" />
-              <div className="absolute inset-0 bg-gradient-to-t from-night/90 via-night/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-night/95 via-night/10 to-transparent" />
+              <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-night/55 via-night/15 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-5">
                 <p className="inline-flex items-center gap-1.5 rounded-full bg-gold/90 px-2.5 py-1 text-[0.6rem] font-extrabold uppercase tracking-[0.14em] text-night">
                   <BadgeCheck className="h-3 w-3" /> প্রত্যয়িত প্রার্থী
