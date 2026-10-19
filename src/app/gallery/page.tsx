@@ -1,0 +1,44 @@
+import type { Metadata } from "next";
+import { Camera, Film, Image as ImageIcon, LayoutGrid } from "lucide-react";
+import { PageHero } from "@/components/ui/page-hero";
+import { Section } from "@/components/ui/section";
+import { GalleryTabs } from "@/components/features/gallery-tabs";
+
+export const metadata: Metadata = {
+  title: "গ্যালারি — ছবি, পোস্টার ও ভিডিও",
+  description: "মহাদান ইউনিয়নের কার্যক্রম, প্রচারণা, পোস্টার ও ভিডিওর ভিজ্যুয়াল আর্কাইভ।",
+  alternates: { canonical: "/gallery" },
+};
+
+export default function GalleryPage() {
+  return (
+    <>
+      <PageHero
+        eyebrow="ভিজ্যুয়াল আর্কাইভ"
+        title={<>স্মৃতির ফ্রেমে <span className="text-gold">আমরা</span></>}
+        description="মাঠের মুহূর্ত, প্রচারণার পোস্টার ও ভিডিও — সব এক জায়গায়। ছবিতে ক্লিক করে বড় করে দেখুন।"
+        crumbs={[{ label: "গ্যালারি" }]}
+        accent="ফ্রেম"
+      >
+        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur">
+          {[
+            { icon: Camera, value: "৪৮", label: "ছবি" },
+            { icon: LayoutGrid, value: "১২", label: "পোস্টার" },
+            { icon: Film, value: "৬", label: "ভিডিও" },
+          ].map((s) => (
+            <div key={s.label} className="text-center">
+              <s.icon className="mx-auto h-4 w-4 text-gold" />
+              <p className="mt-1 font-latin text-base font-bold">{s.value}</p>
+              <p className="text-[0.55rem] text-cream/45">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </PageHero>
+      <Section tone="light" className="py-10 sm:py-14">
+        <div className="container-x">
+          <GalleryTabs />
+        </div>
+      </Section>
+    </>
+  );
+}
