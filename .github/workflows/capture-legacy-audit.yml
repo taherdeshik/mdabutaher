@@ -21,14 +21,8 @@ jobs:
       - name: Optimize screenshots
         if: always()
         run: |
-          mkdir -p audit/screenshots
-          if [ -d public/media/legacy ]; then
-            mogrify -resize '900x>' -quality 72 -format webp public/media/legacy/* || true
-            find public/media/legacy -type f ! -name '*.webp' -delete
-          fi
-          mogrify -resize '1000x>' -quality 68 -format webp audit/screenshots/*.png || true
-          find audit/screenshots -type f -name '*.png' -delete
-          du -sh audit public/media/legacy || true
+          npm i sharp --no-audit --no-fund
+          node scripts/optimize-audit.mjs
       - name: Commit results
         if: always()
         run: |
