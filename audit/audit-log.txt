@@ -1,0 +1,25 @@
+captured home
+captured aim-goal
+captured election-campaign
+captured activities
+captured media-news
+captured picture-gallery
+captured poster-gallery
+captured video-gallery
+captured election
+captured blog-list
+captured contact
+captured campaign-3
+captured campaign-4
+captured campaign-6
+captured activity-2
+captured activity-3
+captured activity-4
+captured news-1
+captured news-3
+captured news-4
+captured blog-1
+captured blog-8
+captured blog-16
+captured blog-24
+done: 24 pages, 107 images
