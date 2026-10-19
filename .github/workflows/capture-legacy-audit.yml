@@ -4,7 +4,10 @@ on:
   push:
     paths: ['.github/workflows/capture-legacy-audit.yml', 'scripts/capture-audit.mjs']
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: legacy-audit
+  cancel-in-progress: true
 jobs:
   capture:
     runs-on: ubuntu-latest
@@ -13,18 +16,33 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: npm i playwright@1.49.1 --no-audit --no-fund && npx playwright install --with-deps chromium
-      - run: node scripts/capture-audit.mjs 2>&1 | tail -60
-      - name: Build archive
+      - name: Capture pages
+        run: node scripts/capture-audit.mjs 2>&1 | tee audit-log.txt
+      - name: Optimize screenshots
         if: always()
         run: |
-          mkdir -p out/audit
-          [ -d audit ] && cp -r audit/* out/audit/ 2>/dev/null || true
-          [ -d public/media/legacy ] && cp -r public/media/legacy out/audit/images 2>/dev/null || true
-          du -sh out/audit || true
-          ls out/audit | head
+          mkdir -p audit/screenshots
+          if [ -d public/media/legacy ]; then
+            mogrify -resize '1200x>' -quality 76 -format webp public/media/legacy/*
+            find public/media/legacy -type f ! -name '*.webp' -delete
+          fi
+          mogrify -resize '1400x>' -quality 80 -format webp audit/screenshots/*.png
+          find audit/screenshots -type f -name '*.png' -delete
+          du -sh audit public/media/legacy || true
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "audit-bot"
+          git config user.email "audit-bot@users.noreply.github.com"
+          cp audit-log.txt audit/audit-log.txt 2>/dev/null || true
+          git add -f audit public/media/legacy
+          git commit -m "chore(audit): capture legacy site screenshots and imagery" || echo "nothing to commit"
+          git push || echo "push skipped"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: legacy-audit
-          path: out/audit
+          path: |
+            audit
+            audit-log.txt
           retention-days: 7
