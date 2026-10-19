@@ -2,7 +2,7 @@ name: Test push permission
 on:
   push:
     paths: ['.github/workflows/test-push.yml']
-  workflow_dispatch
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -10,13 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           git config user.name "audit-bot"
           git config user.email "audit-bot@users.noreply.github.com"
           mkdir -p audit
           date > audit/push-test.txt
           git add audit/push-test.txt
-          git commit -m "chore: test push"
+          git commit -m "chore: test push" || true
           git push origin HEAD:arena/9badc21b-mdabutaher

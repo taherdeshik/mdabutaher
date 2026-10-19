@@ -3,7 +3,7 @@
 @theme {
   --font-sans: var(--font-anek), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-anek), var(--font-inter), ui-sans-serif, sans-serif;
-  --font-latin: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-latin: var(--font-inter), var(--font-anek), ui-sans-serif, system-ui, sans-serif;
 
   --color-night: #05130f;
   --color-night-soft: #081d17;
