@@ -77,6 +77,8 @@ try {
       process.exit(1);
     }
     doc.meta = { ...(doc.meta || {}), seeded: true };
+    // Sessions belong to the old host; everyone signs in again after migration.
+    delete doc.adminSessions;
     await putDoc(p, doc);
     console.log(`✓ ${file} → MySQL (${Object.keys(doc).length} টপ-লেভেল কী)`);
   } else if (command === "backup") {
