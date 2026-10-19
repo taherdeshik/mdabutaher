@@ -83,7 +83,7 @@ function buildSessions(events: VisitorEvent[]): VisitorSession[] {
 }
 
 export async function GET(req: NextRequest) {
-  if (!requireAdmin(req)) return fail("অনুমতি নেই", 401);
+  if (!(await requireAdmin(req))) return fail("অনুমতি নেই", 401);
 
   const days = Math.min(90, Math.max(7, Number(req.nextUrl.searchParams.get("days")) || 30));
   const db = await read();

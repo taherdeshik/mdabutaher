@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CalendarDays,
+  Database,
   Download,
   Files,
   Globe2,
@@ -21,6 +22,7 @@ import type { SectionProps } from "./types";
 import { Badge, Button, Card, CardHead, Field, Input, Stat } from "./admin-ui";
 import { bnNum, formatMoney, pct } from "./admin-labels";
 import { bn } from "@/lib/utils";
+import { AdminUsers } from "./admin-users";
 
 export function AdminSettings({ data, send, adminKey }: SectionProps) {
   const { settings, kpis } = data;
@@ -235,6 +237,10 @@ export function AdminSettings({ data, send, adminKey }: SectionProps) {
         </div>
       </Card>
 
+      <AdminUsers adminKey={adminKey} />
+
+      <StorageCard adminKey={adminKey} />
+
       <Card>
         <CardHead title="অডিট লগ" sub="কে কী পরিবর্তন করেছেন" icon={<History className="h-4 w-4" />} action={<Badge tone="muted">{bn(data.audit.length)}</Badge>} />
         <div className="max-h-[300px] divide-y divide-white/[0.05] overflow-y-auto">
@@ -257,5 +263,70 @@ export function AdminSettings({ data, send, adminKey }: SectionProps) {
         </div>
       </Card>
     </div>
+  );
+}
+
+type SystemInfo = {
+  storage: "mysql" | "json";
+  database: string;
+  users: number;
+  activeSessions: number;
+  auditEntries: number;
+  seeded: boolean;
+  node: string;
+};
+
+function StorageCard({ adminKey }: { adminKey: string }) {
+  const [info, setInfo] = useState<SystemInfo | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/admin/system", { headers: { "x-admin-key": adminKey }, cache: "no-store" })
+      .then((r) => r.json())
+      .then((j) => {
+        if (alive && j.ok) setInfo(j.data as SystemInfo);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [adminKey]);
+
+  const mysql = info?.storage === "mysql";
+  return (
+    <Card>
+      <CardHead
+        title="ডেটাবেস ও ব্যাকআপ"
+        sub="প্রোডাকশন স্টোরেজ, সেশন ও পূর্ণ ব্যাকআপ ডাউনলোড"
+        icon={<Database className="h-4 w-4" />}
+        action={<Badge tone={mysql ? "emerald" : "gold"}>{mysql ? "MySQL" : "JSON ফাইল"}</Badge>}
+      />
+      <div className="grid gap-2 p-4 sm:grid-cols-3">
+        <div className="rounded-xl border border-white/[0.07] bg-white/[0.025] px-3 py-2.5">
+          <p className="text-[0.56rem] uppercase tracking-wider text-cream/30">স্টোরেজ</p>
+          <p className="mt-0.5 font-latin text-[0.74rem] font-semibold text-cream/80">{info ? info.database : "…"}</p>
+        </div>
+        <div className="rounded-xl border border-white/[0.07] bg-white/[0.025] px-3 py-2.5">
+          <p className="text-[0.56rem] uppercase tracking-wider text-cream/30">সক্রিয় সেশন</p>
+          <p className="mt-0.5 text-[0.74rem] font-semibold text-cream/80">{info ? bn(info.activeSessions) : "…"}</p>
+        </div>
+        <div className="rounded-xl border border-white/[0.07] bg-white/[0.025] px-3 py-2.5">
+          <p className="text-[0.56rem] uppercase tracking-wider text-cream/30">অডিট এন্ট্রি</p>
+          <p className="mt-0.5 text-[0.74rem] font-semibold text-cream/80">{info ? bn(info.auditEntries) : "…"}</p>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 border-t border-white/[0.06] px-4 py-3">
+        <a
+          href={`/api/admin/backup?key=${encodeURIComponent(adminKey)}`}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-gold px-2.5 py-1.5 text-[0.64rem] font-semibold text-night transition-colors hover:bg-gold/90"
+        >
+          <Download className="h-3.5 w-3.5" /> পূর্ণ ব্যাকআপ (JSON)
+        </a>
+        <p className="text-[0.58rem] leading-relaxed text-cream/35">
+          {mysql
+            ? "MySQL-এ প্রতিটি পরিবর্তন ট্রানজেকশনে সংরক্ষিত হচ্ছে। cPanel cron দিয়ে দৈনিক ব্যাকআপ রাখুন।"
+            : "এখনো MySQL সংযুক্ত নয় — data/db.json ব্যবহার হচ্ছে। ডিপ্লয় গাইড দেখুন: docs/08-DEPLOY-CPANEL.md"}
+        </p>
+      </div>
+    </Card>
   );
 }

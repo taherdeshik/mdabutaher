@@ -12,7 +12,7 @@ function csv(rows: Record<string, unknown>[]) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!requireAdmin(req)) return fail("অনুমতি নেই", 401);
+  if (!(await requireAdmin(req))) return fail("অনুমতি নেই", 401);
   const type = req.nextUrl.searchParams.get("type") || "feedback";
   const db = await read();
 

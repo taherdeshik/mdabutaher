@@ -38,7 +38,7 @@ export function ContactForm() {
       <p className="mt-1 text-[0.8rem] text-muted">সাধারণ জিজ্ঞাসা, প্রস্তাব বা মিডিয়া অনুরোধ — সবকিছুর জন্য এই ফর্ম।</p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <Field label="নাম" required error={errors.name}><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="আপনার নাম" autoComplete="name" /></Field>
-        <Field label="মোবাইল" error={errors.phone} hint="ঐচ্ছিক"><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="01712345678" inputMode="tel" autoComplete="tel" /></Field>
+        <Field label="মোবাইল" error={errors.phone} hint="ঐচ্ছিক"><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="01711203997" inputMode="tel" autoComplete="tel" /></Field>
         <Field label="ইমেইল" error={errors.email} className="sm:col-span-2"><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@example.com" autoComplete="email" /></Field>
         <Field label="বিষয়" required error={errors.subject} className="sm:col-span-2"><Input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="কী নিয়ে কথা বলতে চান?" /></Field>
         <Field label="বার্তা" required error={errors.message} className="sm:col-span-2"><Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="বিস্তারিত লিখুন..." className="min-h-32" /></Field>

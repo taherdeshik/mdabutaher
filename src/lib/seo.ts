@@ -1,7 +1,7 @@
 import { imageMap } from "@/content/media";
 import { site } from "@/content/site";
 
-export const SITE_URL = "https://mdabutaher.com";
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://mdabutaher.com").replace(/\/$/, "");
 
 export function absoluteUrl(path: string) {
   return path.startsWith("http") ? path : `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;

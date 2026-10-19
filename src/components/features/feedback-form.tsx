@@ -226,7 +226,7 @@ export function FeedbackForm({ initialKind = "problem" }: { initialKind?: "probl
                   <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="নাম" autoComplete="name" />
                 </Field>
                 <Field label="মোবাইল নম্বর" required error={errors.phone} hint="আপডেট পাঠাতে">
-                  <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="01712345678" inputMode="tel" autoComplete="tel" />
+                  <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="01711203997" inputMode="tel" autoComplete="tel" />
                 </Field>
               </div>
             )}

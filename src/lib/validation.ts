@@ -3,7 +3,7 @@ import { z } from "zod";
 const phone = z
   .string()
   .trim()
-  .regex(/^(\+?88)?01[3-9]\d{8}$/, "সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)");
+  .regex(/^(\+?88)?01[3-9]\d{8}$/, "সঠিক মোবাইল নম্বর দিন (যেমন: 01711203997)");
 
 export const appointmentSchema = z.object({
   name: z.string().trim().min(3, "নাম কমপক্ষে ৩ অক্ষর হতে হবে").max(80),

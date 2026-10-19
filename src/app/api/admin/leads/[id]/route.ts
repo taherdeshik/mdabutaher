@@ -10,7 +10,7 @@ const schema = z.object({
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!requireAdmin(req)) return fail("অনুমতি নেই", 401);
+  if (!(await requireAdmin(req))) return fail("অনুমতি নেই", 401);
   const { id } = await params;
   let body: unknown;
   try { body = await req.json(); } catch { return fail("অবৈধ অনুরোধ", 400); }

@@ -102,7 +102,8 @@ const TITLES: Record<SectionId, { title: string; sub: string }> = {
 export function AdminShell() {
   const [checking, setChecking] = useState(true);
   const [key, setKey] = useState("");
-  const [passcode, setPasscode] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginBusy, setLoginBusy] = useState(false);
   const [data, setData] = useState<Snapshot | null>(null);
@@ -188,19 +189,33 @@ export function AdminShell() {
 
   async function login(e: React.FormEvent) {
     e.preventDefault();
-    if (!passcode.trim()) return;
+    if (!username.trim() || !password) return;
     setLoginBusy(true);
     setLoginError("");
-    const ok = await load(passcode.trim());
-    if (!ok) setLoginError("পাসকোড সঠিক নয়। আবার চেষ্টা করুন।");
-    setLoginBusy(false);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username.trim(), password }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "লগইন ব্যর্থ হয়েছে");
+      const loaded = await load(json.data.token);
+      if (loaded) setPassword("");
+    } catch (error) {
+      setLoginError(error instanceof Error ? error.message : "লগইন ব্যর্থ হয়েছে");
+    } finally {
+      setLoginBusy(false);
+    }
   }
 
   function logout() {
+    void fetch("/api/auth/logout", { method: "POST" });
     localStorage.removeItem("mat-admin-key");
     setKey("");
     setData(null);
-    setPasscode("");
+    setUsername("");
+    setPassword("");
     setLoginError("");
   }
 
@@ -267,15 +282,26 @@ export function AdminShell() {
             <p className="mt-1 text-[0.74rem] leading-relaxed text-cream/40">শুধু অনুমোদিত ক্যাম্প ম্যানেজার ও ক্যাপ্টেনদের জন্য।</p>
             <form onSubmit={login} className="mt-5 space-y-3">
               <div>
-                <label htmlFor="passcode" className="mb-1 block text-[0.68rem] font-semibold text-cream/60">পাসকোড</label>
+                <label htmlFor="username" className="mb-1 block text-[0.68rem] font-semibold text-cream/60">ইউজারনেম</label>
                 <Input
-                  id="passcode"
+                  id="username"
+                  autoComplete="username"
+                  placeholder="আপনার ইউজারনেম"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="h-11 bg-night/70 text-[0.9rem]"
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="mb-1 block text-[0.68rem] font-semibold text-cream/60">পাসওয়ার্ড</label>
+                <Input
+                  id="password"
                   type="password"
                   autoComplete="current-password"
                   placeholder="••••••••••"
-                  value={passcode}
-                  onChange={(e) => setPasscode(e.target.value)}
-                  className="h-11 bg-night/70 text-[0.9rem] tracking-[0.2em]"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-11 bg-night/70 text-[0.9rem]"
                 />
               </div>
               {loginError ? <p className="rounded-lg bg-rose-500/10 px-3 py-2 text-[0.7rem] text-rose-300">{loginError}</p> : null}
@@ -285,12 +311,16 @@ export function AdminShell() {
               </Button>
             </form>
             <div className="mt-5 rounded-xl border border-gold/20 bg-gold/[0.06] px-3.5 py-3">
-              <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-gold/70">ডেমো পাসকোড</p>
-              <p className="mt-1 font-latin text-[0.95rem] font-bold tracking-wider text-gold">mahadan-2027</p>
-              <p className="mt-1 text-[0.6rem] leading-relaxed text-cream/35">প্রোডাকশনে ADMIN_KEY এনভায়রনমেন্ট ভেরিয়েবল দিয়ে বদলে নিন।</p>
+              <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-gold/70">প্রথম লগইন</p>
+              {process.env.NODE_ENV === "development" ? (
+                <p className="mt-1 font-latin text-[0.9rem] font-bold tracking-wide text-gold">admin / mahadan-2027</p>
+              ) : null}
+              <p className="mt-1 text-[0.6rem] leading-relaxed text-cream/35">
+                প্রথম অ্যাকাউন্ট তৈরি হয় ADMIN_USERNAME ও ADMIN_PASSWORD এনভায়রনমেন্ট ভেরিয়েবল থেকে। এরপর সেটিংস → ব্যবহারকারী ও ভূমিকা থেকে প্রত্যেকের আলাদা অ্যাকাউন্ট খুলুন।
+              </p>
             </div>
             <p className="mt-4 flex items-center gap-1.5 text-[0.6rem] text-cream/30">
-              <LifeBuoy className="h-3 w-3" /> সহায়তা: ক্যাম্পেইন ম্যানেজার · ০১৭১২-৩৪৫৬৭৮
+              <LifeBuoy className="h-3 w-3" /> সহায়তা: ক্যাম্পেইন ম্যানেজার · ০১৭১১-২০৩৯৯৭
             </p>
           </div>
         </div>

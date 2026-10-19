@@ -52,7 +52,7 @@ export function AppointmentStatusLookup() {
       <form onSubmit={search} className="rounded-2xl border border-forest/10 bg-white p-4 shadow-soft sm:p-5">
         <label className="text-[0.8rem] font-semibold text-forest" htmlFor="phone">মোবাইল নম্বর</label>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-          <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="01712345678" inputMode="tel" className="flex-1" required />
+          <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="01711203997" inputMode="tel" className="flex-1" required />
           <button type="submit" disabled={state === "loading"} className="inline-flex items-center justify-center gap-2 rounded-xl bg-forest px-5 py-2.5 text-sm font-semibold text-cream disabled:opacity-60">
             {state === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />} খুঁজুন
           </button>

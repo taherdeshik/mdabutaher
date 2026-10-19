@@ -13,12 +13,14 @@ npm run build    # প্রোডাকশন বিল্ড
 npm run typecheck
 ```
 
-ডেটা `data/db.json`-এ সংরক্ষিত হয় (প্রথম রিকোয়েস্টে স্বয়ংক্রিয়ভাবে তৈরি)। প্রোডাকশনে
-`src/lib/store.ts`-এর `read()` ও `mutate()` ফাংশন দুটিকে Postgres/Supabase দিয়ে প্রতিস্থাপন
-করলেই বাকি কোড অপরিবর্তিত থাকবে।
+ডেটা ডিফল্টভাবে `data/db.json`-এ থাকে (প্রথম রিকোয়েস্টে স্বয়ংক্রিয়ভাবে তৈরি)। প্রোডাকশনে
+`MYSQL_HOST` / `MYSQL_DATABASE` দিলে হুবহু একই `read()` / `mutate()` কনট্র্যাক্ট নিয়ে
+**MySQL/MariaDB** ব্যবহার হয় — আলাদা কোড বদলাতে হয় না। বিস্তারিত: [`docs/08-DEPLOY-CPANEL.md`](docs/08-DEPLOY-CPANEL.md)।
 
-### ডেমো পাসকোড
-- কমান্ড সেন্টার + CRM: `/admin` → পাসকোড `mahadan-2027` (পরিবর্তন: `ADMIN_KEY` env)
+### অ্যাডমিন লগইন
+- কমান্ড সেন্টার + CRM: `/admin` → ইউজারনেম `admin`, পাসওয়ার্ড `mahadan-2027`
+  (প্রথম অ্যাকাউন্ট তৈরি হয় `ADMIN_USERNAME` / `ADMIN_PASSWORD` env থেকে; এরপর সেটিংস →
+  ব্যবহারকারী ও ভূমিকা থেকে আলাদা অ্যাকাউন্ট খুলুন)
 - কমান্ড সেন্টারে প্রকাশিত `news` / `event` / `blog` পোস্ট স্বয়ংক্রিয়ভাবে পাবলিক
   `/news`, `/events`, `/blog` এবং হোমপেজের নিউজ টিকারে যুক্ত হয়।
 
@@ -33,7 +35,7 @@ npm run typecheck
 | আইকন | Lucide |
 | ভ্যালিডেশন | Zod |
 | ফন্ট | Anek Bangla (বাংলা) + Inter (ল্যাটিন), self-hosted |
-| ডেটা | JSON ফাইল স্টোর (প্লাগেবল) |
+| ডেটা | MySQL/MariaDB (`mysql2`, ট্রানজেকশনাল) অথবা JSON ফাইল স্টোর |
 
 ## পেজ ম্যাপ
 
@@ -73,7 +75,12 @@ npm run typecheck
 | POST | `/api/contact`, `/api/chat`, `/api/newsletter` | বার্তা ও সাবস্ক্রিপশন |
 | GET | `/api/calendar/ics` | সব ইভেন্ট ICS |
 | GET | `/api/stats` | পাবলিক পরিসংখ্যান |
-| POST | `/api/admin/login` | পাসকোড লগইন |
+| POST | `/api/auth/login`, `/api/auth/logout` | ইউজারনেম/পাসওয়ার্ড সেশন লগইন (HttpOnly কুকি) |
+| GET | `/api/auth/me` | বর্তমান ব্যবহারকারী ও ভূমিকা |
+| GET/POST | `/api/admin/users`, `PATCH/DELETE /api/admin/users/[id]` | ব্যবহারকারী ব্যবস্থাপনা (owner) |
+| GET | `/api/admin/backup` | পূর্ণ JSON ব্যাকআপ (owner) |
+| GET | `/api/admin/system` | স্টোরেজ মোড, সেশন ও অডিট পরিসংখ্যান |
+| GET | `/api/health` | পাবলিক হেলথ চেক (স্টোরেজ মোড, আপটাইম মনিটরিং) |
 | GET | `/api/admin/overview` | CRM ডেটা |
 | PATCH | `/api/admin/{appointments,feedback,leads}/[id]` | স্ট্যাটাস আপডেট |
 | GET | `/api/admin/export?type=` | CSV এক্সপোর্ট |
@@ -103,6 +110,8 @@ npm run typecheck
 - [`docs/04-DEVELOPMENT-PLAN.md`](docs/04-DEVELOPMENT-PLAN.md) — ধাপে ধাপে এজেন্ট ডেভেলপমেন্ট প্ল্যান
 - [`docs/05-CONTENT-GUIDE.md`](docs/05-CONTENT-GUIDE.md) — কনটেন্ট এডিট করার নির্দেশিকা
 - [`docs/06-COMMAND-CENTER-PLAN.md`](docs/06-COMMAND-CENTER-PLAN.md) — ইলেকশন কমান্ড সেন্টার: আর্কিটেকচার, M01–M22 মডিউল ম্যাপ, ফেজ প্ল্যান ও ভেরিফিকেশন চেকলিস্ট
+- [`docs/07-ANALYTICS-SEO.md`](docs/07-ANALYTICS-SEO.md) — ভিজিটর অ্যানালিটিক্স, গোপনীয়তা ও SEO
+- [`docs/08-DEPLOY-CPANEL.md`](docs/08-DEPLOY-CPANEL.md) — cPanel শেয়ার্ড হোস্টিং: MySQL, Node.js App, লগইন/ভূমিকা, ব্যাকআপ ও ট্রাবলশুটিং
 
 ## লিগ্যাসি অডিট ক্যাপচার
 

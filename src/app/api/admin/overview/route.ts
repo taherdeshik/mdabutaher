@@ -6,7 +6,7 @@ import { seedPolls } from "@/content/polls";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  if (!requireAdmin(req)) return fail("অনুমতি নেই", 401);
+  if (!(await requireAdmin(req))) return fail("অনুমতি নেই", 401);
   const db = await read();
   const now = new Date();
   const days = Array.from({ length: 14 }, (_, i) => {

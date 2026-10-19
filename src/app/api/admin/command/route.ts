@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { fail, ok, requireAdmin } from "@/lib/api";
+import { actorFromRequest } from "@/lib/auth";
 import { makeId, mutate, pushAudit, read } from "@/lib/store";
 import type {
   Booth,
@@ -96,12 +97,13 @@ async function snapshot() {
 }
 
 export async function GET(req: NextRequest) {
-  if (!requireAdmin(req)) return fail("অনুমতি নেই", 401);
+  if (!(await requireAdmin(req))) return fail("অনুমতি নেই", 401);
   return ok(await snapshot());
 }
 
 export async function POST(req: NextRequest) {
-  if (!requireAdmin(req)) return fail("অনুমতি নেই", 401);
+  const actorInfo = await actorFromRequest(req);
+  if (!actorInfo) return fail("অনুমতি নেই", 401);
 
   let body: Record<string, unknown>;
   try {
@@ -114,7 +116,14 @@ export async function POST(req: NextRequest) {
   const action = str(body.action, 30);
   const id = str(body.id, 80);
   const payload = (body.data || {}) as Record<string, unknown>;
-  const actor = str(body.actor, 60) || "ক্যাম্প ম্যানেজার";
+  const actor = actorInfo.legacy ? str(body.actor, 60) || "ক্যাম্প ম্যানেজার" : actorInfo.name;
+  const role = actorInfo.role;
+  if (role === "captain" && ["settings", "team", "expense", "booth"].includes(entity)) {
+    return fail("এই অংশে আপনার সম্পাদনার অনুমতি নেই", 403);
+  }
+  if (role === "captain" && entity === "challenge" && action === "delete") {
+    return fail("চ্যালেঞ্জ মুছতে শুধু ম্যানেজার পারেন", 403);
+  }
 
   try {
     await mutate((db) => {

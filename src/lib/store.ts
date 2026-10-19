@@ -4,13 +4,15 @@ import crypto from "node:crypto";
 import type { AuditEntry, CommandCollections } from "@/lib/command-types";
 import { seedCollections } from "@/content/command-seed";
 import type { VisitorEvent } from "@/lib/visitor-types";
+import { mysqlEnabled, mysqlLoad, mysqlMutate } from "@/lib/mysql";
 
 /**
- * Lightweight JSON persistence for the demo build.
+ * Persistence for all civic data.
  *
- * IMPORTANT: this is the single write path for civic data. In production,
- * replace the three functions below with a Postgres/Supabase adapter that
- * implements the same `read / mutate` contract — no route or UI changes needed.
+ * With MYSQL_HOST + MYSQL_DATABASE set, the adapter in `src/lib/mysql.ts`
+ * stores the document in MySQL/MariaDB (transaction + row lock). Without
+ * those variables it falls back to `data/db.json` for local development.
+ * Both paths expose the same `read / mutate` contract.
  */
 
 export type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
@@ -106,6 +108,28 @@ export interface Lead {
   updatedAt: string;
 }
 
+export type AdminRole = "owner" | "manager" | "captain";
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  username: string;
+  passwordHash: string;
+  role: AdminRole;
+  wardId?: string;
+  active: boolean;
+  createdAt: string;
+  lastLoginAt?: string;
+}
+
+export interface AdminSession {
+  token: string;
+  userId: string;
+  createdAt: string;
+  expiresAt: string;
+  userAgent?: string;
+}
+
 export interface PollVote {
   pollId: string;
   optionId: string;
@@ -123,6 +147,8 @@ export interface DBShape extends CommandCollections {
   leads: Lead[];
   pollVotes: PollVote[];
   visitorEvents: VisitorEvent[];
+  adminUsers: AdminUser[];
+  adminSessions: AdminSession[];
   meta: { seeded: boolean };
 }
 
@@ -137,6 +163,8 @@ function emptyDB(): DBShape {
     leads: [],
     pollVotes: [],
     visitorEvents: [],
+    adminUsers: [],
+    adminSessions: [],
     settings: {
       pollingDate: "2027-01-15",
       rollDate: "2026-11-05",
@@ -173,25 +201,33 @@ const DB_PATH = process.env.CIVIC_DATA_FILE || path.join(process.cwd(), "data", 
 
 let queue: Promise<unknown> = Promise.resolve();
 
-async function readFile(): Promise<DBShape> {
+function hydrate(parsed: Partial<DBShape> | null): DBShape {
   const base = emptyDB();
+  const db = { ...base, ...(parsed || {}), meta: { seeded: Boolean(parsed?.meta?.seeded) } };
+  if (!db.meta.seeded) Object.assign(db, commandSeed());
+  return db;
+}
+
+async function readFile(): Promise<DBShape> {
+  if (mysqlEnabled()) {
+    // Fail loudly: an unreachable database must not look like an empty site.
+    const raw = await mysqlLoad();
+    return hydrate(raw ? (JSON.parse(raw) as Partial<DBShape>) : null);
+  }
   try {
     const raw = await fs.readFile(DB_PATH, "utf8");
-    const parsed = JSON.parse(raw) as Partial<DBShape>;
-    const db = { ...base, ...parsed, meta: { seeded: Boolean(parsed.meta?.seeded) } };
-    if (!db.meta.seeded) {
-      const seed = commandSeed();
-      Object.assign(db, seed);
-    }
-    return db;
+    return hydrate(raw ? (JSON.parse(raw) as Partial<DBShape>) : null);
   } catch {
-    const db = base;
-    Object.assign(db, commandSeed());
-    return db;
+    return hydrate(null);
   }
 }
 
 async function writeFile(db: DBShape) {
+  db.meta.seeded = true;
+  if (mysqlEnabled()) {
+    await mysqlMutate(async () => ({ result: null, next: JSON.stringify(db) }));
+    return;
+  }
   await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
   const tmp = `${DB_PATH}.${process.pid}.tmp`;
   await fs.writeFile(tmp, JSON.stringify(db, null, 2), "utf8");
@@ -203,8 +239,16 @@ export async function read(): Promise<DBShape> {
   return readFile();
 }
 
-/** Serialized read-modify-write so concurrent requests never clobber data. */
+/** Serialized read-modify-write; MySQL also holds a row lock. */
 export function mutate<T>(fn: (db: DBShape) => T | Promise<T>): Promise<T> {
+  if (mysqlEnabled()) {
+    return mysqlMutate(async (raw) => {
+      const db = hydrate(JSON.parse(raw) as Partial<DBShape>);
+      const result = await fn(db);
+      db.meta.seeded = true;
+      return { result, next: JSON.stringify(db) };
+    });
+  }
   const run = queue.then(async () => {
     const db = await readFile();
     const result = await fn(db);
@@ -214,6 +258,8 @@ export function mutate<T>(fn: (db: DBShape) => T | Promise<T>): Promise<T> {
   queue = run.catch(() => undefined);
   return run;
 }
+
+export { mysqlEnabled } from "@/lib/mysql";
 
 export function makeId(prefix: string) {
   const rand = crypto.randomBytes(3).toString("hex").toUpperCase();

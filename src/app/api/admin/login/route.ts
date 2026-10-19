@@ -3,12 +3,26 @@ import { fail, ok, rateLimit, tooMany } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * @deprecated Legacy single-passcode login.
+ * Only works while the operator explicitly sets ADMIN_KEY; otherwise 410.
+ * New clients use POST /api/auth/login (username + password + session).
+ */
 export async function POST(req: NextRequest) {
+  const expected = process.env.ADMIN_KEY;
+  if (!expected) {
+    return fail("লিগ্যাসি পাসকোড লগইন বন্ধ। /admin থেকে ইউজারনেম ও পাসওয়ার্ড দিয়ে লগইন করুন।", 410);
+  }
+
   const limit = rateLimit(req, "admin-login", 8, 5 * 60_000);
   if (!limit.allowed) return tooMany(300);
+
   let body: { passcode?: string };
-  try { body = await req.json(); } catch { return fail("অবৈধ অনুরোধ", 400); }
-  const expected = process.env.ADMIN_KEY || "mahadan-2027";
+  try {
+    body = await req.json();
+  } catch {
+    return fail("অবৈধ অনুরোধ", 400);
+  }
   if (!body.passcode || body.passcode !== expected) return fail("পাসকোড সঠিক নয়", 401);
-  return ok({ message: "স্বাগতম", key: expected });
+  return ok({ message: "স্বাগতম", key: expected, legacy: true });
 }

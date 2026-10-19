@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { actorFromRequest, type Actor } from "@/lib/auth";
+import type { AdminRole } from "@/lib/store";
 
 export function ok(data: unknown, status = 200) {
   return NextResponse.json({ ok: true, data }, { status });
@@ -38,8 +40,13 @@ export function tooMany(retryAfter = 60) {
   );
 }
 
-export function requireAdmin(req: NextRequest) {
-  const key = req.headers.get("x-admin-key") || req.nextUrl.searchParams.get("key");
-  const expected = process.env.ADMIN_KEY || "mahadan-2027";
-  return key === expected;
+/** Accepts a session token, the session cookie, or (if configured) ADMIN_KEY. */
+export async function requireAdmin(req: NextRequest): Promise<boolean> {
+  return Boolean(await actorFromRequest(req));
+}
+
+export async function requireRole(req: NextRequest, roles: AdminRole[]): Promise<Actor | null> {
+  const actor = await actorFromRequest(req);
+  if (!actor) return null;
+  return roles.includes(actor.role) ? actor : null;
 }
