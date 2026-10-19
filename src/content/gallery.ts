@@ -1,0 +1,62 @@
+/**
+ * Curated visual archive.
+ *
+ * Every entry points at a photograph archived from the legacy site
+ * (`public/media/legacy`) through the audit workflow, so the gallery mirrors
+ * the real campaign history instead of stock imagery.
+ */
+
+export type GalleryPhoto = {
+  key: string;
+  caption: string;
+  /** masonry emphasis — tall frames get a portrait crop */
+  tall?: boolean;
+  tag: string;
+};
+
+export const galleryPhotos: GalleryPhoto[] = [
+  { key: "road", caption: "কর্পাড়ী–সরিষাবাড়ী কাঁচা সড়ক সংস্কার", tag: "অবকাঠামো", tall: true },
+  { key: "water", caption: "বিলবালিয়ায় নতুন গভীর নলকূপ স্থাপন", tag: "নিরাপদ পানি" },
+  { key: "relief", caption: "বন্যায় ক্ষতিগ্রস্ত পরিবারে ত্রাণ বিতরণ", tag: "ত্রাণ" },
+  { key: "medical", caption: "ফ্রি মেডিকেল ক্যাম্পে চিকিৎসা", tag: "স্বাস্থ্য", tall: true },
+  { key: "books", caption: "বিদ্যালয়ে বই ও পাঠ্য উপকরণ বিতরণ", tag: "শিক্ষা" },
+  { key: "education", caption: "মেধাবী শিক্ষার্থীদের হাতে বৃত্তি", tag: "শিক্ষা" },
+  { key: "school", caption: "স্কুলের মাঠে অভিভাবক সমাবেশ", tag: "শিক্ষা" },
+  { key: "library", caption: "কমিউনিটি পাঠাগার উদ্বোধন", tag: "শিক্ষা" },
+  { key: "trees", caption: "ইউনিয়নব্যাপী বৃক্ষরোপণ কর্মসূচি", tag: "পরিবেশ" },
+  { key: "sapling", caption: "রোপণের জন্য তৈরি চারা বিতরণ", tag: "পরিবেশ" },
+  { key: "eid", caption: "ঈদ উপহার হাতে পৌঁছে দেওয়া", tag: "সমাজসেবা" },
+  { key: "winter", caption: "শীতবস্ত্র বিতরণ — ৫০০ পরিবার", tag: "সমাজসেবা" },
+  { key: "women", caption: "নারীদের নিয়ে সচেতনতামূলক বৈঠক", tag: "নারী উন্নয়ন" },
+  { key: "youth", caption: "যুবদের নিয়ে ডিজিটাল সাক্ষরতা কর্মশালা", tag: "যুব" },
+  { key: "digital", caption: "তরুণদের হাতে ডিজিটাল সেবার হাতেখড়ি", tag: "যুব" },
+  { key: "agriculture", caption: "কৃষকদের নিয়ে মাঠ দিবস", tag: "কৃষি", tall: true },
+  { key: "community", caption: "সমাজের নানা প্রান্তের মানুষ এক মঞ্চে", tag: "জনসংযোগ" },
+  { key: "gathering", caption: "উঠান বৈঠকে এলাকাবাসীর মতামত", tag: "জনসংযোগ" },
+  { key: "distribution", caption: "ঈদ উপহার পৌঁছে দেওয়া হচ্ছে ঘরে ঘরে", tag: "সমাজসেবা" },
+  { key: "flooding", caption: "বন্যায় ক্ষতিগ্রস্ত এলাকা পরিদর্শন", tag: "ত্রাণ" },
+  { key: "campaign", caption: "মহাদানে ভোটারদের সাথে সরাসরি আলাপ", tag: "প্রচারণা" },
+  { key: "rally", caption: "নির্বাচনী প্রচারণার মিছিল", tag: "প্রচারণা" },
+  { key: "campaign2", caption: "ওয়ার্ডভিত্তিক গণসংযোগ সভা", tag: "প্রচারণা" },
+  { key: "campaign3", caption: "স্বতন্ত্র প্রার্থীর পথসভা", tag: "প্রচারণা" },
+  { key: "portrait", caption: "প্রার্থীর সাথে গণমাধ্যম কর্মীদের আলাপ", tag: "প্রচারণা" },
+  { key: "iftar", caption: "ইফতার মাহফিলে এলাকাবাসী", tag: "সমাজসেবা" },
+  { key: "mosque", caption: "মসজিদ কমিটির সাথে দোয়া মাহফিল", tag: "সমাজসেবা" },
+];
+
+export type GalleryPoster = { key: string; title: string; subtitle: string };
+
+export const galleryPosters: GalleryPoster[] = [
+  { key: "poster", title: "চেয়ারম্যান পদপ্রার্থী", subtitle: "নির্দলীয় ইউপি নির্বাচন ২০২৭" },
+  { key: "poster2", title: "স্বাস্থ্যসেবা ও সচেতনতা", subtitle: "মাস্ক, পরিষ্কার-পরিচ্ছন্নতা" },
+  { key: "posterEid", title: "ঈদ উপহার ও শুভেচ্ছা", subtitle: "উৎসবের খুশি সবার ঘরে" },
+  { key: "posterEducation", title: "দারিদ্র্য ও মেধা", subtitle: "শিক্ষার সুযোগ সবার জন্য" },
+];
+
+export const galleryVideos = [
+  { id: "13_YsIbYnAI", title: "স্বতন্ত্র চেয়ারম্যান প্রার্থীর ভোট প্রার্থনা" },
+  { id: "dQUP84MXOJU", title: "ডামি নির্বাচনকে না বলুন — মোঃ আবু তাহের" },
+  { id: "jzxaaoDebIM", title: "সবার দুয়ারে স্থানীয় সরকার" },
+  { id: "OJoSE4Y608E", title: "নির্বাচনী ইশতেহার: দলীয় প্রভাবমুক্ত ইউনিয়ন পরিষদ" },
+  { id: "miz_GqVpaiY", title: "নির্বাচনী ইশতেহার: নিরাপদ পানি ও সেনিটেশন" },
+];

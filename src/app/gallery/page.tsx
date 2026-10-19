@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Camera, Film, Image as ImageIcon, LayoutGrid } from "lucide-react";
+import { Camera, Film, Maximize2 } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { GalleryTabs } from "@/components/features/gallery-tabs";
@@ -22,9 +22,9 @@ export default function GalleryPage() {
       >
         <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur">
           {[
-            { icon: Camera, value: "৪৮", label: "ছবি" },
-            { icon: LayoutGrid, value: "১২", label: "পোস্টার" },
-            { icon: Film, value: "৬", label: "ভিডিও" },
+            { icon: Camera, value: "৩১", label: "ছবি" },
+            { icon: Maximize2, value: "৪", label: "পোস্টার" },
+            { icon: Film, value: "৫", label: "ভিডিও" },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <s.icon className="mx-auto h-4 w-4 text-gold" />

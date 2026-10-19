@@ -76,10 +76,23 @@ registration form is replaced with an attendance summary.
 
 ## 5. Image pipeline
 
-1. Capture workflow downloads legacy images to `public/media/legacy/`.
-2. Put approved photos in `public/media/` (e.g. `public/media/water-tank.jpg`).
-3. Register in `media.ts`: `water: "/media/water-tank.jpg"`.
-4. Use `imageKey="water"` in components.
+The visual archive is **real campaign photography**, not stock. It is produced once by
+`.github/workflows/capture-legacy-audit.yml`, which:
+
+1. screenshots every legacy route at 1440×900 and iPhone 13, then
+2. archives each referenced image into `public/media/legacy/`, and
+3. converts both sets to WebP with `scripts/optimize-audit.mjs` (screenshots → `audit/screenshots/`),
+   committing the result back to the working branch.
+
+To add or swap a photo:
+
+1. Drop the file in `public/media/` (e.g. `public/media/water-tank.webp`); keep width ≤ 1200 px.
+2. Register a semantic key in `src/content/media.ts`: `water: "/media/water-tank.webp"`.
+3. Use `imageKey="water"` in components, or reference the key from `src/content/gallery.ts`.
+
+`galleryPhotos`, `galleryPosters` and `galleryVideos` in `src/content/gallery.ts` drive the `/gallery`
+page (filters, captions, keyboard-navigable lightbox). Each photo needs a unique key — the gallery
+prints a duplicate/missing warning through `node` checks in code review.
 
 If a key is missing or the file 404s, `SmartImage` renders a designed forest-green placeholder with
 the caption — never a broken-image icon. This keeps layout and client demos intact while photos are

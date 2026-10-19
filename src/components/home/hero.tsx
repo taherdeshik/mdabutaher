@@ -165,7 +165,7 @@ export function Hero() {
               initial={reduce ? false : { opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6, duration: 0.7 }}
-              className="absolute -left-3 top-10 rounded-2xl border border-white/12 bg-night/80 px-3.5 py-2.5 backdrop-blur-md sm:-left-8"
+              className="absolute -left-1 top-4 rounded-2xl border border-white/12 bg-night/80 px-3 py-2 backdrop-blur-md sm:-left-8 sm:top-10 sm:px-3.5 sm:py-2.5"
             >
               <p className="text-[0.6rem] uppercase tracking-[0.16em] text-cream/40">জনসেবা</p>
               <p className="font-display text-lg font-bold text-gold">২৪+ বছর</p>
@@ -174,7 +174,7 @@ export function Hero() {
               initial={reduce ? false : { opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.75, duration: 0.7 }}
-              className="absolute right-2 bottom-24 max-w-[12rem] rounded-2xl border border-white/12 bg-cream/95 px-3 py-2 text-forest shadow-xl backdrop-blur sm:right-3 lg:-right-2"
+              className="absolute bottom-24 right-3 hidden max-w-[12rem] rounded-2xl border border-white/12 bg-cream/95 px-3 py-2 text-forest shadow-xl backdrop-blur sm:block lg:-right-2"
             >
               <p className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-emerald">
                 <Sparkles className="h-3 w-3" /> প্রতিশ্রুতি

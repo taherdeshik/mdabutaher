@@ -124,7 +124,7 @@ structured data, sitemap-driven breadcrumbs.
 | Activity posts | 4 | Re-created as `/activities` entries, 8 total with new stories |
 | Media/news items | 5 | Re-created as `/news` entries with outlet attribution |
 | Blog posts | 28 | 8 fully rewritten flagship posts; archive slugs mapped |
-| Photos | ~20 | Archived to `public/media/legacy/` by the capture workflow |
+| Photos | 107 files | Archived to `public/media/legacy/` (WebP) by the capture workflow; 31 curated into the gallery |
 | Posters | 3 | Re-created in poster gallery tab |
 | Videos | 5 | Re-embedded as outbound YouTube links (avoids Error 153) |
 | Testimonials | 1 real (duplicated) | Replaced with 6 distinct verified-style voices |

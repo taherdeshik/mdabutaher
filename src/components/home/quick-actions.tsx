@@ -38,7 +38,7 @@ export function QuickActions() {
     <div id="quick-actions" className="relative z-20 -mt-10 sm:-mt-12">
       <div className="container-x">
         <Reveal>
-          <div className="grid gap-2 rounded-3xl border border-forest/10 bg-white/80 p-2.5 shadow-[0_24px_60px_-30px_rgba(6,30,22,.4)] backdrop-blur-xl sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-2 rounded-3xl border border-forest/10 bg-white p-2.5 shadow-[0_24px_60px_-30px_rgba(6,30,22,.4)] sm:grid-cols-2 lg:grid-cols-4">
             {actions.map(({ icon: Icon, ...a }) => (
               <Link
                 key={a.href}
