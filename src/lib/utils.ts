@@ -12,15 +12,43 @@ export function bn(value: number | string): string {
   return String(value).replace(/\d/g, (d) => bnDigits[Number(d)]);
 }
 
-export function formatBnDate(iso: string, opts: Intl.DateTimeFormatOptions = {}) {
+const bnMonthsLong = [
+  "জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন",
+  "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর",
+];
+const bnMonthsShort = [
+  "জানু", "ফেব", "মার্চ", "এপ্রি", "মে", "জুন",
+  "জুল", "আগ", "সেপ", "অক্টো", "নভে", "ডিসে",
+];
+const bnWeekdays = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
+
+function isoParts(iso: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (match) return { year: Number(match[1]), month: Number(match[2]), day: Number(match[3]) };
   const date = new Date(iso);
-  const formatted = new Intl.DateTimeFormat("bn-BD", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    ...opts,
-  }).format(date);
-  return formatted;
+  return {
+    year: date.getUTCFullYear(),
+    month: date.getUTCMonth() + 1,
+    day: date.getUTCDate(),
+  };
+}
+
+/**
+ * Deterministic Bengali date formatting.
+ *
+ * Intl "bn-BD" data differs between Node and browsers (e.g. জানুয়ারি vs
+ * জানুয়ারী), which caused React hydration mismatches. Formatting the parts
+ * ourselves keeps server and client output byte-identical.
+ */
+export function formatBnDate(iso: string, opts: { weekday?: "long" | "short"; day?: "numeric"; month?: "long" | "short" | "numeric"; year?: "numeric" } = {}) {
+  const { year, month, day } = isoParts(iso);
+  const monthName = opts.month === "short" ? bnMonthsShort[month - 1] : bnMonthsLong[month - 1];
+  const includeYear = "year" in opts ? opts.year !== undefined : true;
+  const weekday = opts.weekday ? bnWeekdays[new Date(Date.UTC(year, month - 1, day)).getUTCDay()] : "";
+  return [
+    weekday ? `${weekday},` : "",
+    `${bn(day)} ${monthName}${includeYear ? `, ${bn(year)}` : ""}`,
+  ].filter(Boolean).join(" ");
 }
 
 export function timeAgoBn(iso: string) {

@@ -27,7 +27,7 @@ function reply(input: string) {
 
 export function ChatPage() {
   const [messages, setMessages] = useState<Msg[]>([
-    { id: "a1", role: "agent", text: "আসসালামু আলাইকুম! মহাদান ইউনিয়নের ডিজিটাল সহায়তা কেন্দ্রে স্বাগতম। আপনার প্রশ্ন লিখুন — সাধারণত ২–৫ মিনিটে উত্তর পাবেন।", ts: Date.now() },
+    { id: "a1", role: "agent", text: "আসসালামু আলাইকুম! মহাদান ইউনিয়নের ডিজিটাল সহায়তা কেন্দ্রে স্বাগতম। আপনার প্রশ্ন লিখুন — সাধারণত ২–৫ মিনিটে উত্তর পাবেন।", ts: 0 },
   ]);
   const [text, setText] = useState("");
   const [typing, setTyping] = useState(false);
@@ -76,7 +76,7 @@ export function ChatPage() {
               <div className={cn("max-w-[80%] rounded-2xl px-3.5 py-2.5 text-[0.82rem] leading-relaxed", m.role === "user" ? "rounded-br-sm bg-forest text-cream" : "rounded-bl-sm border border-forest/8 bg-white text-ink shadow-sm")}>
                 {m.text}
                 <span className={cn("mt-1 block text-[0.55rem]", m.role === "user" ? "text-cream/40" : "text-muted/60")}>
-                  {new Date(m.ts).toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" })}
+                  {m.ts > 0 ? new Date(m.ts).toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" }) : "এখন"}
                 </span>
               </div>
               {m.role === "user" && <span className="mt-auto grid h-7 w-7 shrink-0 place-items-center rounded-full bg-cream-2 text-forest"><User className="h-3.5 w-3.5" /></span>}

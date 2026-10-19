@@ -15,7 +15,7 @@ export default function GalleryPage() {
     <>
       <PageHero
         eyebrow="ভিজ্যুয়াল আর্কাইভ"
-        title={<>স্মৃতির ফ্রেমে <span className="text-gold">আমরা</span></>}
+        title={<>স্মৃতির ফ্রেমে{" "}<span className="ml-1.5 inline-block text-gold">আমরা</span></>}
         description="মাঠের মুহূর্ত, প্রচারণার পোস্টার ও ভিডিও — সব এক জায়গায়। ছবিতে ক্লিক করে বড় করে দেখুন।"
         crumbs={[{ label: "গ্যালারি" }]}
         accent="ফ্রেম"
