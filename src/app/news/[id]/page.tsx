@@ -8,6 +8,9 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { SmartImage } from "@/components/ui/smart-image";
 import { formatBnDate } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/json-ld";
+import { articleLd, breadcrumbLd, socialImage } from "@/lib/seo";
+import { site } from "@/content/site";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +21,23 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const fromCms = await findCmsNews(id);
   const n = fromCms || news.find((x) => x.id === id);
   if (!n) return { title: "সংবাদ পাওয়া যায়নি" };
-  return { title: n.title, description: n.summary, alternates: { canonical: `/news/${n.id}` } };
+  return {
+    title: n.title,
+    description: n.summary,
+    alternates: { canonical: `/news/${n.id}` },
+    keywords: [n.outlet, "সংবাদ", "মহাদান ইউনিয়ন", "মোঃ আবু তাহের"],
+    openGraph: {
+      type: "article",
+      title: n.title,
+      description: n.summary,
+      url: `/news/${n.id}`,
+      publishedTime: n.date,
+      authors: [site.name],
+      section: n.outlet,
+      images: [{ url: socialImage(n.image), width: 1200, height: 630, alt: n.title }],
+    },
+    twitter: { card: "summary_large_image", title: n.title, description: n.summary, images: [socialImage(n.image)] },
+  };
 }
 
 export default async function NewsDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -30,6 +49,22 @@ export default async function NewsDetail({ params }: { params: Promise<{ id: str
 
   return (
     <>
+      <JsonLd
+        data={[
+          articleLd({
+            type: "NewsArticle",
+            title: n.title,
+            description: n.summary,
+            path: `/news/${n.id}`,
+            image: n.image,
+            published: n.date,
+            section: n.outlet,
+            tags: [n.outlet, "সংবাদ"],
+            body: n.body.join(" "),
+          }),
+          breadcrumbLd([{ label: "হোম", href: "/" }, { label: "সংবাদ", href: "/news" }, { label: n.outlet }]),
+        ]}
+      />
       <PageHero eyebrow={n.outlet} title={n.title} description={n.summary} crumbs={[{ label: "সংবাদ", href: "/news" }, { label: n.outlet }]} />
       <Section tone="light" className="py-10 sm:py-14">
         <div className="container-x grid gap-8 lg:grid-cols-[1.4fr_0.6fr]">

@@ -6,6 +6,7 @@ import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { NewsTicker } from "./news-ticker";
 import { ChatWidget } from "./chat-widget";
+import { VisitorTracker } from "@/components/analytics/visitor-tracker";
 
 export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -25,6 +26,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
       </main>
       <SiteFooter />
       <ChatWidget />
+      <VisitorTracker />
     </>
   );
 }

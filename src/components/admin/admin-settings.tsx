@@ -4,12 +4,17 @@ import { useState } from "react";
 import {
   CalendarDays,
   Download,
+  Files,
+  Globe2,
   FileSpreadsheet,
   History,
   Printer,
+  Rss,
+  Search,
   Save,
   Settings2,
   ShieldCheck,
+  Smartphone,
   Target,
 } from "lucide-react";
 import type { SectionProps } from "./types";
@@ -148,20 +153,19 @@ export function AdminSettings({ data, send, adminKey }: SectionProps) {
           <CardHead title="নির্বাচনী সারসংক্ষেপ" sub="রিপোর্ট ও প্রিন্টের জন্য" icon={<ShieldCheck className="h-4 w-4" />} action={<Button size="sm" variant="outline" onClick={() => window.print()}><Printer className="h-3.5 w-3.5" /> প্রিন্ট</Button>} />
           <div className="grid grid-cols-2 gap-2.5 p-4">
             {[
-              { l: "ভোটার", v: bnNum(kpis.voters) },
-              { l: "খানা", v: bnNum(kpis.households) },
-              { l: "কভারেজ", v: pct(kpis.coverage) },
-              { l: "প্রতিশ্রুত ভোট", v: bnNum(kpis.committedVotes) },
-              { l: "জয়ের সংখ্যা", v: bnNum(kpis.winNumber) },
-              { l: "ব্যয়", v: formatMoney(kpis.spent) },
-              { l: "বুথ খালি", v: bn(kpis.boothVacancies) },
-              { l: "ভোটের বাকি", v: `${bn(Math.max(0, kpis.daysLeft))} দিন` },
-            ].map((s) => (
-              <div key={s.l} className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
-                <p className="text-[0.55rem] text-cream/30">{s.l}</p>
-                <p className="mt-0.5 font-latin text-[0.9rem] font-bold text-cream/70">{s.v}</p>
-              </div>
-            ))}
+            { href: "/sitemap.xml", label: "সাইটম্যাপ", sub: "সব পাবলিক পেজ + CMS পোস্ট", icon: Globe2 },
+            { href: "/robots.txt", label: "Robots", sub: "ক্রলার নির্দেশনা", icon: Files },
+            { href: "/feed.xml", label: "RSS ফিড", sub: "সংবাদ, ব্লগ ও ইভেন্ট", icon: Rss },
+            { href: "/manifest.webmanifest", label: "ওয়েব ম্যানিফেস্ট", sub: "ফোনে অ্যাপ হিসেবে ইনস্টল", icon: Smartphone },
+          ].map(({ href, label, sub, icon: Icon }) => (
+            <a key={href} href={href} target="_blank" rel="noreferrer" className="flex items-center gap-2.5 rounded-xl border border-white/[0.07] bg-white/[0.025] px-3 py-2.5 transition-colors hover:border-emerald-bright/30 hover:bg-white/[0.04]">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-emerald-bright/10 text-emerald-bright"><Icon className="h-3.5 w-3.5" /></span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[0.66rem] font-semibold text-cream/70">{label}</span>
+                <span className="block truncate text-[0.54rem] text-cream/30">{sub}</span>
+              </span>
+            </a>
+          ))}
           </div>
           <div className="border-t border-white/[0.06] p-4">
             <p className="flex items-start gap-1.5 text-[0.56rem] leading-relaxed text-cream/30">
@@ -199,6 +203,35 @@ export function AdminSettings({ data, send, adminKey }: SectionProps) {
               </a>
             ))}
           </div>
+        </div>
+      </Card>
+
+      <Card>
+        <CardHead
+          title="সার্চ ইঞ্জিন ও সোশ্যাল"
+          sub="SEO অবকাঠামো — সাইটম্যাপ, ফিড ও স্ট্রাকচার্ড ডেটা"
+          icon={<Search className="h-4 w-4" />}
+          action={<Badge tone="emerald">সক্রিয়</Badge>}
+        />
+        <div className="grid gap-2 p-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { href: "/sitemap.xml", label: "সাইটম্যাপ", sub: "সব পাবলিক পেজ + CMS পোস্ট", icon: Globe2 },
+            { href: "/robots.txt", label: "Robots", sub: "ক্রলার নির্দেশনা", icon: Files },
+            { href: "/feed.xml", label: "RSS ফিড", sub: "সংবাদ, ব্লগ ও ইভেন্ট", icon: Rss },
+            { href: "/manifest.webmanifest", label: "ওয়েব ম্যানিফেস্ট", sub: "ফোনে অ্যাপ হিসেবে ইনস্টল", icon: Smartphone },
+          ].map(({ href, label, sub, icon: Icon }) => (
+            <a key={href} href={href} target="_blank" rel="noreferrer" className="flex items-center gap-2.5 rounded-xl border border-white/[0.07] bg-white/[0.025] px-3 py-2.5 transition-colors hover:border-emerald-bright/30 hover:bg-white/[0.04]">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-emerald-bright/10 text-emerald-bright"><Icon className="h-3.5 w-3.5" /></span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[0.66rem] font-semibold text-cream/70">{label}</span>
+                <span className="block truncate text-[0.54rem] text-cream/30">{sub}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+        <div className="space-y-1.5 border-t border-white/[0.06] px-4 py-3 text-[0.6rem] leading-relaxed text-cream/40">
+          <p>সক্রিয়: বাংলা মেটাডেটা ও ক্যানোনিক্যাল URL, Open Graph ও Twitter কার্ড, NewsArticle / BlogPosting / Event / Breadcrumb স্কিমা, ছবির অল্ট টেক্সট, মোবাইল-ফ্রেন্ডলি viewport।</p>
+          <p>Google Search Console-এ <span className="font-latin text-cream/65">sitemap.xml</span> সাবমিট করুন; নতুন পোস্ট প্রকাশের সাথে সাথে সাইটম্যাপে যুক্ত হবে।</p>
         </div>
       </Card>
 

@@ -120,6 +120,7 @@ export interface SectionProps {
 
 export type SectionId =
   | "situation"
+  | "analytics"
   | "map"
   | "canvass"
   | "roll"

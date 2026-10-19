@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
+  BarChart3,
   CalendarCheck2,
   ContactRound,
   Database,
@@ -28,6 +29,7 @@ import { bn, cn, formatBnDate } from "@/lib/utils";
 import type { SectionId, Send, Snapshot } from "./types";
 import { Button, Input } from "./admin-ui";
 import { SituationRoom } from "./situation-room";
+import { VisitorAnalytics } from "./visitor-analytics";
 import { CoverageMap } from "./coverage-map";
 import { CanvassBoard } from "./canvass-board";
 import { RollIntel } from "./roll-intel";
@@ -45,6 +47,7 @@ const NAV: { group: string; items: { id: SectionId; label: string; short: string
     group: "কমান্ড",
     items: [
       { id: "situation", label: "সিচুয়েশন রুম", short: "সিচুয়েশন", icon: LayoutDashboard },
+      { id: "analytics", label: "ভিজিটর অ্যানালিটিক্স", short: "অ্যানালিটিক্স", icon: BarChart3 },
       { id: "map", label: "কভারেজ ম্যাপ", short: "ম্যাপ", icon: MapIcon },
       { id: "win", label: "জয়ের হিসাব", short: "জয়", icon: Target },
     ],
@@ -82,6 +85,7 @@ const NAV: { group: string; items: { id: SectionId; label: string; short: string
 
 const TITLES: Record<SectionId, { title: string; sub: string }> = {
   situation: { title: "সিচুয়েশন রুম", sub: "নির্বাচনের সার্বিক চিত্র — এক নজরে" },
+  analytics: { title: "ভিজিটর অ্যানালিটিক্স", sub: "পেজভিউ, ভিজিটর, লোকেশন ও ডিভাইস — লাইভ" },
   map: { title: "কভারেজ ম্যাপ", sub: "ওয়ার্ড ও বুথভিত্তিক দরজায় দরজায় কভারেজ" },
   canvass: { title: "দরজায় দরজায়", sub: "খানা ভিজিট, সমস্যা ও ফলো-আপ" },
   roll: { title: "ভোটার তালিকা বুদ্ধিমত্তা", sub: "বুথভিত্তিক ভোটার বিশ্লেষণ ও তালিকা আমদানি" },
@@ -297,6 +301,7 @@ export function AdminShell() {
   const meta = TITLES[section];
   const Section = {
     situation: SituationRoom,
+    analytics: VisitorAnalytics,
     map: CoverageMap,
     canvass: CanvassBoard,
     roll: RollIntel,

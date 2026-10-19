@@ -18,7 +18,12 @@ export const metadata: Metadata = {
     "মোঃ আবু তাহের", "মহাদান ইউনিয়ন", "সরিষাবাড়ী", "জামালপুর", "চেয়ারম্যান প্রার্থী",
     "ইউনিয়ন পরিষদ নির্বাচন", "ম্যানিফেস্টো", "Md Abu Taher", "Mahadan Union",
   ],
-  authors: [{ name: site.name }],
+  authors: [{ name: site.name, url }],
+  creator: site.name,
+  publisher: `${site.name} — ${site.union} প্রচারণা`,
+  category: "politics",
+  applicationName: `${site.name} — ${site.union}`,
+  formatDetection: { telephone: false, address: false, email: false },
   openGraph: {
     type: "website",
     locale: "bn_BD",
@@ -28,8 +33,17 @@ export const metadata: Metadata = {
     description: "মানুষের পাশে, সবসময়। ম্যানিফেস্টো, প্রচারণা ও জনসেবার ডিজিটাল ঠিকানা।",
   },
   twitter: { card: "summary_large_image", title: `${site.name} — ${site.slogan}` },
-  alternates: { canonical: "/" },
-  robots: { index: true, follow: true },
+  alternates: {
+    canonical: "/",
+    languages: { "bn-BD": "/" },
+    types: { "application/rss+xml": "/feed.xml" },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  appleWebApp: { capable: true, title: site.name, statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = {
@@ -69,6 +83,20 @@ const jsonLd = {
       name: `${site.name} — ${site.union} প্রচারণা`,
       slogan: site.slogan,
       url,
+      logo: `${url}/favicon.svg`,
+      areaServed: {
+        "@type": "AdministrativeArea",
+        name: `${site.union}, ${site.upazila}, ${site.district}`,
+      },
+      founder: { "@id": `${url}/#person` },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${url}/#website`,
+      url,
+      name: `${site.name} — ${site.role}, ${site.union}`,
+      inLanguage: "bn-BD",
+      publisher: { "@id": `${url}/#campaign` },
     },
   ],
 };
@@ -78,6 +106,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="bn" className={`${anekBangla.variable} ${inter.variable}`}>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="alternate" type="application/rss+xml" title={`${site.name} — আরএসএস ফিড`} href="/feed.xml" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body>

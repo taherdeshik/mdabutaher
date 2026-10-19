@@ -8,6 +8,8 @@ import { Section } from "@/components/ui/section";
 import { SmartImage } from "@/components/ui/smart-image";
 import { Reveal } from "@/components/ui/reveal";
 import { formatBnDate } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/json-ld";
+import { articleLd, breadcrumbLd, socialImage } from "@/lib/seo";
 
 export function generateStaticParams() {
   return activities.map((a) => ({ id: a.id }));
@@ -17,7 +19,21 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const a = activities.find((x) => x.id === id);
   if (!a) return { title: "কার্যক্রম পাওয়া যায়নি" };
-  return { title: a.title, description: a.summary, alternates: { canonical: `/activities/${a.id}` } };
+  return {
+    title: a.title,
+    description: a.summary,
+    alternates: { canonical: `/activities/${a.id}` },
+    keywords: [a.category, "কার্যক্রম", "মহাদান ইউনিয়ন", "মোঃ আবু তাহের"],
+    openGraph: {
+      type: "article",
+      title: a.title,
+      description: a.summary,
+      url: `/activities/${a.id}`,
+      publishedTime: a.date,
+      images: [{ url: socialImage(a.image), width: 1200, height: 630, alt: a.title }],
+    },
+    twitter: { card: "summary_large_image", title: a.title, description: a.summary, images: [socialImage(a.image)] },
+  };
 }
 
 export default async function ActivityDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -28,6 +44,25 @@ export default async function ActivityDetail({ params }: { params: Promise<{ id:
 
   return (
     <>
+      <JsonLd
+        data={[
+          articleLd({
+            type: "Article",
+            title: a.title,
+            description: a.summary,
+            path: `/activities/${a.id}`,
+            image: a.image,
+            published: a.date,
+            section: a.category,
+            body: a.body?.join(" ") || a.summary,
+          }),
+          breadcrumbLd([
+            { label: "হোম", href: "/" },
+            { label: "কার্যক্রম", href: "/activities" },
+            { label: a.category },
+          ]),
+        ]}
+      />
       <PageHero
         eyebrow={`${a.category} · ওয়ার্ড ${a.ward}`}
         title={a.title}

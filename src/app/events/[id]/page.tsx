@@ -10,6 +10,8 @@ import { EventRegister } from "@/components/features/event-register";
 import { Reveal } from "@/components/ui/reveal";
 import { bn } from "@/lib/utils";
 import { site } from "@/content/site";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbLd, eventLd, socialImage } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +27,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     title: event.title,
     description: event.description,
     alternates: { canonical: `/events/${event.id}` },
+    keywords: [event.type, "ইভেন্ট", "মহাদান ইউনিয়ন", event.venue],
+    openGraph: {
+      type: "article",
+      title: event.title,
+      description: event.description,
+      url: `/events/${event.id}`,
+      images: [{ url: socialImage(undefined), width: 1200, height: 630, alt: event.title }],
+    },
+    twitter: { card: "summary_large_image", title: event.title, description: event.description },
   };
 }
 
@@ -34,11 +45,31 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
   if (!event) notFound();
 
   const d = new Date(`${event.date}T00:00:00`);
+  const startIso = new Date(`${event.date}T${event.start || "10:00"}:00+06:00`).toISOString();
+  const endIso = new Date(`${event.date}T${event.end || event.start || "12:00"}:00+06:00`).toISOString();
   const related = events.filter((e) => e.id !== event.id && e.status === "upcoming").slice(0, 3);
   const pct = Math.round((event.registered / event.capacity) * 100);
 
   return (
     <>
+      <JsonLd
+        data={[
+          eventLd({
+            name: event.title,
+            description: event.description,
+            start: startIso,
+            end: endIso,
+            venue: event.venue,
+            path: `/events/${event.id}`,
+            status: event.status,
+          }),
+          breadcrumbLd([
+            { label: "হোম", href: "/" },
+            { label: "ইভেন্ট", href: "/events" },
+            { label: event.title },
+          ]),
+        ]}
+      />
       <PageHero
         eyebrow={`${event.type} · ওয়ার্ড ${event.ward}`}
         title={event.title}

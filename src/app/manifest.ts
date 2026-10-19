@@ -1,0 +1,28 @@
+import type { MetadataRoute } from "next";
+import { site } from "@/content/site";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: `${site.name} — ${site.role}, ${site.union}`,
+    short_name: "আবু তাহের",
+    description:
+      "মহাদান ইউনিয়নের চেয়ারম্যান পদপ্রার্থী মোঃ আবু তাহেরের অফিসিয়াল সাইট — ম্যানিফেস্টো, প্রচারণা, ইভেন্ট ও জনসেবা।",
+    start_url: "/",
+    scope: "/",
+    display: "standalone",
+    background_color: "#f8f4ea",
+    theme_color: "#0a3025",
+    lang: "bn-BD",
+    dir: "ltr",
+    categories: ["politics", "news", "government"],
+    icons: [
+      { src: "/favicon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+      { src: "/favicon.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" },
+    ],
+    shortcuts: [
+      { name: "ম্যানিফেস্টো", url: "/manifesto" },
+      { name: "ইভেন্ট", url: "/events" },
+      { name: "যোগাযোগ", url: "/contact" },
+    ],
+  };
+}

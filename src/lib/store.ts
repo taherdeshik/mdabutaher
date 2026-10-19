@@ -3,6 +3,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import type { AuditEntry, CommandCollections } from "@/lib/command-types";
 import { seedCollections } from "@/content/command-seed";
+import type { VisitorEvent } from "@/lib/visitor-types";
 
 /**
  * Lightweight JSON persistence for the demo build.
@@ -121,6 +122,7 @@ export interface DBShape extends CommandCollections {
   volunteers: Volunteer[];
   leads: Lead[];
   pollVotes: PollVote[];
+  visitorEvents: VisitorEvent[];
   meta: { seeded: boolean };
 }
 
@@ -134,6 +136,7 @@ function emptyDB(): DBShape {
     volunteers: [],
     leads: [],
     pollVotes: [],
+    visitorEvents: [],
     settings: {
       pollingDate: "2027-01-15",
       rollDate: "2026-11-05",
