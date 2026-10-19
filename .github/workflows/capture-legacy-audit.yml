@@ -23,10 +23,10 @@ jobs:
         run: |
           mkdir -p audit/screenshots
           if [ -d public/media/legacy ]; then
-            mogrify -resize '1200x>' -quality 76 -format webp public/media/legacy/*
+            mogrify -resize '900x>' -quality 72 -format webp public/media/legacy/* || true
             find public/media/legacy -type f ! -name '*.webp' -delete
           fi
-          mogrify -resize '1400x>' -quality 80 -format webp audit/screenshots/*.png
+          mogrify -resize '1000x>' -quality 68 -format webp audit/screenshots/*.png || true
           find audit/screenshots -type f -name '*.png' -delete
           du -sh audit public/media/legacy || true
       - name: Commit results
@@ -37,7 +37,8 @@ jobs:
           cp audit-log.txt audit/audit-log.txt 2>/dev/null || true
           git add -f audit public/media/legacy
           git commit -m "chore(audit): capture legacy site screenshots and imagery" || echo "nothing to commit"
-          git push || echo "push skipped"
+          git pull --rebase origin arena/9badc21b-mdabutaher || true
+          git push origin HEAD:arena/9badc21b-mdabutaher
       - uses: actions/upload-artifact@v4
         if: always()
         with:
