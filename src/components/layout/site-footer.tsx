@@ -150,7 +150,7 @@ export function SiteFooter() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link href="/privacy" className="transition-colors hover:text-cream/70">গোপনীয়তা নীতি</Link>
             <Link href="/admin" className="transition-colors hover:text-cream/70">কর্মী লগইন (CRM)</Link>
-            <span className="text-cream/25">ডেমো কনটেন্ট · নির্বাচনী প্রচারণার জন্য তৈরি</span>
+            <span className="text-cream/25">মহাদান ইউনিয়ন · সরিষাবাড়ী · জামালপুর</span>
           </div>
         </div>
       </div>

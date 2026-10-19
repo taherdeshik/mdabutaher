@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
   return new Response("\uFEFF" + csv(rows), {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
+      "Cache-Control": "no-store, max-age=0",
       "Content-Disposition": `attachment; filename="${type}-${new Date().toISOString().slice(0, 10)}.csv"`,
     },
   });

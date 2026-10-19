@@ -78,15 +78,15 @@ export function AdminDashboard() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/admin/overview", { headers: { "x-admin-key": adminKey } });
+      const res = await fetch("/api/admin/overview", { headers: { "x-admin-key": adminKey }, cache: "no-store" });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "লোড করা যায়নি");
       setData(json.data);
       const [a, f, l, m] = await Promise.all([
-        fetch("/api/admin/export?type=appointments&key=" + adminKey).then((r) => r.text()),
-        fetch("/api/admin/export?type=feedback&key=" + adminKey).then((r) => r.text()),
-        fetch("/api/admin/export?type=leads&key=" + adminKey).then((r) => r.text()),
-        fetch("/api/admin/export?type=messages&key=" + adminKey).then((r) => r.text()),
+        fetch("/api/admin/export?type=appointments&key=" + adminKey, { cache: "no-store" }).then((r) => r.text()),
+        fetch("/api/admin/export?type=feedback&key=" + adminKey, { cache: "no-store" }).then((r) => r.text()),
+        fetch("/api/admin/export?type=leads&key=" + adminKey, { cache: "no-store" }).then((r) => r.text()),
+        fetch("/api/admin/export?type=messages&key=" + adminKey, { cache: "no-store" }).then((r) => r.text()),
       ]);
       setRows({ appointments: parseCsv(a), feedback: parseCsv(f), leads: parseCsv(l), messages: parseCsv(m) });
       setKey(adminKey);
@@ -154,8 +154,10 @@ export function AdminDashboard() {
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />} প্রবেশ করুন
             </button>
           </form>
-          <p className="mt-4 rounded-lg border border-dashed border-white/15 px-3 py-2 text-center text-[0.65rem] text-cream/40">
+          <p className="mt-4 rounded-lg border border-dashed border-white/15 px-3 py-2 text-center text-[0.62rem] leading-relaxed text-cream/40">
             ডেমো পাসকোড: <span className="font-latin font-bold text-gold">mahadan-2027</span>
+            <br />
+            <span className="text-cream/30">লাইভে যাওয়ার আগে <span className="font-latin">ADMIN_KEY</span> পরিবর্তন করুন</span>
           </p>
         </motion.div>
       </div>
@@ -338,9 +340,9 @@ export function AdminDashboard() {
                         <td className="px-3 py-2.5">
                           <div className="flex justify-end gap-1">
                             {r.status !== "confirmed" && (
-                              <button onClick={() => updateAppointment(key, r.id, "confirmed", load)} className="grid h-7 w-7 place-items-center rounded-full bg-emerald/10 text-emerald hover:bg-emerald hover:text-white" aria-label="নিশ্চিত"><Check className="h-3.5 w-3.5" /></button>
+                              <button onClick={() => updateAppointment(key, r.id, "confirmed", load)} className="grid h-7 w-7 place-items-center rounded-full bg-emerald/10 text-emerald hover:bg-emerald hover:text-white" aria-label="নিশ্চিত করুন" title="নিশ্চিত করুন"><Check className="h-3.5 w-3.5" /></button>
                             )}
-                            <button onClick={() => updateAppointment(key, r.id, "cancelled", load)} className="grid h-7 w-7 place-items-center rounded-full bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white" aria-label="বাতিল"><X className="h-3.5 w-3.5" /></button>
+                            <button onClick={() => updateAppointment(key, r.id, "cancelled", load)} className="grid h-7 w-7 place-items-center rounded-full bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white" aria-label="বাতিল করুন" title="বাতিল করুন"><X className="h-3.5 w-3.5" /></button>
                           </div>
                         </td>
                       </tr>
