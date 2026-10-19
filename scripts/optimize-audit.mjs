@@ -48,7 +48,26 @@ for (const job of jobs) {
       if (dest !== src) await fs.rm(src);
       console.log(`ok ${dest} ${(st.size / 1024).toFixed(0)}KB`);
     } catch (e) {
-      console.log(`FAIL ${src}: ${String(e).slice(0, 120)}`);
+      // Very tall mobile full-page captures can exceed sharp's output limits.
+      // Keep a readable "above the fold + content" slice instead of a 9 MB PNG.
+      try {
+        const meta = await sharp(src).metadata();
+        const width = Math.min(job.width, 390);
+        const out = await sharp(src, { limitInputPixels: false })
+          .resize({ width })
+          .extract({ left: 0, top: 0, width, height: Math.min(6000, Math.round((meta.height || 6000) * (width / (meta.width || width)))) })
+          .webp({ quality: 62 })
+          .toBuffer();
+        await fs.writeFile(dest, out);
+        const st = await fs.stat(dest);
+        bytes += st.size;
+        total += 1;
+        kept += 1;
+        if (dest !== src) await fs.rm(src);
+        console.log(`ok(tall) ${dest} ${(st.size / 1024).toFixed(0)}KB`);
+      } catch (e2) {
+        console.log(`FAIL ${src}: ${String(e).slice(0, 80)} / ${String(e2).slice(0, 80)}`);
+      }
     }
   }
   console.log(`${job.dir}: ${kept}/${files.length} converted`);

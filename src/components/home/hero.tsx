@@ -174,7 +174,7 @@ export function Hero() {
               initial={reduce ? false : { opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.75, duration: 0.7 }}
-              className="absolute -right-2 bottom-24 rounded-2xl border border-white/12 bg-cream/95 px-3.5 py-2.5 text-forest shadow-xl backdrop-blur sm:-right-6"
+              className="absolute right-2 bottom-24 max-w-[12rem] rounded-2xl border border-white/12 bg-cream/95 px-3 py-2 text-forest shadow-xl backdrop-blur sm:right-3 lg:-right-2"
             >
               <p className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-emerald">
                 <Sparkles className="h-3 w-3" /> প্রতিশ্রুতি

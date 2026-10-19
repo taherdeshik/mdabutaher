@@ -10,7 +10,7 @@ import { news } from "@/content/news";
 import { cn } from "@/lib/utils";
 
 const photoKeys = Array.from(new Set([...activities.map((a) => a.image), ...posts.map((p) => p.image), ...news.map((n) => n.image), "community", "campaign", "portrait"]));
-const posters = ["poster", "poster2", "campaign", "community"];
+const posters = ["poster", "poster2", "posterEid", "posterEducation"];
 const videos = [
   { id: "13_YsIbYnAI", title: "স্বতন্ত্র চেয়ারম্যান প্রার্থীর ভোট প্রার্থনা" },
   { id: "dQUP84MXOJU", title: "ডামি নির্বাচনকে না বলুন — মোঃ আবু তাহের" },
