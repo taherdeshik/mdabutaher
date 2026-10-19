@@ -1,5 +1,8 @@
 name: Test push permission
-on: workflow_dispatch
+on:
+  push:
+    paths: ['.github/workflows/test-push.yml']
+  workflow_dispatch
 permissions:
   contents: write
 jobs:
