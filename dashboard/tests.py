@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
-from django.test import TestCase
+from django.test import Client, TestCase, override_settings
 
 from civic.models import Appointment, Feedback, Lead, Message
 
@@ -208,3 +208,65 @@ class DashboardTests(TestCase):
                 "/api/admin/overview/", HTTP_X_ADMIN_KEY="legacy-secret-key"
             )
             self.assertEqual(res.status_code, 200)
+
+
+class CsrfOriginTests(TestCase):
+    """Regression: the login form must accept POSTs from the preview/proxy host."""
+
+    HOST = "8000-abc123.e2b.app"
+    ORIGIN = "https://8000-abc123.e2b.app"
+
+    def setUp(self):
+        cache.clear()
+        from mahadan.origins import csrf_trusted_origins
+
+        overrides = override_settings(
+            ALLOWED_HOSTS=[".e2b.app", "localhost"],
+            CSRF_TRUSTED_ORIGINS=csrf_trusted_origins([".e2b.app", "localhost"]),
+        )
+        overrides.enable()
+        self.addCleanup(overrides.disable)
+
+    def _login_post(self, origin):
+        client = Client(enforce_csrf_checks=True)
+        page = client.get("/admin/login", HTTP_HOST=self.HOST)
+        self.assertEqual(page.status_code, 200)
+        token = client.cookies["csrftoken"].value
+        return client.post(
+            "/admin/login",
+            {"csrfmiddlewaretoken": token, "username": "nobody", "password": "x"},
+            HTTP_HOST=self.HOST,
+            HTTP_ORIGIN=origin,
+            HTTP_REFERER=origin + "/admin/login",
+        )
+
+    def test_login_form_accepts_subdomain_origin(self):
+        response = self._login_post(self.ORIGIN)
+        # Wrong credentials re-render the form (200); a CSRF failure would be 403.
+        self.assertEqual(response.status_code, 200)
+
+    def test_login_form_rejects_foreign_origin(self):
+        response = self._login_post("https://evil.example.org")
+        self.assertEqual(response.status_code, 403)
+
+    def test_csrf_origin_helper(self):
+        from mahadan.origins import csrf_trusted_origins
+
+        hosts = [
+            ".e2b.app",
+            "localhost",
+            "127.0.0.1",
+            "0.0.0.0",
+            ".localhost",
+            "mdabutaher.com",
+            "www.mdabutaher.com",
+        ]
+        self.assertEqual(
+            csrf_trusted_origins(hosts, extra=["https://extra.example.org", ""]),
+            [
+                "https://*.e2b.app",
+                "https://mdabutaher.com",
+                "https://www.mdabutaher.com",
+                "https://extra.example.org",
+            ],
+        )

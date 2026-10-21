@@ -8,6 +8,8 @@ or neither to use a local SQLite file (development default). See `.env.example`.
 import os
 from pathlib import Path
 
+from mahadan.origins import csrf_trusted_origins
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -52,11 +54,11 @@ ALLOWED_HOSTS = [
 if DEBUG:
     ALLOWED_HOSTS += [".e2b.app", ".localhost"]
 
-CSRF_TRUSTED_ORIGINS = [
-    f"https://{h.lstrip('.')}"
-    for h in ALLOWED_HOSTS
-    if not h.startswith(("localhost", "127.", "0.0.0.0"))
-]
+# Derived from ALLOWED_HOSTS (leading-dot hosts become https://*.domain wildcards).
+# DJANGO_CSRF_TRUSTED_ORIGINS adds explicit extra origins, comma-separated.
+CSRF_TRUSTED_ORIGINS = csrf_trusted_origins(
+    ALLOWED_HOSTS, extra=env("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+)
 SITE_URL = env("SITE_URL", "https://mdabutaher.com").rstrip("/")
 
 INSTALLED_APPS = [
