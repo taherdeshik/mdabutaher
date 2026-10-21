@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, withBasePath } from "@/lib/utils";
 import { imageFor } from "@/content/media";
 
 type Props = {
@@ -33,7 +33,7 @@ export function SmartImage({
   label,
   fill = true,
 }: Props) {
-  const resolved = src || imageFor(imageKey);
+  const resolved = withBasePath(src || imageFor(imageKey) || "");
   const [failed, setFailed] = useState(false);
   const showFallback = !resolved || failed;
 

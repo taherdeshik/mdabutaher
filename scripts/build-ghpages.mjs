@@ -35,6 +35,7 @@ const root = process.cwd();
 const workDir = process.env.GH_PAGES_WORK || path.join(os.tmpdir(), "mdabutaher-ghpages");
 const outDir = path.join(root, "out-ghpages");
 const basePath = process.env.GH_PAGES_BASE ?? "/mdabutaher";
+const siteOrigin = (process.env.GH_PAGES_ORIGIN ?? "https://taherdeshik.github.io").replace(/\/$/, "");
 const publish = process.argv.includes("--publish");
 const manifestPath = path.join(root, ".ghpages-manifest.json");
 
@@ -116,12 +117,12 @@ async function walk(dir, fn) {
   }
 }
 
-function run(cmd, args, cwd) {
+function run(cmd, args, cwd, extraEnv = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(cmd, args, {
       cwd,
       stdio: "inherit",
-      env: { ...process.env, NODE_ENV: "production" },
+      env: { ...process.env, NODE_ENV: "production", ...extraEnv },
     });
     child.on("exit", (code) => (code === 0 ? resolve() : reject(new Error(`${cmd} exited with ${code}`))));
   });
@@ -221,9 +222,13 @@ export default nextConfig;
   );
 
   console.log("  compiling…");
-  await run("npx", ["next", "build"], workDir);
+  await run("npx", ["next", "build"], workDir, {
+    NEXT_PUBLIC_BASE_PATH: basePath,
+    NEXT_PUBLIC_SITE_URL: `${siteOrigin}${basePath}`,
+  });
 
   const staticOut = path.join(workDir, "out");
+  await dedupeMetadataBase(staticOut);
   if (!existsSync(staticOut)) throw new Error("next build produced no out/ directory");
   await fs.cp(staticOut, outDir, { recursive: true });
 
@@ -235,6 +240,33 @@ export default nextConfig;
   console.log(`✓ out-ghpages/ ready — ${pages} top-level entries, ${(size / 1024 / 1024).toFixed(1)} MB`);
 
   if (publish) await publishToRoot();
+}
+
+/**
+ * Next appends basePath to metadata routes (opengraph-image) *and* resolves
+ * them against metadataBase, which already contains the basePath here — the
+ * resulting URL has the segment twice. Fix it in the exported markup.
+ */
+async function dedupeMetadataBase(dir) {
+  const doubled = `${siteOrigin}${basePath}${basePath}/`;
+  const single = `${siteOrigin}${basePath}/`;
+  let files = 0;
+  await walkAny(dir, async (file) => {
+    if (!/\.(html|txt|xml|json|webmanifest)$/.test(file)) return;
+    const src = await fs.readFile(file, "utf8");
+    if (!src.includes(doubled)) return;
+    await fs.writeFile(file, src.split(doubled).join(single), "utf8");
+    files += 1;
+  });
+  if (files) console.log(`  fixed doubled base path in ${files} file(s)`);
+}
+
+async function walkAny(dir, fn) {
+  for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) await walkAny(full, fn);
+    else if (entry.isFile()) await fn(full);
+  }
 }
 
 async function listFiles(dir, prefix = "") {

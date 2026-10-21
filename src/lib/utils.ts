@@ -93,3 +93,18 @@ export function percent(part: number, total: number) {
   if (!total) return 0;
   return Math.round((part / total) * 100);
 }
+
+/**
+ * Sub-path deployments (GitHub Pages project site, cPanel sub-folder) need
+ * every local asset URL prefixed. Empty on the production domain.
+ */
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+export function withBasePath(path: string): string;
+export function withBasePath(path?: string): string | undefined;
+export function withBasePath(path?: string) {
+  if (!path) return path;
+  if (/^(https?:)?\/\//.test(path) || path.startsWith("data:") || path.startsWith("blob:")) return path;
+  if (!BASE_PATH) return path;
+  return path.startsWith("/") ? `${BASE_PATH}${path}` : `${BASE_PATH}/${path}`;
+}

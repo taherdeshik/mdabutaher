@@ -1,5 +1,6 @@
 import { imageMap } from "@/content/media";
 import { site } from "@/content/site";
+import { withBasePath } from "@/lib/utils";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://mdabutaher.com").replace(/\/$/, "");
 
@@ -13,7 +14,7 @@ export function socialImage(key?: string) {
   if (!key) return fallback;
   if (/^https?:\/\//.test(key)) return key;
   const resolved = imageMap[key] || key;
-  return resolved.startsWith("/") ? `${SITE_URL}${resolved}` : fallback;
+  return resolved.startsWith("/") ? `${SITE_URL}${withBasePath(resolved)}` : fallback;
 }
 
 export function breadcrumbLd(items: { label: string; href?: string }[]) {

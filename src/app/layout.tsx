@@ -3,8 +3,10 @@ import "./globals.css";
 import { anekBangla, inter } from "@/lib/fonts";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { site } from "@/content/site";
+import { BASE_PATH } from "@/lib/utils";
+import { SITE_URL } from "@/lib/seo";
 
-const url = "https://mdabutaher.com";
+const url = SITE_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL(url),
@@ -105,7 +107,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="bn" className={`${anekBangla.variable} ${inter.variable}`}>
       <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href={`${BASE_PATH}/favicon.svg`} type="image/svg+xml" />
         <link rel="alternate" type="application/rss+xml" title={`${site.name} — আরএসএস ফিড`} href="/feed.xml" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>

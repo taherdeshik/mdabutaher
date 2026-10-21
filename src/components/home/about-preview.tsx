@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight, Quote, ShieldCheck } from "lucide-react";
 import { bio, site, values } from "@/content/site";
 import { Section, SectionHeading, Badge } from "@/components/ui/section";
+import { withBasePath } from "@/lib/utils";
 import { SmartImage } from "@/components/ui/smart-image";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
@@ -69,7 +70,7 @@ export function AboutPreview() {
 
             <div className="mt-7 flex items-end gap-4 border-t border-forest/10 pt-4">
               <Image
-                src={imageFor("signature") ?? "/media/signature/abu-taher-signature-2026.png"}
+                src={withBasePath(imageFor("signature") ?? "/media/signature/abu-taher-signature-2026.png")}
                 alt="আবু হাসান মোহাম্মদ তাহেরের স্বাক্ষর"
                 width={2298}
                 height={589}
