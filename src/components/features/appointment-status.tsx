@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { CalendarCheck, Clock, Loader2, MapPin, Search, XCircle } from "lucide-react";
 import { Input } from "@/components/ui/form";
-import { bn } from "@/lib/utils";
+import { bn, withBasePath } from "@/lib/utils";
 
 type Appointment = {
   id: string;
@@ -65,7 +65,7 @@ export function AppointmentStatusLookup() {
         <div className="mt-6 rounded-2xl border border-dashed border-forest/15 bg-white p-8 text-center">
           <XCircle className="mx-auto h-8 w-8 text-muted/40" />
           <p className="mt-3 text-sm text-muted">{message}</p>
-          <a href="/appointment" className="mt-4 inline-block rounded-full bg-forest px-4 py-2 text-[0.8rem] font-semibold text-cream">নতুন অ্যাপয়েন্টমেন্ট নিন</a>
+          <a href={withBasePath("/appointment")} className="mt-4 inline-block rounded-full bg-forest px-4 py-2 text-[0.8rem] font-semibold text-cream">নতুন অ্যাপয়েন্টমেন্ট নিন</a>
         </div>
       )}
 

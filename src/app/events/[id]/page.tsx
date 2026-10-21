@@ -8,7 +8,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { EventRegister } from "@/components/features/event-register";
 import { Reveal } from "@/components/ui/reveal";
-import { bn } from "@/lib/utils";
+import { bn, withBasePath } from "@/lib/utils";
 import { site } from "@/content/site";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbLd, eventLd, socialImage } from "@/lib/seo";
@@ -104,7 +104,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       <Section tone="light" className="py-10 sm:py-14">
         <div className="container-x grid gap-8 lg:grid-cols-[1.4fr_0.6fr]">
           <div>
-            <Link href="/events" className="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold text-muted transition-colors hover:text-forest">
+            <Link href={withBasePath("/events")} className="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold text-muted transition-colors hover:text-forest">
               <ArrowLeft className="h-3.5 w-3.5" /> সব ইভেন্ট
             </Link>
 
@@ -146,7 +146,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                 <a href={`https://www.facebook.com/sharer/sharer.php?u=https://mdabutaher.com/events/${event.id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full border border-forest/15 px-3.5 py-2 text-[0.72rem] font-semibold text-forest transition-colors hover:bg-cream">
                   <Share2 className="h-3.5 w-3.5" /> শেয়ার করুন
                 </a>
-                <a href="/api/calendar/ics" className="inline-flex items-center gap-1.5 rounded-full border border-forest/15 px-3.5 py-2 text-[0.72rem] font-semibold text-forest transition-colors hover:bg-cream">
+                <a href={withBasePath("/api/calendar/ics")} className="inline-flex items-center gap-1.5 rounded-full border border-forest/15 px-3.5 py-2 text-[0.72rem] font-semibold text-forest transition-colors hover:bg-cream">
                   <CalendarDays className="h-3.5 w-3.5" /> ক্যালেন্ডারে যোগ
                 </a>
               </div>
@@ -173,7 +173,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               <div className="rounded-2xl border border-forest/10 bg-white p-5 text-center">
                 <p className="text-[0.85rem] font-bold text-forest">এই ইভেন্টটি সম্পন্ন হয়েছে</p>
                 <p className="mt-1 text-[0.75rem] text-muted">{bn(event.registered)} জন উপস্থিত ছিলেন</p>
-                <Link href="/events" className="mt-3 inline-block rounded-full bg-forest px-4 py-2 text-[0.78rem] font-semibold text-cream">আসন্ন ইভেন্ট দেখুন</Link>
+                <Link href={withBasePath("/events")} className="mt-3 inline-block rounded-full bg-forest px-4 py-2 text-[0.78rem] font-semibold text-cream">আসন্ন ইভেন্ট দেখুন</Link>
               </div>
             ) : (
               <EventRegister eventId={event.id} registered={event.registered} capacity={event.capacity} />
@@ -182,7 +182,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             <div className="rounded-2xl border border-forest/10 bg-white p-4">
               <p className="text-[0.62rem] font-bold uppercase tracking-[0.14em] text-muted">দ্রুত যোগাযোগ</p>
               <a href={`tel:${site.phoneHref}`} className="mt-2 flex items-center justify-between rounded-xl bg-cream/60 px-3 py-2 text-[0.78rem] font-semibold text-forest">কল করুন <span className="font-latin text-[0.72rem] text-muted">{site.phone}</span></a>
-              <a href="/chat" className="mt-1.5 flex items-center justify-between rounded-xl bg-cream/60 px-3 py-2 text-[0.78rem] font-semibold text-forest">লাইভ চ্যাট <span className="text-[0.68rem] text-muted">২৪/৭ →</span></a>
+              <a href={withBasePath("/chat")} className="mt-1.5 flex items-center justify-between rounded-xl bg-cream/60 px-3 py-2 text-[0.78rem] font-semibold text-forest">লাইভ চ্যাট <span className="text-[0.68rem] text-muted">২৪/৭ →</span></a>
             </div>
           </div>
         </div>

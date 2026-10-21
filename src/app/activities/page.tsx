@@ -4,6 +4,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { ActivityGrid } from "@/components/features/activity-grid";
 import { Counter } from "@/components/ui/counter";
+import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "সাম্প্রতিক কার্যক্রম",
@@ -54,8 +55,8 @@ export default function ActivitiesPage() {
             <p className="text-[0.85rem]">আপনার এলাকায় কোনো কাজ প্রয়োজন? <span className="text-cream/50">আমাদের জানান।</span></p>
           </div>
           <div className="flex gap-2">
-            <a href="/feedback" className="rounded-full bg-gold px-4 py-2 text-[0.75rem] font-bold text-night">সমস্যা জানান</a>
-            <a href="/campaign#volunteer" className="rounded-full border border-white/20 px-4 py-2 text-[0.75rem] font-semibold">স্বেচ্ছাসেবক হোন</a>
+            <a href={withBasePath("/feedback")} className="rounded-full bg-gold px-4 py-2 text-[0.75rem] font-bold text-night">সমস্যা জানান</a>
+            <a href={withBasePath("/campaign#volunteer")} className="rounded-full border border-white/20 px-4 py-2 text-[0.75rem] font-semibold">স্বেচ্ছাসেবক হোন</a>
           </div>
         </div>
       </div>

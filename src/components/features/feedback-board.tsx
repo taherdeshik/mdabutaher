@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Clock3, Filter, Loader2, MapPin, MessageSquareHeart, ThumbsUp } from "lucide-react";
-import { cn, bn, timeAgoBn } from "@/lib/utils";
+import { cn, bn, timeAgoBn, withBasePath } from "@/lib/utils";
 
 type Item = {
   id: string; trackingId: string; kind: "problem" | "advice" | "threat"; category: string;
@@ -82,7 +82,7 @@ export function FeedbackBoard() {
           <MessageSquareHeart className="mx-auto h-9 w-9 text-muted/30" />
           <p className="mt-3 text-sm font-semibold text-forest">এখনো কোনো পাবলিক রিপোর্ট নেই</p>
           <p className="mt-1 text-[0.78rem] text-muted">প্রথম রিপোর্টটি আপনিই দিন — আপনার সমস্যা অনেকের সমস্যা হতে পারে।</p>
-          <a href="/feedback" className="mt-4 inline-block rounded-full bg-forest px-4 py-2 text-[0.78rem] font-semibold text-cream">রিপোর্ট করুন</a>
+          <a href={withBasePath("/feedback")} className="mt-4 inline-block rounded-full bg-forest px-4 py-2 text-[0.78rem] font-semibold text-cream">রিপোর্ট করুন</a>
         </div>
       )}
 

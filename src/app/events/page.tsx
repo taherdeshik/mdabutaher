@@ -5,7 +5,7 @@ import { Section } from "@/components/ui/section";
 import { EventList } from "@/components/features/event-list";
 import { events } from "@/content/events";
 import { cmsEvents } from "@/lib/cms";
-import { bn } from "@/lib/utils";
+import { bn, withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "আসন্ন ইভেন্ট ও সময়সূচি",
@@ -39,7 +39,7 @@ export default async function EventsPage() {
         <div className="container-x">
           <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
             <p className="text-[0.8rem] text-muted">ইভেন্টে অংশ নিতে রেজিস্ট্রেশন করুন — সম্পূর্ণ বিনামূল্যে।</p>
-            <a href="/api/calendar/ics" className="inline-flex items-center gap-1.5 rounded-full border border-forest/15 bg-white px-3.5 py-2 text-[0.72rem] font-semibold text-forest transition-colors hover:border-forest hover:bg-forest hover:text-cream">
+            <a href={withBasePath("/api/calendar/ics")} className="inline-flex items-center gap-1.5 rounded-full border border-forest/15 bg-white px-3.5 py-2 text-[0.72rem] font-semibold text-forest transition-colors hover:border-forest hover:bg-forest hover:text-cream">
               <Download className="h-3.5 w-3.5" /> সব ইভেন্ট ক্যালেন্ডারে
             </a>
           </div>

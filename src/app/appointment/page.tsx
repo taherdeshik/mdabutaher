@@ -6,6 +6,7 @@ import { Section } from "@/components/ui/section";
 import { Accordion } from "@/components/ui/accordion";
 import { Reveal } from "@/components/ui/reveal";
 import { site, faqs } from "@/content/site";
+import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "অ্যাপয়েন্টমেন্ট বুকিং",
@@ -104,7 +105,7 @@ export default function AppointmentPage() {
             <CalendarCheck className="h-4 w-4 text-emerald" />
             আগে বুক করেছেন? রেফারেন্স নম্বর দিয়ে স্ট্যাটাস দেখুন।
           </p>
-          <a href="/appointment/status" className="rounded-full border border-forest/15 bg-white px-4 py-2 text-[0.78rem] font-semibold text-forest transition-colors hover:border-forest hover:bg-forest hover:text-cream">
+          <a href={withBasePath("/appointment/status")} className="rounded-full border border-forest/15 bg-white px-4 py-2 text-[0.78rem] font-semibold text-forest transition-colors hover:border-forest hover:bg-forest hover:text-cream">
             স্ট্যাটাস দেখুন
           </a>
         </div>

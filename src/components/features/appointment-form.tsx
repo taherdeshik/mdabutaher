@@ -7,7 +7,7 @@ import {
   MapPin, Phone, User, Video,
 } from "lucide-react";
 import { appointmentTypes } from "@/lib/constants";
-import { bn } from "@/lib/utils";
+import { bn, withBasePath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { Icon } from "@/components/ui/icon";
 import { Field, Input, Select, Textarea, Checkbox } from "@/components/ui/form";
@@ -111,7 +111,7 @@ export function AppointmentForm() {
           </div>
         </div>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <a href={`/appointment/status?ref=${result.reference}`} className="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">স্ট্যাটাস দেখুন</a>
+          <a href={withBasePath(`/appointment/status?ref=${result.reference}`)} className="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">স্ট্যাটাস দেখুন</a>
           <button onClick={() => { setResult(null); setStep(0); setType(""); setDate(""); setSlot(""); }} className="rounded-full border border-forest/15 px-5 py-2.5 text-sm font-semibold text-forest">
             আরেকটি বুকিং
           </button>

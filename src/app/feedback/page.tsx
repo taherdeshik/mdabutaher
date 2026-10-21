@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { FeedbackForm } from "@/components/features/feedback-form";
 import { Reveal } from "@/components/ui/reveal";
 import { FeedbackStats } from "@/components/features/feedback-stats";
+import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "সমস্যা, পরামর্শ ও হুমকি রিপোর্ট",
@@ -64,7 +65,7 @@ export default function FeedbackPage() {
                     </div>
                   ))}
                 </div>
-                <a href="/feedback/board" className="mt-4 flex items-center justify-between rounded-xl bg-cream-2/70 px-3.5 py-2.5 text-[0.78rem] font-semibold text-forest transition-colors hover:bg-cream-2">
+                <a href={withBasePath("/feedback/board")} className="mt-4 flex items-center justify-between rounded-xl bg-cream-2/70 px-3.5 py-2.5 text-[0.78rem] font-semibold text-forest transition-colors hover:bg-cream-2">
                   পাবলিক বোর্ড দেখুন <ArrowUpRight className="h-3.5 w-3.5" />
                 </a>
               </div>

@@ -7,7 +7,7 @@ import {
   Clock, Download, Inbox, LayoutDashboard, Loader2, LogOut, MessageSquare,
   Phone, RefreshCw, Search, Send, Sparkles, Users, Workflow, X,
 } from "lucide-react";
-import { cn, bn, timeAgoBn, formatBnDate } from "@/lib/utils";
+import { cn, bn, timeAgoBn, formatBnDate, withBasePath } from "@/lib/utils";
 
 type Overview = {
   counts: Record<string, number>;
@@ -201,7 +201,7 @@ export function AdminDashboard() {
             <button onClick={logout} className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-[0.72rem] text-cream/50 hover:bg-white/5 hover:text-cream">
               <LogOut className="h-3.5 w-3.5" /> লগআউট
             </button>
-            <a href="/" className="block rounded-lg bg-white/5 px-2.5 py-2 text-center text-[0.68rem] text-cream/60">সাইটে ফিরুন</a>
+            <a href={withBasePath("/")} className="block rounded-lg bg-white/5 px-2.5 py-2 text-center text-[0.68rem] text-cream/60">সাইটে ফিরুন</a>
           </div>
         </aside>
 

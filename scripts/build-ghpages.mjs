@@ -229,6 +229,7 @@ export default nextConfig;
 
   const staticOut = path.join(workDir, "out");
   await dedupeMetadataBase(staticOut);
+  await prefixInternalUrls(staticOut);
   if (!existsSync(staticOut)) throw new Error("next build produced no out/ directory");
   await fs.cp(staticOut, outDir, { recursive: true });
 
@@ -259,6 +260,27 @@ async function dedupeMetadataBase(dir) {
     files += 1;
   });
   if (files) console.log(`  fixed doubled base path in ${files} file(s)`);
+}
+
+/**
+ * Last line of defence: some anchors come from content data or template
+ * strings, so Next cannot prefix them. Rewrite every root-relative URL in the
+ * exported markup to sit under the deployment base path.
+ */
+async function prefixInternalUrls(dir) {
+  if (!basePath) return;
+  const re = /(\s(?:href|src|action)=")\/(?!\/|mdabutaher\/)([^"]*)"/g;
+  let files = 0;
+  await walkAny(dir, async (file) => {
+    if (!/\.(html|txt)$/.test(file)) return;
+    const src = await fs.readFile(file, "utf8");
+    const next = src.replace(re, (_m, attr, rest) => `${attr}${basePath}/${rest}"`);
+    if (next !== src) {
+      await fs.writeFile(file, next, "utf8");
+      files += 1;
+    }
+  });
+  console.log(`  prefixed internal URLs in ${files} file(s)`);
 }
 
 async function walkAny(dir, fn) {

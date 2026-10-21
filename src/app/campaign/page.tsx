@@ -7,7 +7,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/ui/reveal";
 import { Counter } from "@/components/ui/counter";
 import { VolunteerForm } from "@/components/features/volunteer-form";
 import { campaignKpis, campaignOverview, campaignResources, phases, weeklyRhythm, zones } from "@/content/campaign";
-import { bn } from "@/lib/utils";
+import { bn, withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "প্রচারণা পরিকল্পনা ও সময়সূচি",
@@ -34,7 +34,7 @@ export default function CampaignPage() {
               </div>
             ))}
           </div>
-          <a href="/api/calendar/ics" className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-white/20 px-3 py-2 text-[0.75rem] font-semibold text-cream transition-colors hover:border-gold hover:text-gold">
+          <a href={withBasePath("/api/calendar/ics")} className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-white/20 px-3 py-2 text-[0.75rem] font-semibold text-cream transition-colors hover:border-gold hover:text-gold">
             <CalendarDays className="h-3.5 w-3.5" /> ক্যালেন্ডারে যোগ করুন
           </a>
         </div>
@@ -170,8 +170,8 @@ export default function CampaignPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Link href="/events" className="rounded-full bg-gold px-4 py-2.5 text-[0.8rem] font-bold text-night transition-transform hover:scale-[1.02]">সব ইভেন্ট</Link>
-            <Link href="/manifesto" className="rounded-full border border-white/20 px-4 py-2.5 text-[0.8rem] font-semibold text-cream transition-colors hover:border-gold hover:text-gold">ম্যানিফেস্টো</Link>
+            <Link href={withBasePath("/events")} className="rounded-full bg-gold px-4 py-2.5 text-[0.8rem] font-bold text-night transition-transform hover:scale-[1.02]">সব ইভেন্ট</Link>
+            <Link href={withBasePath("/manifesto")} className="rounded-full border border-white/20 px-4 py-2.5 text-[0.8rem] font-semibold text-cream transition-colors hover:border-gold hover:text-gold">ম্যানিফেস্টো</Link>
           </div>
         </div>
       </div>

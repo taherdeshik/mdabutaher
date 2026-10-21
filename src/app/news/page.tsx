@@ -7,7 +7,7 @@ import { SmartImage } from "@/components/ui/smart-image";
 import { Reveal } from "@/components/ui/reveal";
 import { news } from "@/content/news";
 import { cmsNews } from "@/lib/cms";
-import { formatBnDate } from "@/lib/utils";
+import { formatBnDate, withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "সংবাদ ও গণমাধ্যম",
@@ -82,7 +82,7 @@ export default async function NewsPage() {
                 <Quote className="h-6 w-6 text-gold" />
                 <p className="text-[0.85rem]">মিডিয়া জিজ্ঞাসা বা সাক্ষাৎকারের জন্য যোগাযোগ করুন</p>
               </div>
-              <a href="/contact" className="rounded-full bg-gold px-4 py-2 text-[0.78rem] font-bold text-night">মিডিয়া কিট ও যোগাযোগ</a>
+              <a href={withBasePath("/contact")} className="rounded-full bg-gold px-4 py-2 text-[0.78rem] font-bold text-night">মিডিয়া কিট ও যোগাযোগ</a>
             </div>
           </Reveal>
         </div>

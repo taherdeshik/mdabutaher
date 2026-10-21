@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, CalendarDays, Check, ChevronDown, Coins, Download, Target } from "lucide-react";
 import { pillars, type Pillar } from "@/content/manifesto";
 import { Icon } from "@/components/ui/icon";
-import { cn, bn } from "@/lib/utils";
+import { cn, bn, withBasePath } from "@/lib/utils";
 
 const accentBg = {
   emerald: "bg-emerald text-white",
@@ -114,7 +114,7 @@ export function ManifestoExplorer() {
             </div>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <a href={`/feedback?topic=${pillar.id}`} className="inline-flex items-center gap-1.5 rounded-full bg-forest px-4 py-2 text-[0.76rem] font-semibold text-cream transition-colors hover:bg-forest-2">
+              <a href={withBasePath(`/feedback?topic=${pillar.id}`)} className="inline-flex items-center gap-1.5 rounded-full bg-forest px-4 py-2 text-[0.76rem] font-semibold text-cream transition-colors hover:bg-forest-2">
                 এই বিষয়ে মতামত দিন <ArrowRight className="h-3.5 w-3.5" />
               </a>
               <button className="inline-flex items-center gap-1.5 rounded-full border border-forest/15 px-4 py-2 text-[0.76rem] font-semibold text-forest transition-colors hover:bg-cream">

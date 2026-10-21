@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, CalendarDays, Clock, MapPin, Users } from "lucide-react";
 import { events } from "@/content/events";
 import { Section, SectionHeading, Badge } from "@/components/ui/section";
-import { formatBnDate, bn } from "@/lib/utils";
+import { formatBnDate, bn, withBasePath } from "@/lib/utils";
 import { Reveal } from "@/components/ui/reveal";
 
 export function EventsPreview() {
@@ -71,7 +71,7 @@ export function EventsPreview() {
               <CalendarDays className="h-4 w-4 text-emerald" />
               সব ইভেন্ট একসাথে আপনার ফোনের ক্যালেন্ডারে যোগ করুন
             </p>
-            <a href="/api/calendar/ics" className="inline-flex items-center gap-2 rounded-full border border-forest/15 bg-white px-4 py-2 text-[0.75rem] font-semibold text-forest transition-colors hover:border-forest hover:bg-forest hover:text-cream">
+            <a href={withBasePath("/api/calendar/ics")} className="inline-flex items-center gap-2 rounded-full border border-forest/15 bg-white px-4 py-2 text-[0.75rem] font-semibold text-forest transition-colors hover:border-forest hover:bg-forest hover:text-cream">
               ক্যালেন্ডারে যোগ করুন (ICS) <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
           </div>

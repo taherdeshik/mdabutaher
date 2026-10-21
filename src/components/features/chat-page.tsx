@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUp, Bot, Clock, MessageCircle, Paperclip, Phone, ShieldCheck, Sparkles, User } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, withBasePath } from "@/lib/utils";
 import { site } from "@/content/site";
 
 type Msg = { id: string; role: "user" | "agent"; text: string; ts: number };
@@ -120,8 +120,8 @@ export function ChatPage() {
         </div>
         <div className="rounded-2xl bg-gold p-4 text-night">
           <p className="flex items-center gap-1.5 text-[0.62rem] font-extrabold uppercase tracking-[0.16em] text-night/60"><Sparkles className="h-3 w-3" /> দ্রুত সেবা</p>
-          <a href="/appointment" className="mt-2 flex items-center justify-between rounded-xl bg-night/10 px-3 py-2 text-[0.76rem] font-bold hover:bg-night/15">অ্যাপয়েন্টমেন্ট <MessageCircle className="h-3.5 w-3.5" /></a>
-          <a href="/feedback" className="mt-1.5 flex items-center justify-between rounded-xl bg-night/10 px-3 py-2 text-[0.76rem] font-bold hover:bg-night/15">সমস্যা জানান <MessageCircle className="h-3.5 w-3.5" /></a>
+          <a href={withBasePath("/appointment")} className="mt-2 flex items-center justify-between rounded-xl bg-night/10 px-3 py-2 text-[0.76rem] font-bold hover:bg-night/15">অ্যাপয়েন্টমেন্ট <MessageCircle className="h-3.5 w-3.5" /></a>
+          <a href={withBasePath("/feedback")} className="mt-1.5 flex items-center justify-between rounded-xl bg-night/10 px-3 py-2 text-[0.76rem] font-bold hover:bg-night/15">সমস্যা জানান <MessageCircle className="h-3.5 w-3.5" /></a>
         </div>
       </div>
     </div>

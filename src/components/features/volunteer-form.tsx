@@ -5,7 +5,7 @@ import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { Field, Input, Select } from "@/components/ui/form";
 import { volunteerRoles } from "@/content/campaign";
 import { wards } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { cn, withBasePath } from "@/lib/utils";
 
 const availabilities = ["সপ্তাহে ২–৪ ঘণ্টা", "সপ্তাহে ৫–১০ ঘণ্টা", "শুধু ইভেন্টের দিন", "পূর্ণ সময়"];
 
@@ -32,7 +32,7 @@ export function VolunteerForm() {
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-emerald/10 text-emerald"><CheckCircle2 className="h-7 w-7" /></span>
         <h3 className="mt-4 text-lg font-bold text-forest">স্বাগতম, আপনি এখন আমাদের দলে!</h3>
         <p className="mt-1.5 text-[0.85rem] text-muted">আপনার ওয়ার্ড সমন্বয়ক ৪৮ ঘণ্টার মধ্যে যোগাযোগ করবেন।</p>
-        <a href="/campaign" className="mt-4 inline-block rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">প্রচারণা পরিকল্পনা দেখুন</a>
+        <a href={withBasePath("/campaign")} className="mt-4 inline-block rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">প্রচারণা পরিকল্পনা দেখুন</a>
       </div>
     );
   }

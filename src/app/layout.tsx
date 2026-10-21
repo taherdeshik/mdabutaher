@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
     languages: { "bn-BD": "/" },
-    types: { "application/rss+xml": "/feed.xml" },
+    types: { "application/rss+xml": `${BASE_PATH}/feed.xml` },
   },
   robots: {
     index: true,
@@ -108,7 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="bn" className={`${anekBangla.variable} ${inter.variable}`}>
       <head>
         <link rel="icon" href={`${BASE_PATH}/favicon.svg`} type="image/svg+xml" />
-        <link rel="alternate" type="application/rss+xml" title={`${site.name} — আরএসএস ফিড`} href="/feed.xml" />
+        <link rel="alternate" type="application/rss+xml" title={`${site.name} — আরএসএস ফিড`} href={`${BASE_PATH}/feed.xml`} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body>

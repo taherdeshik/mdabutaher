@@ -7,6 +7,7 @@ import { Accordion } from "@/components/ui/accordion";
 import { Reveal } from "@/components/ui/reveal";
 import { CtaBand } from "@/components/home/cta-band";
 import { manifestoIntro, manifestoFaq, pillars } from "@/content/manifesto";
+import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "নির্বাচনী ম্যানিফেস্টো ২০২৭",
@@ -37,7 +38,7 @@ export default function ManifestoPage() {
             <div><p className="font-latin text-xl font-bold text-gold">৩২</p><p className="text-[0.6rem] text-cream/50">অঙ্গীকার</p></div>
             <div><p className="font-latin text-xl font-bold text-gold">৫</p><p className="text-[0.6rem] text-cream/50">বছরের রোডম্যাপ</p></div>
           </div>
-          <a href="/manifesto/print" className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-gold px-4 py-2.5 text-[0.8rem] font-bold text-night transition-transform hover:scale-[1.01]">
+          <a href={withBasePath("/manifesto/print")} className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-gold px-4 py-2.5 text-[0.8rem] font-bold text-night transition-transform hover:scale-[1.01]">
             <Download className="h-4 w-4" /> ম্যানিফেস্টো ডাউনলোড (PDF)
           </a>
           <p className="mt-2 text-center text-[0.6rem] text-cream/35">প্রকাশিত: ১ সেপ্টেম্বর ২০২৬ · সংস্করণ ১.০</p>
@@ -126,7 +127,7 @@ export default function ManifestoPage() {
                 ম্যানিফেস্টো একটি জীবন্ত দলিল। আপনার পরামর্শ এলে সংশোধনী আকারে যুক্ত হবে — সংস্করণ নম্বর ও তারিখসহ।
               </p>
             </div>
-            <a href="/feedback" className="mt-3 flex items-center justify-between rounded-2xl bg-forest px-4 py-3 text-cream transition-colors hover:bg-forest-2">
+            <a href={withBasePath("/feedback")} className="mt-3 flex items-center justify-between rounded-2xl bg-forest px-4 py-3 text-cream transition-colors hover:bg-forest-2">
               <span className="flex items-center gap-2 text-[0.82rem] font-semibold"><FileText className="h-4 w-4 text-gold" /> ম্যানিফেস্টোতে পরামর্শ দিন</span>
               <ArrowUpRight className="h-4 w-4" />
             </a>

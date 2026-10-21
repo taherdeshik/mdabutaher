@@ -7,7 +7,7 @@ import {
   Lock, MessageSquareWarning, ShieldAlert, Trash2, X,
 } from "lucide-react";
 import { Field, Input, Select, Textarea, Checkbox } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
+import { cn, withBasePath } from "@/lib/utils";
 import { bn } from "@/lib/utils";
 
 const kinds = [
@@ -98,7 +98,7 @@ export function FeedbackForm({ initialKind = "problem" }: { initialKind?: "probl
           </div>
         )}
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <a href="/feedback/board" className="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">পাবলিক বোর্ড দেখুন</a>
+          <a href={withBasePath("/feedback/board")} className="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">পাবলিক বোর্ড দেখুন</a>
           <button onClick={() => { setState("idle"); setTicket(null); setForm({ category: "", title: "", details: "", ward: "", location: "", severity: "medium", name: "", phone: "" }); setPhoto(""); }} className="rounded-full border border-forest/15 px-5 py-2.5 text-sm font-semibold text-forest">
             আরেকটি রিপোর্ট
           </button>
