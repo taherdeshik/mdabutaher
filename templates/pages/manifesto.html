@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow="ম্যানিফেস্টো" title=intro.title description=intro.subtitle crumbs=meta.crumbs %}
+<section class="container-x py-12">
+  <blockquote class="mx-auto max-w-3xl rounded-3xl border-l-4 border-gold bg-white p-8 text-lg leading-relaxed text-forest shadow-soft">“{{ intro.quote }}”</blockquote>
+  <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm">
+    <a href="{% url 'core:manifesto-print' %}" class="rounded-full border border-forest/20 px-5 py-2.5 font-semibold text-forest hover:border-gold">প্রিন্ট সংস্করণ</a>
+    <span class="rounded-full bg-forest/5 px-5 py-2.5 text-muted">প্রকাশ: {{ intro.published }}</span>
+  </div>
+</section>
+
+<section class="container-x pb-16">
+  <div class="grid gap-4 lg:grid-cols-2">
+    {% for p in pillars %}
+    <details id="{{ p.id }}" class="card-surface group rounded-3xl p-6 open:shadow-lift" {% if forloop.first %}open{% endif %}>
+      <summary class="flex cursor-pointer list-none items-start justify-between gap-4">
+        <span><span class="text-xs font-bold text-gold-deep">স্তম্ভ {{ p.number|bn }}</span>
+          <span class="mt-1 block font-display text-xl font-bold text-forest">{{ p.title }}</span>
+          <span class="mt-1 block text-sm text-muted">{{ p.short }}</span></span>
+        <span class="text-forest transition group-open:rotate-180" aria-hidden="true">▾</span>
+      </summary>
+      <div class="mt-5 space-y-5 text-sm">
+        <p class="leading-relaxed text-forest/85">{{ p.summary }}</p>
+        <p class="rounded-2xl bg-cream-2/70 p-4 text-muted"><span class="font-semibold text-forest">সমস্যা:</span> {{ p.problem }}</p>
+        <ul class="space-y-2">
+          {% for c in p.commitments %}<li class="flex gap-2"><span class="text-emerald">✓</span><span>{{ c }}</span></li>{% endfor %}
+        </ul>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="rounded-2xl border border-forest/10 p-3"><p class="text-muted">লক্ষ্য</p><p class="mt-1 font-bold text-forest">{{ p.target }}</p></div>
+          <div class="rounded-2xl border border-forest/10 p-3"><p class="text-muted">বাজেট</p><p class="mt-1 font-bold text-forest">{{ p.budget }}</p></div>
+        </div>
+        <p class="text-xs text-muted">SDG: {{ p.sdg }}</p>
+      </div>
+    </details>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container-x pb-20">
+  <h2 class="text-2xl font-bold text-forest">প্রশ্নোত্তর</h2>
+  <div class="mt-6 grid gap-3 md:grid-cols-2">
+    {% for f in faqs %}
+    <details class="card-surface rounded-2xl p-5"><summary class="cursor-pointer font-semibold text-forest">{{ f.q }}</summary><p class="mt-3 text-sm leading-relaxed text-muted">{{ f.a }}</p></details>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

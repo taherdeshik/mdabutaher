@@ -1,0 +1,75 @@
+{% load static %}
+<div class="relative z-50 hidden bg-night text-cream/75 lg:block">
+  <div class="container-x flex h-9 items-center justify-between text-[0.72rem]">
+    <div class="flex items-center gap-5">
+      <span class="inline-flex items-center gap-1.5">
+        <span class="relative flex h-1.5 w-1.5"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-bright opacity-75"></span><span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-bright"></span></span>
+        নির্বাচন {{ site.electionYear }} · প্রচারণা চলছে
+      </span>
+      <span class="h-3 w-px bg-white/15"></span>
+      <span>{{ site.union }}, {{ site.upazila }}, {{ site.district }}</span>
+    </div>
+    <div class="flex items-center gap-5">
+      <a href="tel:{{ site.phoneHref }}" class="transition-colors hover:text-gold">{{ site.phone }}</a>
+      <a href="{% url 'core:feedback' %}" class="transition-colors hover:text-gold">সমস্যা জানান</a>
+      <span class="h-3 w-px bg-white/15"></span>
+      <a href="{{ site.socials.0.href }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-gold">Facebook</a>
+      <a href="{{ site.socials.1.href }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-gold">YouTube</a>
+    </div>
+  </div>
+</div>
+
+<header class="sticky top-0 z-50 bg-cream/85 backdrop-blur-md transition-all duration-500" data-site-header>
+  <div class="container-x flex h-[76px] items-center justify-between gap-4">
+    <a href="{% url 'core:home' %}" class="group flex items-center gap-3" aria-label="হোম">
+      <span class="relative grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-forest/10 bg-forest">
+        <span class="font-display text-[1.35rem] font-bold leading-none text-gold">আ</span>
+        <span class="absolute -bottom-1 -right-1 grid h-4 w-4 place-items-center rounded-full border-2 border-cream bg-gold text-[7px] font-black text-night">✓</span>
+      </span>
+      <span class="flex flex-col leading-none">
+        <span class="font-display text-[1.08rem] font-bold tracking-tight text-forest">{{ site.name }}</span>
+        <span class="mt-1 text-[0.66rem] font-medium uppercase tracking-[0.16em] text-muted">{{ site.role }} · {{ site.union }}</span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-0.5 lg:flex" aria-label="প্রধান মেনু">
+      {% for item in nav %}
+        {% if item.children %}
+        <div class="group relative">
+          <a href="{{ item.href }}" class="inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-[0.84rem] font-medium text-forest/80 transition hover:bg-forest/5 hover:text-forest">{{ item.label }} <span aria-hidden="true">▾</span></a>
+          <div class="invisible absolute left-0 top-full z-50 w-72 translate-y-2 rounded-2xl border border-forest/10 bg-white p-2 opacity-0 shadow-lift transition group-hover:visible group-hover:translate-y-1 group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+            {% for child in item.children %}
+            <a href="{{ child.href }}" class="block rounded-xl px-3 py-2.5 hover:bg-forest/5">
+              <span class="block text-[0.85rem] font-semibold text-forest">{{ child.label }}</span>
+              <span class="block text-[0.72rem] text-muted">{{ child.desc }}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <a href="{{ item.href }}" class="rounded-full px-3.5 py-2 text-[0.84rem] font-medium text-forest/80 transition hover:bg-forest/5 hover:text-forest">{{ item.label }}</a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a href="{% url 'core:appointment' %}" class="hidden rounded-full bg-forest px-4 py-2.5 text-[0.82rem] font-semibold text-cream shadow-soft transition hover:bg-forest-2 sm:inline-flex">সাক্ষাতের সময় নিন</a>
+      <button type="button" class="grid h-11 w-11 place-items-center rounded-full border border-forest/15 text-forest lg:hidden" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+        <span class="sr-only">মেনু</span>
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden border-t border-forest/10 bg-cream lg:hidden" data-mobile-menu>
+    <nav class="container-x grid gap-1 py-4" aria-label="মোবাইল মেনু">
+      {% for item in nav %}
+        <a href="{{ item.href }}" class="rounded-xl px-3 py-3 font-semibold text-forest hover:bg-forest/5">{{ item.label }}</a>
+        {% for child in item.children %}
+          <a href="{{ child.href }}" class="rounded-xl py-2 pl-7 pr-3 text-[0.86rem] text-muted hover:bg-forest/5">{{ child.label }}</a>
+        {% endfor %}
+      {% endfor %}
+      <a href="{% url 'core:appointment' %}" class="mt-2 rounded-full bg-forest px-4 py-3 text-center font-semibold text-cream">সাক্ষাতের সময় নিন</a>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow="জনসমস্যা বোর্ড" title="প্রকাশ্য অগ্রগতি" description=meta.description crumbs=meta.crumbs %}
+<section class="container-x py-12">
+  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-5" data-board-stats></div>
+  <div class="mb-6 flex flex-wrap gap-2" role="group" aria-label="ওয়ার্ড ফিল্টার">
+    {% for w in wards %}<button type="button" class="rounded-full border border-forest/15 px-3 py-1.5 text-sm font-semibold text-forest" data-ward-filter="{% if forloop.first %}all{% else %}{{ w }}{% endif %}">{% if forloop.first %}সব ওয়ার্ড{% else %}ওয়ার্ড {{ w }}{% endif %}</button>{% endfor %}
+  </div>
+  <ul class="grid gap-4 md:grid-cols-2" data-board-list aria-live="polite">
+    <li class="text-muted">লোড হচ্ছে…</li>
+  </ul>
+</section>
+{% endblock %}

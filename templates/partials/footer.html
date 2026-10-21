@@ -1,0 +1,39 @@
+{% load civic_tags %}
+<footer class="relative mt-24 overflow-hidden mesh-dark text-cream">
+  <div class="container-x grid gap-10 py-14 md:grid-cols-[1.3fr_1fr_1fr]">
+    <div>
+      <p class="font-display text-xl font-bold">{{ site.name }}</p>
+      <p class="mt-1 text-sm text-cream/70">{{ site.role }} · {{ site.ward }}</p>
+      <p class="mt-4 max-w-md text-sm leading-relaxed text-cream/60">{{ site.tagline }}। {{ site.slogan }}।</p>
+      <div class="mt-5 flex flex-wrap gap-2 text-xs">
+        {% for s in site.socials %}<a href="{{ s.href }}" target="_blank" rel="noopener noreferrer" class="rounded-full border border-white/15 px-3 py-1.5 hover:border-gold hover:text-gold">{{ s.label }}</a>{% endfor %}
+      </div>
+    </div>
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">দ্রুত লিংক</p>
+      <ul class="mt-4 space-y-2 text-sm text-cream/75">
+        <li><a href="{% url 'core:manifesto' %}" class="hover:text-gold">ম্যানিফেস্টো</a></li>
+        <li><a href="{% url 'core:events' %}" class="hover:text-gold">ইভেন্ট</a></li>
+        <li><a href="{% url 'core:feedback' %}" class="hover:text-gold">সমস্যা ও পরামর্শ</a></li>
+        <li><a href="{% url 'core:privacy' %}" class="hover:text-gold">গোপনীয়তা নীতি</a></li>
+        <li><a href="{% url 'dashboard:login' %}" class="hover:text-gold">ড্যাশবোর্ড</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">যোগাযোগ</p>
+      <ul class="mt-4 space-y-2 text-sm text-cream/75">
+        <li>{{ site.phone }}</li>
+        <li>{{ site.email }}</li>
+        <li class="leading-relaxed">{{ site.office }}</li>
+        <li class="text-cream/55">{{ site.officeHours }}</li>
+      </ul>
+      <p class="mt-6 text-xs text-cream/50">জরুরি: {% for e in site.quickLinks.values %}{{ e|bn }}{% if not forloop.last %} · {% endif %}{% endfor %}</p>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="container-x flex flex-col gap-2 py-5 text-xs text-cream/50 sm:flex-row sm:justify-between">
+      <p>© {{ current_year|bn }} {{ site.name }}। সর্বস্বত্ব সংরক্ষিত।</p>
+      <p>{{ photo_credit.source }} · {{ photo_credit.captured }}</p>
+    </div>
+  </div>
+</footer>

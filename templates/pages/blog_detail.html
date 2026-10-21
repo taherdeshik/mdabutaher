@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow=post.category title=post.title description=post.excerpt crumbs=meta.crumbs %}
+<article class="container-x grid gap-12 py-14 lg:grid-cols-[1fr_300px]">
+  <div class="max-w-3xl">
+    <p class="text-sm text-muted">{{ post.author.name }} · {{ post.author.role }} · {{ post.date|bn_date }} · {{ post.readTime|bn }} মিনিট</p>
+    <div class="mt-8 space-y-5 leading-relaxed text-forest/85">
+      {% for b in post.content %}
+        {% if b.type == "p" %}<p>{{ b.text }}</p>
+        {% elif b.type == "h2" %}<h2 class="pt-4 text-2xl font-bold text-forest">{{ b.text }}</h2>
+        {% elif b.type == "quote" %}<blockquote class="border-l-4 border-gold pl-5 text-lg italic text-forest">“{{ b.text }}”{% if b.cite %}<footer class="mt-2 text-sm not-italic text-muted">— {{ b.cite }}</footer>{% endif %}</blockquote>
+        {% elif b.type == "list" %}<ul class="list-disc space-y-2 pl-6">{% for i in b.items %}<li>{{ i }}</li>{% endfor %}</ul>
+        {% elif b.type == "callout" %}<aside class="rounded-3xl bg-emerald/10 p-6"><p class="font-bold text-forest">{{ b.title }}</p><p class="mt-2 text-sm">{{ b.text }}</p></aside>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="mt-10 flex flex-wrap gap-2">{% for t in post.tags %}<span class="rounded-full bg-forest/5 px-3 py-1 text-sm text-forest">#{{ t }}</span>{% endfor %}</div>
+
+    <div class="mt-10 flex flex-wrap gap-2" data-reactions>
+      {% for r in reactions %}
+      <button type="button" class="rounded-full border border-forest/15 px-4 py-2 text-sm font-semibold text-forest hover:border-gold" data-reaction="{{ r.id }}">{{ r.label }} · {{ r.count|bn }}</button>
+      {% endfor %}
+    </div>
+  </div>
+  <aside class="space-y-6">
+    {% if related %}
+    <div class="card-surface rounded-3xl p-6">
+      <h2 class="font-bold text-forest">সংশ্লিষ্ট লেখা</h2>
+      <ul class="mt-4 space-y-4">{% for r in related %}<li><a href="{% url 'core:blog-detail' r.slug %}" class="font-semibold leading-snug text-forest hover:underline">{{ r.title }}</a><p class="text-xs text-muted">{{ r.readTime|bn }} মিনিট</p></li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+    <a href="{% url 'core:blog' %}" class="block text-sm font-semibold text-forest">← সব লেখা</a>
+  </aside>
+</article>
+{% endblock %}

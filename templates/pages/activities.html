@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow="কার্যক্রম" title="জনকল্যাণের বাস্তব কাজ" description=meta.description crumbs=meta.crumbs %}
+<section class="container-x py-12">
+  <nav class="mb-8 flex flex-wrap gap-2" aria-label="কার্যক্রমের ধরন">
+    {% for c in categories %}<a href="?cat={{ c|urlencode }}" class="rounded-full border px-4 py-2 text-sm font-semibold {% if c == active_cat %}border-forest bg-forest text-cream{% else %}border-forest/15 text-forest{% endif %}">{{ c }}</a>{% endfor %}
+  </nav>
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {% for a in activities %}
+    <a href="{% url 'core:activity-detail' a.id %}" class="card-surface overflow-hidden rounded-3xl transition hover:-translate-y-1">
+      <img src="{% image a.image %}" alt="{{ a.title }}" class="aspect-[16/10] w-full object-cover" loading="lazy">
+      <div class="p-6">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gold-deep">{{ a.category }} · {{ a.date|bn_date }}</p>
+        <h2 class="mt-2 font-bold leading-snug text-forest">{{ a.title }}</h2>
+        <p class="mt-2 text-sm text-muted">{{ a.summary }}</p>
+        <p class="mt-4 text-xs text-muted">{{ a.location }}</p>
+      </div>
+    </a>
+    {% empty %}<p class="text-muted">এই ধরনের কার্যক্রম নেই।</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

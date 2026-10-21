@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow="সংবাদ" title="গণমাধ্যমে আমরা" description=meta.description crumbs=meta.crumbs %}
+<section class="container-x py-14">
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {% for n in items %}
+    <a href="{% url 'core:news-detail' n.id %}" class="card-surface flex flex-col rounded-3xl p-6 transition hover:-translate-y-1">
+      <p class="text-xs font-semibold uppercase tracking-wider text-gold-deep">{{ n.outlet }}</p>
+      <h2 class="mt-3 font-bold leading-snug text-forest">{{ n.title }}</h2>
+      <p class="mt-3 text-sm text-muted">{{ n.summary }}</p>
+      <p class="mt-auto pt-5 text-xs text-muted">{{ n.date|bn_date }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

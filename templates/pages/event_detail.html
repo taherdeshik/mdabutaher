@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow=event.type title=event.title description=event.description crumbs=meta.crumbs %}
+<section class="container-x grid gap-10 py-14 lg:grid-cols-[1.2fr_1fr]">
+  <div class="space-y-6">
+    <dl class="card-surface grid gap-4 rounded-3xl p-6 sm:grid-cols-2" data-event-id="{{ event.id }}">
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">তারিখ</dt><dd class="mt-1 font-semibold text-forest">{{ event.date|bn_date }}</dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">সময়</dt><dd class="mt-1 font-semibold text-forest">{{ event.start|bn }} – {{ event.end|bn }}</dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">স্থান</dt><dd class="mt-1 font-semibold text-forest">{{ event.venue }}</dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">ওয়ার্ড</dt><dd class="mt-1 font-semibold text-forest">{{ event.ward|bn }}</dd></div>
+      {% if event.speaker %}<div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">বক্তা</dt><dd class="mt-1 font-semibold text-forest">{{ event.speaker }}</dd></div>{% endif %}
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">আসন</dt><dd class="mt-1 font-semibold text-forest"><span data-seats>{{ registered|bn_num }}</span> / {{ event.capacity|bn_num }} (বাকি <span data-seats-left>{{ seats_left|bn_num }}</span>)</dd></div>
+    </dl>
+    {% if event.highlights %}
+    <ul class="flex flex-wrap gap-2">{% for h in event.highlights %}<li class="rounded-full bg-gold/15 px-3 py-1.5 text-sm font-semibold text-gold-deep">{{ h }}</li>{% endfor %}</ul>
+    {% endif %}
+    <p class="leading-relaxed text-forest/85">{{ event.description }}</p>
+  </div>
+
+  <form class="card-surface space-y-4 rounded-3xl p-6" data-api-form="/api/events/{{ event.id }}/register/" data-success-target="reg-msg" novalidate {% if closed %}data-disabled{% endif %}>
+    <h2 class="text-xl font-bold text-forest">রেজিস্ট্রেশন</h2>
+    {% if closed %}<p class="rounded-2xl bg-cream-2 p-4 text-sm text-muted">এই ইভেন্টটি সম্পন্ন হয়েছে।</p>{% endif %}
+    <label class="block"><span class="text-sm font-semibold text-forest">নাম *</span><input name="name" required minlength="3" maxlength="80" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field {% if closed %}disabled{% endif %}></label>
+    <label class="block"><span class="text-sm font-semibold text-forest">মোবাইল *</span><input name="phone" required inputmode="tel" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field {% if closed %}disabled{% endif %}></label>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="block"><span class="text-sm font-semibold text-forest">ওয়ার্ড *</span><select name="ward" required class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field {% if closed %}disabled{% endif %}><option value="">বেছে নিন</option>{% for w in wards %}<option value="{{ w }}">{{ w }}</option>{% endfor %}</select></label>
+      <label class="block"><span class="text-sm font-semibold text-forest">অতিথি (০–১০)</span><input name="guests" type="number" min="0" max="10" value="0" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" {% if closed %}disabled{% endif %}></label>
+    </div>
+    <button type="submit" class="w-full rounded-full bg-forest px-6 py-3 text-sm font-semibold text-cream disabled:opacity-50" {% if closed %}disabled{% endif %}>আসন নিশ্চিত করুন</button>
+    <p id="reg-msg" class="text-sm" role="status" aria-live="polite"></p>
+  </form>
+</section>
+{% endblock %}

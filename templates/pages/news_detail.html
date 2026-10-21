@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow=item.outlet title=item.title description=item.summary crumbs=meta.crumbs %}
+<article class="container-x max-w-3xl space-y-5 py-14 leading-relaxed text-forest/85">
+  <p class="text-sm text-muted">{{ item.date|bn_date }}</p>
+  {% for para in item.body %}<p>{{ para }}</p>{% endfor %}
+  {% if item.link %}<p><a class="font-semibold text-forest underline" href="{{ item.link }}" target="_blank" rel="noopener noreferrer">মূল প্রতিবেদন পড়ুন →</a></p>{% endif %}
+  <a href="{% url 'core:news' %}" class="inline-block text-sm font-semibold text-forest">← সব সংবাদ</a>
+</article>
+{% endblock %}

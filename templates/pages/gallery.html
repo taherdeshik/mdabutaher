@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow="গ্যালারি" title="ছবি, পোস্টার ও ভিডিও" description=meta.description crumbs=meta.crumbs %}
+<section class="container-x py-12">
+  <nav class="mb-8 flex flex-wrap gap-2" aria-label="ছবির ধরন">
+    {% for t in tags %}<a href="?tag={{ t|urlencode }}" class="rounded-full border px-4 py-2 text-sm font-semibold {% if t == active_tag %}border-forest bg-forest text-cream{% else %}border-forest/15 text-forest{% endif %}">{{ t }}</a>{% endfor %}
+  </nav>
+  <div class="columns-1 gap-4 sm:columns-2 lg:columns-3" data-lightbox-group>
+    {% for p in photos %}
+    <figure class="mb-4 break-inside-avoid overflow-hidden rounded-3xl bg-white shadow-soft">
+      <button type="button" class="block w-full" data-lightbox-src="{{ p.src }}" data-lightbox-caption="{{ p.caption }}">
+        <img src="{{ p.src }}" alt="{{ p.caption }}" loading="lazy" class="w-full object-cover">
+      </button>
+      <figcaption class="p-4 text-sm text-forest"><span class="text-xs font-semibold text-gold-deep">{{ p.tag }}</span><br>{{ p.caption }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+
+  <h2 class="mt-16 text-2xl font-bold text-forest">পোস্টার</h2>
+  <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {% for p in posters %}
+    <figure class="overflow-hidden rounded-3xl bg-white shadow-soft"><img src="{{ p.src }}" alt="{{ p.title }}" class="aspect-[3/4] w-full object-cover" loading="lazy"><figcaption class="p-4"><p class="font-semibold text-forest">{{ p.title }}</p><p class="text-xs text-muted">{{ p.subtitle }}</p></figcaption></figure>
+    {% endfor %}
+  </div>
+
+  <h2 class="mt-16 text-2xl font-bold text-forest">ভিডিও</h2>
+  <div class="mt-6 grid gap-4 md:grid-cols-2">
+    {% for v in videos %}
+    <div class="aspect-video overflow-hidden rounded-3xl bg-night shadow-soft">
+      <iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/{{ v.id }}" title="{{ v.title }}" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

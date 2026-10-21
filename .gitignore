@@ -1,0 +1,21 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.sqlite3
+/data/
+/staticfiles/
+.env
+.env.*
+!.env.example
+
+# Node (only used to compile the Tailwind bundle)
+node_modules/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.log
+tmp/

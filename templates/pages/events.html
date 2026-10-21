@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow="ইভেন্ট" title="আসন্ন ইভেন্ট ও জনসভা" description=meta.description crumbs=meta.crumbs %}
+<section class="container-x py-12">
+  <nav class="mb-8 flex flex-wrap gap-2" aria-label="ইভেন্টের ধরন">
+    {% for t in types %}
+    <a href="?type={{ t|urlencode }}" class="rounded-full border px-4 py-2 text-sm font-semibold {% if t == active_type %}border-forest bg-forest text-cream{% else %}border-forest/15 text-forest hover:border-forest/40{% endif %}">{{ t }}</a>
+    {% endfor %}
+  </nav>
+  <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+    {% for event in events %}{% include "partials/event_card.html" %}{% empty %}<p class="text-muted">এই ধরনের কোনো ইভেন্ট নেই।</p>{% endfor %}
+  </div>
+  <p class="mt-10 text-sm text-muted">ক্যালেন্ডারে যোগ করতে: <a class="font-semibold text-forest underline" href="/api/calendar/ics/">ICS ক্যালেন্ডার ডাউনলোড</a></p>
+</section>
+{% endblock %}

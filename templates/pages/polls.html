@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load civic_tags %}
+{% block content %}
+{% include "partials/page_hero.html" with eyebrow="জনমত" title="জনমত জরিপ" description=meta.description crumbs=meta.crumbs %}
+<section class="container-x py-12">
+  <p class="mb-8 text-sm text-muted">মোট {{ archive.totalPolls|bn_num }} টি জরিপ · {{ archive.totalVotes|bn_num }} ভোট · সর্বশেষ হালনাগাদ {{ archive.lastUpdated|bn_date }}</p>
+  <div class="grid gap-6 md:grid-cols-2">
+    {% for poll in polls %}{% include "partials/poll_block.html" with poll=poll %}{% endfor %}
+  </div>
+  <p class="mt-8 text-xs text-muted">জরিপটি অনানুষ্ঠানিক; প্রতি ডিভাইস থেকে একবার ভোট দেওয়া যায় এবং আইপি-ভিত্তিক সীমা প্রযোজ্য।</p>
+</section>
+{% endblock %}
