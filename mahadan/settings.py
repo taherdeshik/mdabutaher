@@ -1,8 +1,8 @@
 """Django settings for the মহাদান ইউনিয়ন প্রচারণা প্ল্যাটফর্ম.
 
 Configuration is read from environment variables (see `.env.example`).
-Without MYSQL_HOST/MYSQL_DATABASE the app uses a local SQLite file, which is
-the development default. On cPanel set the MYSQL_* variables instead.
+Database: set POSTGRES_* for PostgreSQL (preferred), MYSQL_* for MySQL/MariaDB,
+or neither to use a local SQLite file (development default). See `.env.example`.
 """
 
 import os
@@ -105,7 +105,28 @@ TEMPLATES = [
 WSGI_APPLICATION = "mahadan.wsgi.application"
 
 # --- database -----------------------------------------------------------------
-if env("MYSQL_HOST") and env("MYSQL_DATABASE"):
+# Backend selection (first match wins):
+#   1. PostgreSQL  – POSTGRES_HOST + POSTGRES_DB            (recommended)
+#   2. MySQL/MariaDB – MYSQL_HOST + MYSQL_DATABASE          (legacy cPanel setup)
+#   3. SQLite      – data/db.sqlite3                        (local development default)
+if env("POSTGRES_HOST") and env("POSTGRES_DB"):
+    _pg_options = {}
+    if env("POSTGRES_SSLMODE"):
+        _pg_options["sslmode"] = env("POSTGRES_SSLMODE")
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DB"),
+            "USER": env("POSTGRES_USER"),
+            "PASSWORD": env("POSTGRES_PASSWORD"),
+            "HOST": env("POSTGRES_HOST"),
+            "PORT": env("POSTGRES_PORT", "5432"),
+            "CONN_MAX_AGE": int(env("POSTGRES_CONN_MAX_AGE", "60")),
+            "CONN_HEALTH_CHECKS": True,
+            "OPTIONS": _pg_options,
+        }
+    }
+elif env("MYSQL_HOST") and env("MYSQL_DATABASE"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",

@@ -1,0 +1,3 @@
+-r requirements.txt
+# PostgreSQL driver (psycopg 3, binary wheels: no C toolchain needed).
+psycopg[binary]>=3.2,<4

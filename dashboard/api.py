@@ -25,6 +25,7 @@ from civic.models import (
     Volunteer,
 )
 from core import content
+from core.db import storage_label
 
 from . import analytics
 from .auth import api_admin
@@ -485,11 +486,10 @@ def analytics_get(request: HttpRequest):
 
 @api_admin()
 def system_get(request: HttpRequest):
-    engine = settings.DATABASES["default"]["ENGINE"]
     sessions_active = Session.objects.filter(expire_date__gt=timezone.now()).count()
     return ok(
         {
-            "storage": "mysql" if "mysql" in engine else "sqlite",
+            "storage": storage_label(),
             "time": timezone.now().isoformat(),
             "sessionsActive": sessions_active,
             "auditEntries": AuditLog.objects.count(),

@@ -16,6 +16,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
 from core import content
+from core.db import storage_label
 
 from . import forms as f
 from .constants import APPOINTMENT_SLOTS, APPOINTMENT_TYPES, SLOT_CAPACITY, WARDS
@@ -628,11 +629,10 @@ def stats_get(request: HttpRequest):
 
 @require_GET
 def health_get(request: HttpRequest):
-    engine = settings.DATABASES["default"]["ENGINE"]
     response = ok(
         {
             "service": "mdabutaher",
-            "storage": "mysql" if "mysql" in engine else "sqlite",
+            "storage": storage_label(),
             "time": timezone.now().isoformat(),
         }
     )

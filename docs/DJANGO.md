@@ -6,7 +6,9 @@
 
 - **Django 5.1+** — রাউটিং, ORM, সেশন/অথেনটিকেশন, CSRF, মাইগ্রেশন।
 - **ডেটা:** আগে একটি JSON ডকুমেন্ট (MySQL বা `data/db.json`) ছিল। এখন প্রতিটি সংগ্রহের জন্য আলাদা মডেল
-  (`civic/models.py`)। MySQL/MariaDB বা SQLite — `settings.py` এ নির্বাচিত হয়।
+  (`civic/models.py`)। **PostgreSQL** (সুপারিশকৃত), MySQL/MariaDB বা SQLite — `settings.py` এ নির্বাচিত হয়:
+  `POSTGRES_HOST` + `POSTGRES_DB` থাকলে PostgreSQL, তারপর `MYSQL_HOST` + `MYSQL_DATABASE` থাকলে MySQL,
+  কিছুই না থাকলে SQLite (`data/db.sqlite3`, শুধু ডেভেলপমেন্ট)।
 - **কন্টেন্ট:** TypeScript ফাইল থেকে `content/data/*.json` বানানো হয়েছে (`core/content.py` লোড করে)।
 - **ফ্রন্টএন্ড:** সার্ভার-রেন্ডার্ড Django টেমপ্লেট + অল্প ভ্যানিলা JS (`static/js/site.js`)। ফর্মগুলো JSON API-তে পাঠায়
   এবং বাংলা বার্তা দেখায়। Framer Motion-এর মতো অ্যানিমেশনের বদলে CSS ট্রানজিশন।
@@ -50,15 +52,32 @@
 python manage.py test      # ৫৩টি টেস্ট: API ভ্যালিডেশন, রেট লিমিট, পেজ রেন্ডার, ড্যাশবোর্ড অনুমতি, ইম্পোর্ট
 ```
 
+## ৩ক. PostgreSQL
+
+```bash
+pip install -r requirements-postgres.txt
+export POSTGRES_HOST=127.0.0.1 POSTGRES_DB=mahadan POSTGRES_USER=mahadan POSTGRES_PASSWORD=...
+python manage.py migrate        # প্রথমবার: টেবিল তৈরি + owner অ্যাকাউন্ট
+python manage.py test           # টেস্ট একটি আলাদা `test_mahadan` DB-তে চলে (CREATEDB অধিকার লাগে)
+```
+
+- `GET /api/health/` ও `GET /api/admin/system/` এ `storage` = `postgresql` দেখায়।
+- ঐচ্ছিক: `POSTGRES_SSLMODE` (যেমন `require`), `POSTGRES_PORT` (ডিফল্ট ৫৪৩২), `POSTGRES_CONN_MAX_AGE` (ডিফল্ট ৬০ সেকেন্ড)।
+- পরীক্ষিত: PostgreSQL 16.2 (লোকাল) — ৫৩টি টেস্ট পাস, `migrate` ও `import_legacy` (দুইবার চালিয়ে idempotent) সফল।
+- লিগ্যাসি JSON ইম্পোর্ট ও নতুন ডেটা লেখা সব ডেটাবেস-এ একই কোড ব্যবহার করে; মডেলের প্রাইমারি কি বেশিরভাগ `CharField`
+  (যেমন `APT-…`), তাই ইম্পোর্টে ID হাতে দিলে PostgreSQL সিকোয়েন্স নিয়ে সমস্যা হয় না।
+
 ## ৪. cPanel-এ স্থাপন
 
-1. **MySQL:** cPanel → MySQL Databases-এ একটি DB ও ইউজার তৈরি করুন, সব অধিকার দিন।
+1. **ডেটাবেস:** PostgreSQL হলে সার্ভারে একটি DB ও ইউজার তৈরি করুন (`CREATE ROLE ... LOGIN PASSWORD ...`,
+   `CREATE DATABASE ... OWNER ...`)। cPanel-এ MySQL ব্যবহার করলে cPanel → MySQL Databases-এ DB ও ইউজার বানান।
 2. **Setup Python App:** Python 3.11+ নির্বাচন করুন। Application root = প্রজেক্ট ফোল্ডার।
    Startup file: `passenger_wsgi.py`, Application callable: `application`।
-3. **Dependencies:** cPanel-এর দেওয়া virtualenv সক্রিয় করে `pip install -r requirements-mysql.txt`।
+3. **Dependencies:** virtualenv সক্রিয় করে PostgreSQL হলে `pip install -r requirements-postgres.txt`,
+   MySQL হলে `pip install -r requirements-mysql.txt`।
 4. **Secrets:** প্রজেক্টে `.env` বানান (`.env.example` থেকে কপি করে):
    `DJANGO_SECRET_KEY` (৫০+ অক্ষরের র‍্যান্ডম), `DJANGO_DEBUG=0`, `DJANGO_ALLOWED_HOSTS=mdabutaher.com,www.mdabutaher.com`,
-   `SITE_URL=https://mdabutaher.com`, `MYSQL_*`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`।
+   `SITE_URL=https://mdabutaher.com`, `POSTGRES_*` (অথবা `MYSQL_*`), `ADMIN_USERNAME`, `ADMIN_PASSWORD`।
 5. **Database ও স্ট্যাটিক:**
    ```bash
    python manage.py migrate

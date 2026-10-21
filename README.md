@@ -19,8 +19,9 @@ python manage.py runserver 0.0.0.0:8000
 - Django-এর নিজস্ব অ্যাডমিন: <http://localhost:8000/django-admin/>
 
 কনফিগারেশনের জন্য `.env.example` দেখুন। `.env` ফাইল থাকলে স্বয়ংক্রিয়ভাবে পড়া হয়।
-MySQL/MariaDB (cPanel) ব্যবহার করতে `MYSQL_*` ভেরিয়েবল দিন এবং `pip install -r requirements-mysql.txt` করুন;
-না দিলে SQLite (`data/db.sqlite3`) ব্যবহার হয়।
+PostgreSQL ব্যবহার করতে `POSTGRES_HOST` ও `POSTGRES_DB` (+ `POSTGRES_USER`, `POSTGRES_PASSWORD`) দিন এবং
+`pip install -r requirements-postgres.txt` করুন। MySQL/MariaDB (পুরোনো cPanel) হলে `MYSQL_*` ও `requirements-mysql.txt`;
+কিছুই না দিলে SQLite (`data/db.sqlite3`) ব্যবহার হয়। বিস্তারিত: `docs/DJANGO.md` → PostgreSQL।
 
 ## CSS বিল্ড (ঐচ্ছিক)
 
