@@ -67,7 +67,7 @@ python manage.py test      # ৫৩টি টেস্ট: API ভ্যাল�
    (পুরোনো ডেটা থাকলে: `python manage.py import_legacy data/db.json --dry-run`, তারপর আসল চালান।)
 6. **রিস্টার্ট:** cPanel-এ Python App “Restart” চাপুন।
 7. **SSL:** AutoSSL/Let's Encrypt চালু করুন। তারপর `.env`-এ HTTPS সব সময় চালু থাকে (প্রোডাকশন মোডে)।
-8. **পরীক্ষা:** `https://মাপনার-ডোমেইন/api/health` → `{"ok": true, ...}` আসা উচিত।
+8. **পরীক্ষা:** `https://আপনার-ডোমেইন/api/health/` → `{"ok": true, "data": {...}}` আসা উচিত।
 
 Node.js সার্ভারে লাগে না; CSS বিল্ড করা ফাইল রিপোজিটরিতেই আছে।
 
