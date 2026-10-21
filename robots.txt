@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /api/
+
+Host: https://mdabutaher.com
+Sitemap: https://mdabutaher.com/sitemap.xml

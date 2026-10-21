@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0a3025"/><stop offset="1" stop-color="#0e4334"/></linearGradient></defs>
+  <rect width="64" height="64" rx="16" fill="url(#g)"/>
+  <circle cx="32" cy="32" r="20" fill="none" stroke="#e7b75f" stroke-opacity=".35" stroke-dasharray="2 5"/>
+  <text x="32" y="43" text-anchor="middle" font-family="Anek Bangla, Noto Sans Bengali, sans-serif" font-size="30" font-weight="700" fill="#e7b75f">আ</text>
+</svg>

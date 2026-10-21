@@ -95,6 +95,21 @@ npm run typecheck
 
 ভিজিটর অ্যানালিটিক্স ও SEO-এর পূর্ণ বিবরণ: [`docs/07-ANALYTICS-SEO.md`](docs/07-ANALYTICS-SEO.md)।
 
+## GitHub Pages প্রিভিউ
+
+পাবলিক সাইটের একটি **স্ট্যাটিক মিরর** GitHub Pages-এ প্রকাশিত হয়:
+<https://taherdeshik.github.io/mdabutaher/>
+
+```bash
+node scripts/build-ghpages.mjs --publish   # মিরর তৈরি করে ব্রাঞ্চ রুটে প্রকাশ করে
+```
+
+- Pages (legacy mode) এই ব্রাঞ্চের রুট ফোল্ডার সার্ভ করে, তাই আউটপুট রুটে কপি হয়;
+  কোন ফাইল তৈরি হয়েছে তা `.ghpages-manifest.json`-এ থাকে এবং পুরোনো পেজ স্বয়ংক্রিয়ভাবে মুছে যায়।
+- মিররে **ফর্ম, পোল, চ্যাট ও অ্যাডমিন নেই** — সেগুলোর জন্য Node + MySQL সার্ভার লাগে
+  ([`docs/08-DEPLOY-CPANEL.md`](docs/08-DEPLOY-CPANEL.md))।
+- Pages সেটিংসে Source = GitHub Actions করা হলে `--publish` ছাড়াই CI থেকে ডিপ্লয় করা যাবে।
+
 ## ডিজাইন সিস্টেম
 
 - **রঙ:** `night` / `forest` / `emerald` / `gold` / `cream` — সব `src/app/globals.css`-এ `@theme` টোকেন।

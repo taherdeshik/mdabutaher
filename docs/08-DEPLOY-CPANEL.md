@@ -232,4 +232,19 @@ curl -s https://mdabutaher.com/api/health        # {"ok":true,"storage":"mysql"}
 
 ---
 
+---
+
+## ১৪. GitHub Pages (ঐচ্ছিক প্রিভিউ)
+
+`https://taherdeshik.github.io/mdabutaher/` — পাবলিক পেজগুলোর স্ট্যাটিক মিরর, শুধু দেখানোর জন্য।
+
+```bash
+node scripts/build-ghpages.mjs --publish
+git add -A && git commit -m "chore(pages): refresh static mirror" && git push
+```
+
+- API রুট, অ্যাডমিন ও ফর্ম বাদ যায়; CMS তালিকা `src/content`-এর সম্পাদকীয় কনটেন্ট থেকে তৈরি হয়।
+- `basePath` ডিফল্ট `/mdabutaher`; কাস্টম ডোমেইনে `GH_PAGES_BASE="" node scripts/build-ghpages.mjs --publish`।
+- আসল সাইট (ফর্ম, লগইন, ডেটাবেস) সবসময় cPanel ডিপ্লয়মেন্ট।
+
 সম্পর্কিত: [`01-PLAN.md`](01-PLAN.md) · [`05-CONTENT-GUIDE.md`](05-CONTENT-GUIDE.md) · [`07-ANALYTICS-SEO.md`](07-ANALYTICS-SEO.md)

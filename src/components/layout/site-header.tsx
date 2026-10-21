@@ -117,7 +117,7 @@ export function SiteHeader() {
 
           <nav className="hidden items-center gap-0.5 lg:flex" aria-label="প্রধান মেনু">
             {site.nav.map((item) => {
-              const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+              const active = pathname === item.href || (item.href !== "/" && Boolean(pathname?.startsWith(item.href)));
               const children = "children" in item ? item.children : undefined;
               return (
                 <div

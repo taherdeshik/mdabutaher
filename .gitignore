@@ -15,3 +15,7 @@ tools
 
 # build cache
 tsconfig.tsbuildinfo
+
+# GitHub Pages static mirror build
+.ghpages-build/
+out-ghpages/
