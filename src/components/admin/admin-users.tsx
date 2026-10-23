@@ -92,6 +92,17 @@ export function AdminUsers({ adminKey }: { adminKey: string }) {
     }
   }
 
+  async function changePassword(id: string, username: string) {
+    const password = window.prompt(`${username} — নতুন পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)`);
+    if (password === null) return;
+    if (password.trim().length < 8) {
+      setMsg({ tone: "error", text: "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে" });
+      return;
+    }
+    await patchUser(id, { password: password.trim() });
+    setMsg({ tone: "ok", text: "পাসওয়ার্ড পরিবর্তন হয়েছে" });
+  }
+
   async function removeUser(id: string) {
     if (!window.confirm("এই ব্যবহারকারীকে মুছে ফেলবেন?")) return;
     setBusy(true);
@@ -147,25 +158,39 @@ export function AdminUsers({ adminKey }: { adminKey: string }) {
                   {ROLE_LABEL[u.role]}
                 </Badge>
                 {!u.active ? <Badge tone="rose">নিষ্ক্রিয়</Badge> : null}
-                {isOwner && u.id !== me?.id ? (
+                {isOwner ? (
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
-                      onClick={() => patchUser(u.id, { active: !u.active })}
+                      onClick={() => changePassword(u.id, u.username)}
                       disabled={busy}
-                      className="rounded-md border border-white/10 px-2 py-1 text-[0.6rem] text-cream/45 hover:border-gold/30 hover:text-gold"
+                      aria-label="পাসওয়ার্ড বদলান"
+                      title="পাসওয়ার্ড বদলান"
+                      className="rounded-md border border-white/10 p-1.5 text-cream/35 hover:border-gold/40 hover:text-gold"
                     >
-                      {u.active ? "নিষ্ক্রিয়" : "সক্রিয়"}
+                      <KeyRound className="h-3 w-3" />
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => removeUser(u.id)}
-                      disabled={busy}
-                      aria-label="মুছুন"
-                      className="rounded-md border border-white/10 p-1.5 text-cream/35 hover:border-rose-400/40 hover:text-rose-300"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </button>
+                    {u.id !== me?.id ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => patchUser(u.id, { active: !u.active })}
+                          disabled={busy}
+                          className="rounded-md border border-white/10 px-2 py-1 text-[0.6rem] text-cream/45 hover:border-gold/30 hover:text-gold"
+                        >
+                          {u.active ? "নিষ্ক্রিয়" : "সক্রিয়"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeUser(u.id)}
+                          disabled={busy}
+                          aria-label="মুছুন"
+                          className="rounded-md border border-white/10 p-1.5 text-cream/35 hover:border-rose-400/40 hover:text-rose-300"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </>
+                    ) : null}
                   </div>
                 ) : null}
               </li>

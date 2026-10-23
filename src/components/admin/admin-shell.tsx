@@ -99,6 +99,10 @@ const TITLES: Record<SectionId, { title: string; sub: string }> = {
   settings: { title: "সেটিংস ও রিপোর্ট", sub: "নির্বাচনী তারিখ, টার্নআউট ও রপ্তানি" },
 };
 
+/** Demo builds (preview / staging) may reveal the bootstrap password on screen. */
+const SHOW_DEMO_LOGIN =
+  process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_DEMO_LOGIN === "1";
+
 export function AdminShell() {
   const [checking, setChecking] = useState(true);
   const [key, setKey] = useState("");
@@ -312,8 +316,10 @@ export function AdminShell() {
             </form>
             <div className="mt-5 rounded-xl border border-gold/20 bg-gold/[0.06] px-3.5 py-3">
               <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-gold/70">প্রথম লগইন</p>
-              {process.env.NODE_ENV === "development" ? (
-                <p className="mt-1 font-latin text-[0.9rem] font-bold tracking-wide text-gold">admin / mahadan-2027</p>
+              {SHOW_DEMO_LOGIN ? (
+                <p className="mt-1 font-latin text-[0.9rem] font-bold tracking-wide text-gold">
+                  admin / mahadan-2027
+                </p>
               ) : null}
               <p className="mt-1 text-[0.6rem] leading-relaxed text-cream/35">
                 প্রথম অ্যাকাউন্ট তৈরি হয় ADMIN_USERNAME ও ADMIN_PASSWORD এনভায়রনমেন্ট ভেরিয়েবল থেকে। এরপর সেটিংস → ব্যবহারকারী ও ভূমিকা থেকে প্রত্যেকের আলাদা অ্যাকাউন্ট খুলুন।
