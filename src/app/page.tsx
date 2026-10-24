@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
 import { QuickActions } from "@/components/home/quick-actions";
 import { StatsBand } from "@/components/home/stats-band";
+import { IntroVideoSection } from "@/components/features/intro-video";
 import { AboutPreview } from "@/components/home/about-preview";
 import { ManifestoPreview } from "@/components/home/manifesto-preview";
 import { CampaignPreview } from "@/components/home/campaign-preview";
@@ -26,6 +27,7 @@ export default function HomePage() {
       <Hero />
       <QuickActions />
       <StatsBand />
+      <IntroVideoSection />
       <AboutPreview />
       <ManifestoPreview />
       <CampaignPreview />

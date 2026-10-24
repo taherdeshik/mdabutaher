@@ -176,6 +176,34 @@ If a key is missing or the file 404s, `SmartImage` renders a designed forest-gre
 the caption — never a broken-image icon. This keeps layout and client demos intact while photos are
 being cleared.
 
+### ভিডিও পরিচিতি (হোমপেজের intro video) — বদলানো বা বন্ধ করা
+
+`src/content/videos.ts` → `introVideo` অবজেক্টটিই একমাত্র নিয়ন্ত্রণ। কম্পোনেন্টে হাত দিতে হবে না।
+
+```ts
+export const introVideo: IntroVideoConfig = {
+  enabled: true,                       // false করলে সেকশনটি দুই পেজ থেকেই সরে যায়
+  id: "hnD09TA3Vj8",                   // YouTube লিংকের শেষ অংশ
+  eyebrow: "ভিডিও পরিচিতি",
+  title: "দুই মিনিটে জানুন, আমি কে",
+  description: "…এক-দুই বাক্যের বর্ণনা…",
+  kicker: "প্রার্থীর ভিডিও বার্তা · নির্বাচন ২০২৭",
+  highlights: ["২৪ বছরের মাঠ অভিজ্ঞতা", "৮টি স্তম্ভে ৩২টি অঙ্গীকার", "স্বচ্ছ বাজেট, প্রকাশ্য হিসাব"],
+  poster: undefined,                   // ইচ্ছা হলে "/media/…" দিয়ে নিজের ছবি
+};
+```
+
+- **কোথায় দেখায়:** হোমপেজে পরিসংখ্যান-ব্যান্ডের নিচে, এবং `/about` পেজের শেষে (CTA-এর আগে)।
+- **হিরোর 🔘 প্লে বাটন** এবং “ভিডিও বার্তা” লিংক সরাসরি এই সেকশনে নিয়ে গিয়ে ভিডিও চালু করে।
+- **ভিডিও বদলাতে:** শুধু `id` বদলান — থাম্বনেইল YouTube থেকে নিজে থেকেই আসে।
+- **নিজের পোস্টার ছবি:** ছবিটি `public/media/`-এ রাখুন (যেমন `public/media/candidate/intro-poster.webp`)
+  এবং `poster: "/media/candidate/intro-poster.webp"` দিন। ছবি না মিললে বা না থাকলে YouTube-এর
+  থাম্বনেইল, তাও না পেলে প্রচারণার ছবি — কখনোই ভাঙা ছবি দেখাবে না।
+- **প্রাইভেসি:** ক্লিক করার আগে কোনো YouTube iframe বা কুকি লোড হয় না; প্লে করলেই
+  `youtube-nocookie.com` থেকে চলে।
+- বন্ধ করতে চাইলে `enabled: false` — হোমপেজ ও পরিচিতি দুটো পেজ থেকেই সেকশনটি সরে যাবে,
+  হিরোর প্লে বাটনও আর দেখাবে না (কোথাও ভাঙা লিংক থাকবে না)।
+
 ## 6. Legacy URL → new URL mapping (for 301s)
 
 | Old | New |

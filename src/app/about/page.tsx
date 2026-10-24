@@ -10,6 +10,7 @@ import { SmartImage } from "@/components/ui/smart-image";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/reveal";
 import { Counter } from "@/components/ui/counter";
 import { CtaBand } from "@/components/home/cta-band";
+import { IntroVideoSection } from "@/components/features/intro-video";
 import { Accordion } from "@/components/ui/accordion";
 import { bio, site, stats, values, faqs } from "@/content/site";
 import { Icon } from "@/components/ui/icon";
@@ -235,6 +236,8 @@ export default function AboutPage() {
           <Accordion items={faqs} />
         </div>
       </Section>
+
+      <IntroVideoSection showAboutLink={false} />
 
       <CtaBand />
     </>

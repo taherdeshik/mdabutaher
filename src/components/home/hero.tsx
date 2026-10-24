@@ -7,6 +7,7 @@ import { ArrowDown, ArrowUpRight, BadgeCheck, CalendarCheck, MapPin, Play, Shiel
 import { site } from "@/content/site";
 import { SmartImage } from "@/components/ui/smart-image";
 import { ButtonLink } from "@/components/ui/button";
+import { introVideo } from "@/content/videos";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -91,6 +92,17 @@ export function Hero() {
               <CalendarCheck className="h-4 w-4" />
               সাক্ষাতের সময় নিন
             </ButtonLink>
+            {introVideo.enabled && (
+              <Link
+                href="#intro-video"
+                className="group inline-flex items-center gap-2 rounded-full px-2 py-2 text-[0.85rem] font-semibold text-cream/75 transition-colors hover:text-gold"
+              >
+                <span className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/[0.04] transition-all group-hover:border-gold/60 group-hover:bg-gold/15">
+                  <Play className="h-3.5 w-3.5 fill-current" />
+                </span>
+                ভিডিও বার্তা
+              </Link>
+            )}
           </motion.div>
 
           <motion.div
@@ -150,15 +162,16 @@ export function Hero() {
                   <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" />৯ ওয়ার্ড</span>
                 </div>
               </div>
-              <Link
-                href="https://www.youtube.com/watch?v=hnD09TA3Vj8"
-                target="_blank"
-                className="group absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-cream backdrop-blur transition-all hover:bg-gold hover:text-night"
-                aria-label="ভিডিও বার্তা দেখুন"
-              >
-                <Play className="h-4 w-4 fill-current" />
-                <span className="absolute inset-0 animate-ping rounded-full border border-white/30" />
-              </Link>
+              {introVideo.enabled && (
+                <Link
+                  href="#intro-video"
+                  className="group absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-cream backdrop-blur transition-all hover:bg-gold hover:text-night"
+                  aria-label="ভিডিও পরিচিতি চালু করুন"
+                >
+                  <Play className="h-4 w-4 fill-current" />
+                  <span className="absolute inset-0 animate-ping rounded-full border border-white/30" />
+                </Link>
+              )}
             </div>
 
             {/* floating chips */}
