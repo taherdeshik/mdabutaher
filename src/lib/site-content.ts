@@ -1,5 +1,6 @@
 import { read } from "@/lib/store";
 import { mergePageContent, sitePages, type SitePageContent } from "@/content/site-pages";
+import { homeSections, mergeHomeCopy, type HomeCopyMap } from "@/content/home-sections";
 
 /**
  * Reads the admin-edited page overrides.
@@ -35,4 +36,17 @@ export async function hiddenPageIds(): Promise<string[]> {
   return Object.entries(all)
     .filter(([, content]) => content.visible === false)
     .map(([id]) => id);
+}
+
+/** Home-page section copy, merged over the coded defaults. */
+export async function getHomeCopy(): Promise<HomeCopyMap> {
+  let stored: Record<string, any> = {};
+  try {
+    stored = (await read()).homeCopy || {};
+  } catch {
+    stored = {};
+  }
+  const out: HomeCopyMap = {};
+  for (const section of homeSections) out[section.id] = mergeHomeCopy(stored[section.id]);
+  return out;
 }

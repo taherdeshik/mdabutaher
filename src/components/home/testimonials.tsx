@@ -1,3 +1,4 @@
+import type { HomeSectionCopy } from "@/content/home-sections";
 "use client";
 
 import { useState } from "react";
@@ -7,7 +8,7 @@ import { testimonials } from "@/content/testimonials";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { cn } from "@/lib/utils";
 
-export function Testimonials() {
+export function Testimonials({ copy }: { copy?: HomeSectionCopy }) {
   const [index, setIndex] = useState(0);
   const t = testimonials[index];
   const next = () => setIndex((i) => (i + 1) % testimonials.length);
@@ -20,9 +21,9 @@ export function Testimonials() {
       <div className="container-x relative">
         <SectionHeading
           dark
-          eyebrow="মানুষের কথা"
-          title={<>যারা <span className="text-gold">বিশ্বাস</span> করেন</>}
-          description="আমাদের শক্তি কোনো প্রচার নয় — মানুষের আস্থা। তাদের কথাই আমাদের কাজের মাপকাঠি।"
+          eyebrow={copy?.eyebrow || "মানুষের কথা"}
+          title={copy?.title ? <>{copy.title}</> : <>যারা <span className="text-gold">বিশ্বাস</span> করেন</>}
+          description={copy?.description || "আমাদের শক্তি কোনো প্রচার নয় — মানুষের আস্থা। তাদের কথাই আমাদের কাজের মাপকাঠি।"}
           align="center"
         />
 

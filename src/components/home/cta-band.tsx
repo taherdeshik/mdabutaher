@@ -1,3 +1,4 @@
+import type { HomeSectionCopy } from "@/content/home-sections";
 import Link from "next/link";
 import { ArrowUpRight, CalendarCheck, HeartHandshake, MessageSquareWarning, Phone } from "lucide-react";
 import { site } from "@/content/site";
@@ -9,7 +10,7 @@ const ctas = [
   { icon: HeartHandshake, title: "স্বেচ্ছাসেবক হোন", desc: "আপনার ওয়ার্ডে আমাদের সাথে যোগ দিন", href: "/campaign#volunteer" },
 ];
 
-export function CtaBand() {
+export function CtaBand({ copy }: { copy?: HomeSectionCopy } = {}) {
   return (
     <section className="relative overflow-hidden bg-gold py-14 text-night sm:py-16">
       <div className="pointer-events-none absolute inset-0 opacity-[0.14]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #05130f 1px, transparent 0)", backgroundSize: "22px 22px" }} />
@@ -17,9 +18,13 @@ export function CtaBand() {
       <div className="container-x relative">
         <Reveal className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
           <div className="max-w-xl">
-            <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.22em] text-night/55">আপনার কথা, আমাদের কাজ</p>
+            <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.22em] text-night/55">{copy?.eyebrow || "আপনার কথা, আমাদের কাজ"}</p>
             <h2 className="mt-2 text-balance-tight text-3xl font-bold leading-tight sm:text-4xl">
-              একটি ফোন, একটি বার্তা — <br className="hidden sm:block" />পরিবর্তনের শুরু আপনার হাতেই
+              {copy?.title || (
+                <>
+                  একটি ফোন, একটি বার্তা — <br className="hidden sm:block" />পরিবর্তনের শুরু আপনার হাতেই
+                </>
+              )}
             </h2>
           </div>
           <a href={`tel:${site.phoneHref}`} className="group inline-flex items-center gap-3 rounded-full bg-night px-5 py-3 text-cream shadow-lg transition-transform hover:scale-[1.02]">

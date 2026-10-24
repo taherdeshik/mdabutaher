@@ -13,6 +13,8 @@ import type {
 } from "@/lib/command-types";
 import type { CommandAlert, Kpis } from "@/lib/command-calc";
 import type { SitePageContent } from "@/content/site-pages";
+import type { HomeSectionCopy } from "@/content/home-sections";
+import type { AdminPhoto, AdminPoster, AdminVideo, GalleryStore } from "@/lib/store";
 
 export interface WardCoverage {
   id: string;
@@ -100,6 +102,8 @@ export interface Snapshot {
   challenges: Challenge[];
   posts: Post[];
   siteContent: Record<string, SitePageContent>;
+  homeCopy: Record<string, HomeSectionCopy>;
+  gallery: GalleryStore;
   audit: AuditEntry[];
   kpis: Kpis;
   alerts: CommandAlert[];
@@ -133,5 +137,7 @@ export type SectionId =
   | "money"
   | "cms"
   | "site"
+  | "home"
+  | "gallery"
   | "crm"
   | "settings";

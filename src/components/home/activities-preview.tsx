@@ -1,3 +1,4 @@
+import type { HomeSectionCopy } from "@/content/home-sections";
 import Link from "next/link";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { activities } from "@/content/activities";
@@ -6,15 +7,15 @@ import { SmartImage } from "@/components/ui/smart-image";
 import { Reveal } from "@/components/ui/reveal";
 import { bn, formatBnDate } from "@/lib/utils";
 
-export function ActivitiesPreview() {
+export function ActivitiesPreview({ copy }: { copy?: HomeSectionCopy }) {
   const featured = activities.filter((a) => a.featured).slice(0, 3);
   return (
     <Section tone="sand" id="activities">
       <div className="container-x">
         <SectionHeading
-          eyebrow="সাম্প্রতিক কার্যক্রম"
-          title={<>কথা নয়, <span className="text-emerald">কাজ</span> — মাঠের প্রমাণ</>}
-          description="শিক্ষা, পানি, স্বাস্থ্য ও দুর্যোগে মানুষের পাশে দাঁড়ানোর নির্বাচিত কিছু মুহূর্ত।"
+          eyebrow={copy?.eyebrow || "সাম্প্রতিক কার্যক্রম"}
+          title={copy?.title ? <>{copy.title}</> : <>কথা নয়, <span className="text-emerald">কাজ</span> — মাঠের প্রমাণ</>}
+          description={copy?.description || "শিক্ষা, পানি, স্বাস্থ্য ও দুর্যোগে মানুষের পাশে দাঁড়ানোর নির্বাচিত কিছু মুহূর্ত।"}
           action={{ href: "/activities", label: "সব কার্যক্রম" }}
         />
 

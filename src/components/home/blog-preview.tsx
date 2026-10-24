@@ -1,3 +1,4 @@
+import type { HomeSectionCopy } from "@/content/home-sections";
 import Link from "next/link";
 import { ArrowUpRight, Clock, Eye } from "lucide-react";
 import { posts } from "@/content/blog";
@@ -6,15 +7,15 @@ import { SmartImage } from "@/components/ui/smart-image";
 import { Reveal } from "@/components/ui/reveal";
 import { bn, formatBnDate } from "@/lib/utils";
 
-export function BlogPreview() {
+export function BlogPreview({ copy }: { copy?: HomeSectionCopy }) {
   const latest = posts.slice(0, 3);
   return (
     <Section tone="light" id="blog">
       <div className="container-x">
         <SectionHeading
-          eyebrow="ব্লগ ও ভাবনা"
-          title={<>সমস্যার কথা নয়, <span className="text-emerald">সমাধানের</span> কথা</>}
-          description="নীতি, উন্নয়ন ও মাঠের অভিজ্ঞতা নিয়ে লিখিত বিশ্লেষণ — প্রতিটি পোস্টে বাস্তব তথ্য ও পরিকল্পনা।"
+          eyebrow={copy?.eyebrow || "ব্লগ ও ভাবনা"}
+          title={copy?.title ? <>{copy.title}</> : <>সমস্যার কথা নয়, <span className="text-emerald">সমাধানের</span> কথা</>}
+          description={copy?.description || "নীতি, উন্নয়ন ও মাঠের অভিজ্ঞতা নিয়ে লিখিত বিশ্লেষণ — প্রতিটি পোস্টে বাস্তব তথ্য ও পরিকল্পনা।"}
           action={{ href: "/blog", label: "সব লেখা" }}
         />
 

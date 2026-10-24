@@ -1,3 +1,4 @@
+import type { HomeSectionCopy } from "@/content/home-sections";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Quote, ShieldCheck } from "lucide-react";
@@ -9,7 +10,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
 import { imageFor } from "@/content/media";
 
-export function AboutPreview() {
+export function AboutPreview({ copy }: { copy?: HomeSectionCopy }) {
   return (
     <Section tone="light" id="about">
       <div className="container-x">
@@ -41,9 +42,9 @@ export function AboutPreview() {
 
           <div className="order-1 lg:order-2">
             <SectionHeading
-              eyebrow="আমার সম্পর্কে"
-              title={<>মাটি, মানুষ আর <span className="text-emerald">মায়ের দোয়া</span> — এই তিনটিই আমার শক্তি</>}
-              description={site.intro}
+              eyebrow={copy?.eyebrow || "আমার সম্পর্কে"}
+              title={copy?.title ? <>{copy.title}</> : <>মাটি, মানুষ আর <span className="text-emerald">মায়ের দোয়া</span> — এই তিনটিই আমার শক্তি</>}
+              description={copy?.description || site.intro}
             />
             <div className="mt-7 space-y-4 text-sm leading-relaxed text-muted">
               <p>

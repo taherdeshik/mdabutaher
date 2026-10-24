@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Maximize2, LayoutGrid, Megaphone } from "lucide-react";
 import { GalleryShowcase } from "@/components/features/gallery-showcase";
-import { galleryPosters } from "@/content/gallery";
 import { bn } from "@/lib/utils";
+import { getGallery } from "@/lib/gallery-store";
 
 export const revalidate = 60;
 
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PosterGalleryPage() {
+export default async function PosterGalleryPage() {
+  const gallery = await getGallery();
   return (
     <GalleryShowcase
       pageId="gallery-posters"
@@ -29,8 +30,8 @@ export default function PosterGalleryPage() {
       accent="পোস্টার"
       tab="posters"
       stats={[
-        { icon: Maximize2, value: bn(galleryPosters.length), label: "পোস্টার" },
-        { icon: Megaphone, value: bn(galleryPosters.filter((p) => p.election).length), label: "নির্বাচনী" },
+        { icon: Maximize2, value: bn(gallery.posters.length), label: "পোস্টার" },
+        { icon: Megaphone, value: bn(gallery.posters.filter((p) => p.election).length), label: "নির্বাচনী" },
         { icon: LayoutGrid, value: "৩:৪", label: "অনুপাত" },
       ]}
     />

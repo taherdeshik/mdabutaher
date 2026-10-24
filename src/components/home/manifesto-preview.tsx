@@ -1,3 +1,4 @@
+import type { HomeSectionCopy } from "@/content/home-sections";
 import Link from "next/link";
 import { ArrowUpRight, CircleDot } from "lucide-react";
 import { pillars, manifestoIntro } from "@/content/manifesto";
@@ -12,14 +13,14 @@ const accentStyles = {
   rose: "bg-rose-500/10 text-rose-600 group-hover:bg-rose-500",
 } as const;
 
-export function ManifestoPreview() {
+export function ManifestoPreview({ copy }: { copy?: HomeSectionCopy }) {
   return (
     <Section tone="sand" id="manifesto">
       <div className="container-x">
         <SectionHeading
-          eyebrow="ম্যানিফেস্টো ২০২৭"
-          title={<>৮টি স্তম্ভ, <span className="text-emerald">৩২টি অঙ্গীকার</span> — সময়সীমা সহ</>}
-          description={manifestoIntro.subtitle + "। প্রতিটি অঙ্গীকারের অগ্রগতি উন্মুক্ত ড্যাশবোর্ডে প্রকাশিত হবে।"}
+          eyebrow={copy?.eyebrow || "ম্যানিফেস্টো ২০২৭"}
+          title={copy?.title ? <>{copy.title}</> : <>৮টি স্তম্ভ, <span className="text-emerald">৩২টি অঙ্গীকার</span> — সময়সীমা সহ</>}
+          description={copy?.description || manifestoIntro.subtitle + "। প্রতিটি অঙ্গীকারের অগ্রগতি উন্মুক্ত ড্যাশবোর্ডে প্রকাশিত হবে।"}
           action={{ href: "/manifesto", label: "পূর্ণ ম্যানিফেস্টো" }}
         />
 

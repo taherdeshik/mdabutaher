@@ -7,9 +7,7 @@ import { Clock, ExternalLink, Film, Play, X } from "lucide-react";
 import {
   campaignVideos,
   embedUrl,
-  featuredVideo,
   thumbnailUrl,
-  videoCategories,
   watchUrl,
   type CampaignVideo,
 } from "@/content/videos";
@@ -59,12 +57,14 @@ function PlayButton({ size = "md" }: { size?: "md" | "lg" }) {
   );
 }
 
-export function VideoGallery() {
+export function VideoGallery({ videos = campaignVideos }: { videos?: CampaignVideo[] } = {}) {
   const [category, setCategory] = useState<string>("সব");
   const [playing, setPlaying] = useState<CampaignVideo | null>(null);
   const [featuredPlaying, setFeaturedPlaying] = useState(false);
 
-  const list = campaignVideos.filter((v) => !v.featured);
+  const featured = videos.find((v) => v.featured) ?? videos[0];
+  const list = videos.filter((v) => !v.featured && v.id !== featured?.id);
+  const categories = Array.from(new Set(videos.map((v) => v.category)));
   const filtered = category === "সব" ? list : list.filter((v) => v.category === category);
 
   useEffect(() => {
@@ -88,8 +88,8 @@ export function VideoGallery() {
         <div className="relative aspect-video w-full bg-night">
           {featuredPlaying ? (
             <iframe
-              src={embedUrl(featuredVideo.id)}
-              title={featuredVideo.title}
+              src={embedUrl(featured.id)}
+              title={featured.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               className="absolute inset-0 h-full w-full"
@@ -99,9 +99,9 @@ export function VideoGallery() {
               type="button"
               onClick={() => setFeaturedPlaying(true)}
               className="group absolute inset-0 h-full w-full"
-              aria-label={`${featuredVideo.title} — ভিডিও চালান`}
+              aria-label={`${featured.title} — ভিডিও চালান`}
             >
-              <Thumb video={featuredVideo} eager className="opacity-80 transition-opacity duration-300 group-hover:opacity-95" />
+              <Thumb video={featured} eager className="opacity-80 transition-opacity duration-300 group-hover:opacity-95" />
               <span className="absolute inset-0 bg-gradient-to-t from-night via-night/40 to-night/10" />
               <span className="absolute inset-0 grid place-items-center">
                 <PlayButton size="lg" />
@@ -111,11 +111,11 @@ export function VideoGallery() {
                   <Film className="h-3 w-3" /> প্রধান ভিডিও
                 </span>
                 <span className="mt-2 block font-display text-lg font-bold leading-snug text-cream sm:text-2xl">
-                  {featuredVideo.title}
+                  {featured.title}
                 </span>
-                {featuredVideo.note ? (
+                {featured.note ? (
                   <span className="mt-1 hidden max-w-2xl text-[0.78rem] leading-relaxed text-cream/60 sm:block">
-                    {featuredVideo.note}
+                    {featured.note}
                   </span>
                 ) : null}
               </span>
@@ -127,7 +127,7 @@ export function VideoGallery() {
       {/* Filters */}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-1.5">
-          {["সব", ...videoCategories].map((c) => (
+          {["সব", ...categories].map((c) => (
             <button
               key={c}
               type="button"

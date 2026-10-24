@@ -9,10 +9,11 @@ import { SmartImage } from "@/components/ui/smart-image";
 import { ButtonLink } from "@/components/ui/button";
 import { introVideo } from "@/content/videos";
 import type { SitePageContent } from "@/content/site-pages";
+import type { HomeSectionCopy } from "@/content/home-sections";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export function Hero({ cms }: { cms?: SitePageContent }) {
+export function Hero({ cms, copy }: { cms?: SitePageContent; copy?: HomeSectionCopy }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -52,8 +53,8 @@ export function Hero({ cms }: { cms?: SitePageContent }) {
             transition={{ duration: 0.8, delay: 0.08, ease }}
             className="mt-6 text-balance-tight text-[clamp(2.3rem,6.2vw,4.5rem)] font-bold leading-[1.08]"
           >
-            {cms?.title ? (
-              <span className="text-balance-tight">{cms.title}</span>
+            {cms?.title || copy?.title ? (
+              <span className="text-balance-tight">{cms?.title || copy?.title}</span>
             ) : (
               <>
                 মানুষের পাশে
@@ -86,7 +87,7 @@ export function Hero({ cms }: { cms?: SitePageContent }) {
             transition={{ duration: 0.7, delay: 0.2, ease }}
             className="mt-6 max-w-xl text-[0.95rem] leading-relaxed text-cream/60 sm:text-base"
           >
-            {cms?.description || site.heroQuote}
+            {copy?.description || cms?.description || site.heroQuote}
           </motion.p>
 
           <motion.div

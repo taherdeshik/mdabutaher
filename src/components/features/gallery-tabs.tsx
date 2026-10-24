@@ -5,24 +5,48 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Camera, Film, Maximize2, Play, X } from "lucide-react";
 import Link from "next/link";
 import { SmartImage } from "@/components/ui/smart-image";
-import { galleryPhotos, galleryPosters, galleryVideos, type GalleryPoster } from "@/content/gallery";
+import type { GalleryVideoView } from "@/lib/gallery-store";
 import { cn } from "@/lib/utils";
 
 type TabId = "photos" | "posters" | "videos";
 
-const filters = ["সব", ...Array.from(new Set(galleryPhotos.map((p) => p.tag)))];
+type PhotoView = {
+  id: string;
+  key?: string;
+  src?: string;
+  caption: string;
+  tag: string;
+  tall?: boolean;
+};
+
+type PosterView = {
+  id: string;
+  key?: string;
+  src?: string;
+  title: string;
+  subtitle: string;
+  election?: boolean;
+};
 
 type Props = {
   /** কোন ট্যাব খোলা থাকবে — ফটো/পোস্টার/নির্বাচনী পোস্টার পেজ থেকে আসে */
   initialTab?: TabId;
   /** শুধু নির্বাচনী পোস্টার দেখান (`/gallery/election-posters`) */
   electionOnly?: boolean;
+  /** অ্যাডমিনে যোগ করা ছবি + কিউরেটেড ছবি — সার্ভার থেকে আসে */
+  photos?: PhotoView[];
+  posters?: PosterView[];
+  videos?: GalleryVideoView[];
 };
 
-export function GalleryTabs({ initialTab = "photos", electionOnly = false }: Props) {
-  const posters: GalleryPoster[] = electionOnly
-    ? galleryPosters.filter((p) => p.election)
-    : galleryPosters;
+export function GalleryTabs({ initialTab = "photos", electionOnly = false, photos: photoInput = [], posters: posterInput = [], videos: videoInput = [] }: Props) {
+  const galleryPhotos = photoInput;
+  const filters = ["সব", ...Array.from(new Set(galleryPhotos.map((p) => p.tag)))];
+  const galleryVideos = videoInput;
+
+  const posters: PosterView[] = electionOnly
+    ? posterInput.filter((p) => p.election)
+    : posterInput;
 
   const tabs = [
     ...(electionOnly ? [] : [{ id: "photos" as TabId, label: "ছবি", icon: Camera, count: galleryPhotos.length }]),
@@ -147,12 +171,13 @@ export function GalleryTabs({ initialTab = "photos", electionOnly = false }: Pro
             <div className="columns-2 gap-3 sm:columns-3 lg:columns-4 [&>*]:mb-3">
               {photos.map((photo, i) => (
                 <button
-                  key={photo.key}
+                  key={photo.id}
                   onClick={() => setLightbox(i)}
                   className="group relative block w-full overflow-hidden rounded-2xl border border-forest/8 bg-forest/5 text-left"
                 >
                   <SmartImage
                     imageKey={photo.key}
+                    src={photo.src}
                     alt={photo.caption}
                     className={photo.tall ? "aspect-[4/5]" : i % 3 === 0 ? "aspect-square" : "aspect-[4/3]"}
                     label={photo.caption}
@@ -176,7 +201,7 @@ export function GalleryTabs({ initialTab = "photos", electionOnly = false }: Pro
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {posters.map((poster, i) => (
                 <motion.div
-                  key={poster.key}
+                  key={poster.id}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
@@ -189,6 +214,7 @@ export function GalleryTabs({ initialTab = "photos", electionOnly = false }: Pro
                   >
                     <SmartImage
                       imageKey={poster.key}
+                      src={poster.src}
                       alt={poster.title}
                       className="aspect-[3/4]"
                       label={poster.title}

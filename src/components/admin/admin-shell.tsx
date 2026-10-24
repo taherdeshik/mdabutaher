@@ -9,6 +9,8 @@ import {
   ContactRound,
   Database,
   Footprints,
+  Images,
+  Home,
   LayoutDashboard,
   LayoutTemplate,
   LifeBuoy,
@@ -41,6 +43,8 @@ import { ChallengesBoard } from "./challenges-board";
 import { MoneyBoard } from "./money-board";
 import { CmsManager } from "./cms-manager";
 import { SiteContentManager } from "./site-content-manager";
+import { HomeSectionsManager } from "./home-sections-manager";
+import { GalleryManager } from "./gallery-manager";
 import { CrmBoard } from "./crm-board";
 import { AdminSettings } from "./admin-settings";
 
@@ -75,6 +79,8 @@ const NAV: { group: string; items: { id: SectionId; label: string; short: string
       { id: "money", label: "ব্যয় ট্র্যাকার", short: "অর্থ", icon: Wallet },
       { id: "cms", label: "কনটেন্ট স্টুডিও", short: "কনটেন্ট", icon: Newspaper },
       { id: "site", label: "সাইট কনটেন্ট", short: "সাইট", icon: LayoutTemplate },
+      { id: "home", label: "হোমপেজ সেকশন", short: "হোম", icon: Home },
+      { id: "gallery", label: "গ্যালারি ছবি ও ভিডিও", short: "গ্যালারি", icon: Images },
     ],
   },
   {
@@ -99,6 +105,8 @@ const TITLES: Record<SectionId, { title: string; sub: string }> = {
   money: { title: "ব্যয় ট্র্যাকার", sub: "ব্যয়সীমা, রশিদ ও নির্বাচনী হিসাব" },
   cms: { title: "কনটেন্ট স্টুডিও", sub: "সংবাদ, ইভেন্ট ও ব্লগ প্রকাশ — সাইটে সরাসরি" },
   site: { title: "সাইট কনটেন্ট", sub: "সব মেনু ও সাব-মেনুর লেখা, ছবি ও ভিডিও — এখান থেকেই" },
+  home: { title: "হোমপেজ সেকশন", sub: "হোমপেজের প্রতিটি ব্লকের শিরোনাম, বর্ণনা ও দৃশ্যমানতা" },
+  gallery: { title: "গ্যালারি ছবি ও ভিডিও", sub: "ছবি, পোস্টার ও ভিডিও যোগ-বদল — আপলোডসহ" },
   crm: { title: "CRM ও বার্তা", sub: "সম্পর্ক, অভিযোগ, অ্যাপয়েন্টমেন্ট ও বার্তা" },
   settings: { title: "সেটিংস ও রিপোর্ট", sub: "নির্বাচনী তারিখ, টার্নআউট ও রপ্তানি" },
 };
@@ -352,6 +360,8 @@ export function AdminShell() {
     money: MoneyBoard,
     cms: CmsManager,
     site: SiteContentManager,
+    home: HomeSectionsManager,
+    gallery: GalleryManager,
     crm: CrmBoard,
     settings: AdminSettings,
   }[section];

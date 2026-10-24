@@ -4,6 +4,8 @@ import { ArrowRight, Camera, Film, Maximize2, Vote } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { GalleryTabs } from "@/components/features/gallery-tabs";
+import { getGallery } from "@/lib/gallery-store";
+import { bn } from "@/lib/utils";
 
 export const revalidate = 60;
 
@@ -13,7 +15,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/gallery" },
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const gallery = await getGallery();
   return (
     <>
       <PageHero pageId="gallery"
@@ -25,9 +28,9 @@ export default function GalleryPage() {
       >
         <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur">
           {[
-            { icon: Camera, value: "৩১", label: "ছবি" },
-            { icon: Maximize2, value: "৪", label: "পোস্টার" },
-            { icon: Film, value: "৫", label: "ভিডিও" },
+            { icon: Camera, value: bn(gallery.photos.length), label: "ছবি" },
+            { icon: Maximize2, value: bn(gallery.posters.length), label: "পোস্টার" },
+            { icon: Film, value: bn(gallery.videos.length), label: "ভিডিও" },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <s.icon className="mx-auto h-4 w-4 text-gold" />
@@ -62,7 +65,11 @@ export default function GalleryPage() {
               </Link>
             ))}
           </div>
-          <GalleryTabs />
+          <GalleryTabs
+            photos={gallery.photos}
+            posters={gallery.posters}
+            videos={gallery.videos}
+          />
         </div>
       </Section>
     </>

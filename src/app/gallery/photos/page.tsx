@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Camera, Images, Film } from "lucide-react";
 import { GalleryShowcase } from "@/components/features/gallery-showcase";
-import { galleryPhotos, galleryVideos } from "@/content/gallery";
 import { bn } from "@/lib/utils";
+import { getGallery } from "@/lib/gallery-store";
 
 export const revalidate = 60;
 
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PhotoGalleryPage() {
+export default async function PhotoGalleryPage() {
+  const gallery = await getGallery();
   return (
     <GalleryShowcase
       pageId="gallery-photos"
@@ -29,9 +30,9 @@ export default function PhotoGalleryPage() {
       accent="ছবি"
       tab="photos"
       stats={[
-        { icon: Camera, value: bn(galleryPhotos.length), label: "ছবি" },
-        { icon: Images, value: bn(new Set(galleryPhotos.map((p) => p.tag)).size), label: "বিভাগ" },
-        { icon: Film, value: bn(galleryVideos.length), label: "ভিডিও" },
+        { icon: Camera, value: bn(gallery.photos.length), label: "ছবি" },
+        { icon: Images, value: bn(new Set(gallery.photos.map((p) => p.tag)).size), label: "বিভাগ" },
+        { icon: Film, value: bn(gallery.videos.length), label: "ভিডিও" },
       ]}
     />
   );

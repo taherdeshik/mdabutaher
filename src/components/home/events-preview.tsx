@@ -1,3 +1,4 @@
+import type { HomeSectionCopy } from "@/content/home-sections";
 import Link from "next/link";
 import { ArrowUpRight, CalendarDays, Clock, MapPin, Users } from "lucide-react";
 import { events } from "@/content/events";
@@ -5,15 +6,15 @@ import { Section, SectionHeading, Badge } from "@/components/ui/section";
 import { formatBnDate, bn, withBasePath } from "@/lib/utils";
 import { Reveal } from "@/components/ui/reveal";
 
-export function EventsPreview() {
+export function EventsPreview({ copy }: { copy?: HomeSectionCopy }) {
   const upcoming = events.filter((e) => e.status === "upcoming").slice(0, 4);
   return (
     <Section tone="light" id="events">
       <div className="container-x">
         <SectionHeading
-          eyebrow="আসন্ন ইভেন্ট"
-          title={<>আপনার এলাকায় <span className="text-emerald">আমরা</span> — সরাসরি</>}
-          description="জনসভা, উঠান বৈঠক, স্বাস্থ্য ক্যাম্প ও স্বেচ্ছাসেবক কর্মশালা। ইভেন্টে যোগ দিতে অনলাইনে রেজিস্ট্রেশন করুন।"
+          eyebrow={copy?.eyebrow || "আসন্ন ইভেন্ট"}
+          title={copy?.title ? <>{copy.title}</> : <>আপনার এলাকায় <span className="text-emerald">আমরা</span> — সরাসরি</>}
+          description={copy?.description || "জনসভা, উঠান বৈঠক, স্বাস্থ্য ক্যাম্প ও স্বেচ্ছাসেবক কর্মশালা। ইভেন্টে যোগ দিতে অনলাইনে রেজিস্ট্রেশন করুন।"}
           action={{ href: "/events", label: "সব ইভেন্ট" }}
         />
 

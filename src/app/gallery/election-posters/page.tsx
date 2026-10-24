@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { BadgeCheck, Flag, Vote } from "lucide-react";
 import { GalleryShowcase } from "@/components/features/gallery-showcase";
-import { electionPosters } from "@/content/gallery";
 import { bn } from "@/lib/utils";
+import { getGallery } from "@/lib/gallery-store";
 
 export const revalidate = 60;
 
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ElectionPosterPage() {
+export default async function ElectionPosterPage() {
+  const gallery = await getGallery();
   return (
     <GalleryShowcase
       pageId="gallery-election"
@@ -30,7 +31,7 @@ export default function ElectionPosterPage() {
       tab="posters"
       electionOnly
       stats={[
-        { icon: Vote, value: bn(electionPosters.length), label: "পোস্টার" },
+        { icon: Vote, value: bn(gallery.posters.filter((p: { election?: boolean }) => p.election).length), label: "পোস্টার" },
         { icon: Flag, value: "চশমা", label: "প্রতীক" },
         { icon: BadgeCheck, value: "২০২৭", label: "নির্বাচন" },
       ]}

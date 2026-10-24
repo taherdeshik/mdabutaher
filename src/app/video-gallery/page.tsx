@@ -7,6 +7,7 @@ import { VideoGallery } from "@/components/features/video-gallery";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbLd } from "@/lib/seo";
 import { campaignVideos, embedUrl, thumbnailUrl, watchUrl } from "@/content/videos";
+import { getGallery } from "@/lib/gallery-store";
 import { site } from "@/content/site";
 import { bn } from "@/lib/utils";
 
@@ -32,7 +33,8 @@ export const metadata: Metadata = {
 
 const youtube = site.socials.find((s) => s.label === "YouTube");
 
-export default function VideoGalleryPage() {
+export default async function VideoGalleryPage() {
+  const videos = (await getGallery()).videos;
   return (
     <>
       <JsonLd
@@ -42,8 +44,8 @@ export default function VideoGalleryPage() {
             "@context": "https://schema.org",
             "@type": "ItemList",
             name: "ভিডিও গ্যালারি — মোঃ আবু তাহের",
-            numberOfItems: campaignVideos.length,
-            itemListElement: campaignVideos.map((v, i) => ({
+            numberOfItems: videos.length,
+            itemListElement: videos.map((v, i) => ({
               "@type": "ListItem",
               position: i + 1,
               item: {
@@ -75,10 +77,10 @@ export default function VideoGalleryPage() {
       >
         <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur">
           {[
-            { icon: Film, value: bn(campaignVideos.length), label: "ভিডিও" },
+            { icon: Film, value: bn(videos.length), label: "ভিডিও" },
             {
               icon: Megaphone,
-              value: bn(campaignVideos.filter((v) => v.category === "প্রচারণা").length),
+              value: bn(videos.filter((v) => v.category === "প্রচারণা").length),
               label: "প্রচারণা",
             },
             { icon: Radio, value: "YouTube", label: "চ্যানেল" },
@@ -94,7 +96,7 @@ export default function VideoGalleryPage() {
 
       <Section tone="light" className="py-10 sm:py-14">
         <div className="container-x">
-          <VideoGallery />
+          <VideoGallery videos={videos as unknown as typeof campaignVideos} />
 
           {/* Cross-links + channel */}
           <div className="mt-10 grid gap-3 sm:grid-cols-2">

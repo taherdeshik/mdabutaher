@@ -1,3 +1,4 @@
+import type { HomeSectionCopy } from "@/content/home-sections";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { PollCard } from "@/components/features/poll-card";
 import { seedPolls, pollArchiveSummary } from "@/content/polls";
@@ -6,15 +7,15 @@ import { ArrowUpRight, BarChart3, Users } from "lucide-react";
 import Link from "next/link";
 import { bn } from "@/lib/utils";
 
-export function PollPreview() {
+export function PollPreview({ copy }: { copy?: HomeSectionCopy }) {
   const active = seedPolls.filter((p) => p.status === "active").slice(0, 1);
   return (
     <Section tone="light" id="polls">
       <div className="container-x">
         <SectionHeading
-          eyebrow="জনমত জরিপ"
-          title={<>আপনার মতই <span className="text-emerald">আমাদের অগ্রাধিকার</span></>}
-          description="এলাকার সমস্যা, সেবার অগ্রাধিকার ও ইভেন্ট— প্রতিটি সিদ্ধান্তে জনমত নেওয়া হয়। ভোট দিন, লাইভ ফলাফল দেখুন।"
+          eyebrow={copy?.eyebrow || "জনমত জরিপ"}
+          title={copy?.title ? <>{copy.title}</> : <>আপনার মতই <span className="text-emerald">আমাদের অগ্রাধিকার</span></>}
+          description={copy?.description || "এলাকার সমস্যা, সেবার অগ্রাধিকার ও ইভেন্ট— প্রতিটি সিদ্ধান্তে জনমত নেওয়া হয়। ভোট দিন, লাইভ ফলাফল দেখুন।"}
           action={{ href: "/polls", label: "সব জরিপ" }}
         />
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">

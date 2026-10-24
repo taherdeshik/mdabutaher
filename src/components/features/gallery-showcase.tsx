@@ -1,6 +1,7 @@
 import type { GalleryTab } from "@/content/gallery";
 import { GalleryTabs } from "./gallery-tabs";
 import { PageHero } from "@/components/ui/page-hero";
+import { getGallery } from "@/lib/gallery-store";
 import { Section } from "@/components/ui/section";
 
 type Props = {
@@ -16,7 +17,8 @@ type Props = {
 };
 
 /** Shared shell for the gallery sub-pages (ছবি / পোস্টার / নির্বাচনী পোস্টার). */
-export function GalleryShowcase({ pageId, eyebrow, title, description, crumb, accent, tab, electionOnly, stats }: Props) {
+export async function GalleryShowcase({ pageId, eyebrow, title, description, crumb, accent, tab, electionOnly, stats }: Props) {
+  const gallery = await getGallery();
   return (
     <>
       <PageHero
@@ -39,7 +41,13 @@ export function GalleryShowcase({ pageId, eyebrow, title, description, crumb, ac
       </PageHero>
       <Section tone="light" className="py-10 sm:py-14">
         <div className="container-x">
-          <GalleryTabs initialTab={tab} electionOnly={electionOnly} />
+          <GalleryTabs
+            initialTab={tab}
+            electionOnly={electionOnly}
+            photos={gallery.photos}
+            posters={gallery.posters}
+            videos={gallery.videos}
+          />
         </div>
       </Section>
     </>

@@ -13,7 +13,7 @@ import { BlogPreview } from "@/components/home/blog-preview";
 import { Testimonials } from "@/components/home/testimonials";
 import { CtaBand } from "@/components/home/cta-band";
 import { site } from "@/content/site";
-import { getPageContent } from "@/lib/site-content";
+import { getPageContent, getHomeCopy } from "@/lib/site-content";
 
 export const revalidate = 60;
 
@@ -25,22 +25,23 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const cms = await getPageContent("home");
+  const [cms, copy] = await Promise.all([getPageContent("home"), getHomeCopy()]);
+  const show = (id: string) => copy[id]?.visible !== false;
   return (
     <>
-      <Hero cms={cms} />
-      <QuickActions />
-      <StatsBand />
+      <Hero cms={cms} copy={copy.hero} />
+      {show("quick-actions") && <QuickActions />}
+      {show("stats") && <StatsBand />}
       <IntroVideoSection />
-      <AboutPreview />
-      <ManifestoPreview />
-      <CampaignPreview />
-      <EventsPreview />
-      <ActivitiesPreview />
-      <PollPreview />
-      <BlogPreview />
-      <Testimonials />
-      <CtaBand />
+      {show("about") && <AboutPreview copy={copy.about} />}
+      {show("manifesto") && <ManifestoPreview copy={copy.manifesto} />}
+      {show("campaign") && <CampaignPreview copy={copy.campaign} />}
+      {show("events") && <EventsPreview copy={copy.events} />}
+      {show("activities") && <ActivitiesPreview copy={copy.activities} />}
+      {show("polls") && <PollPreview copy={copy.polls} />}
+      {show("blog") && <BlogPreview copy={copy.blog} />}
+      {show("testimonials") && <Testimonials copy={copy.testimonials} />}
+      {show("cta") && <CtaBand copy={copy.cta} />}
     </>
   );
 }

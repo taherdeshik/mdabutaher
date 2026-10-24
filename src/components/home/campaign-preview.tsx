@@ -1,3 +1,4 @@
+import type { HomeSectionCopy } from "@/content/home-sections";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, MapPinned } from "lucide-react";
 import { campaignOverview, phases, zones } from "@/content/campaign";
@@ -5,7 +6,7 @@ import { Section, SectionHeading, Badge } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
 import { bn } from "@/lib/utils";
 
-export function CampaignPreview() {
+export function CampaignPreview({ copy }: { copy?: HomeSectionCopy }) {
   const totalHouseholds = zones.reduce((s, z) => s + z.households, 0);
   const active = phases.find((p) => p.status === "active");
   return (
@@ -15,9 +16,9 @@ export function CampaignPreview() {
       <div className="container-x relative">
         <SectionHeading
           dark
-          eyebrow="প্রচারণা ২০২৭"
-          title={<>২১ সপ্তাহ, ৯টি ওয়ার্ড — <span className="text-gold">একটি পরিকল্পিত পথচলা</span></>}
-          description={campaignOverview.goal}
+          eyebrow={copy?.eyebrow || "প্রচারণা ২০২৭"}
+          title={copy?.title ? <>{copy.title}</> : <>২১ সপ্তাহ, ৯টি ওয়ার্ড — <span className="text-gold">একটি পরিকল্পিত পথচলা</span></>}
+          description={copy?.description || campaignOverview.goal}
           action={{ href: "/campaign", label: "পূর্ণ পরিকল্পনা" }}
         />
 

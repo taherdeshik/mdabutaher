@@ -5,7 +5,45 @@ import type { AuditEntry, CommandCollections } from "@/lib/command-types";
 import { seedCollections } from "@/content/command-seed";
 import type { VisitorEvent } from "@/lib/visitor-types";
 import type { SitePageContent } from "@/content/site-pages";
+import type { HomeSectionCopy } from "@/content/home-sections";
 import { mysqlEnabled, mysqlLoad, mysqlMutate } from "@/lib/mysql";
+
+export type AdminPhoto = {
+  id: string;
+  /** Image path ("/media/…") or absolute URL. */
+  src: string;
+  caption: string;
+  tag: string;
+  tall?: boolean;
+  createdAt: string;
+};
+
+export type AdminPoster = {
+  id: string;
+  src: string;
+  title: string;
+  subtitle: string;
+  election: boolean;
+  createdAt: string;
+};
+
+export type AdminVideo = {
+  id: string;
+  /** YouTube id (not the full URL). */
+  youtubeId: string;
+  title: string;
+  category: string;
+  note?: string;
+  createdAt: string;
+};
+
+export type GalleryStore = {
+  photos: AdminPhoto[];
+  posters: AdminPoster[];
+  videos: AdminVideo[];
+  /** Ids of curated (coded) items hidden from the public galleries. */
+  hidden: string[];
+};
 
 /**
  * Persistence for all civic data.
@@ -152,6 +190,10 @@ export interface DBShape extends CommandCollections {
   adminSessions: AdminSession[];
   /** Per-page overrides written by the admin "সাইট কনটেন্ট" editor. */
   siteContent: Record<string, SitePageContent>;
+  /** Home-page section copy (eyebrow/title/description/visibility). */
+  homeCopy: Record<string, HomeSectionCopy>;
+  /** Gallery items added from the admin panel + curated items that were hidden. */
+  gallery: GalleryStore;
   meta: { seeded: boolean };
 }
 
@@ -169,6 +211,8 @@ function emptyDB(): DBShape {
     adminUsers: [],
     adminSessions: [],
     siteContent: {},
+    homeCopy: {},
+    gallery: { photos: [], posters: [], videos: [], hidden: [] },
     settings: {
       pollingDate: "2027-01-15",
       rollDate: "2026-11-05",

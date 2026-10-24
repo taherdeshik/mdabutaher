@@ -17,6 +17,9 @@ import type {
 import { computeAlerts, computeBrief, computeKpis, wardStats } from "@/lib/command-calc";
 import { slugify } from "@/lib/utils";
 import { sitePageById, type SitePageContent } from "@/content/site-pages";
+import { mergeHomeCopy } from "@/content/home-sections";
+import { campaignVideos } from "@/content/videos";
+import { galleryPhotos, galleryPosters } from "@/content/gallery";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +74,8 @@ async function snapshot() {
     challenges: [...db.challenges].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
     posts: [...db.posts].sort((a, b) => b.date.localeCompare(a.date)),
     siteContent: db.siteContent || {},
+    homeCopy: db.homeCopy || {},
+    gallery: db.gallery || { photos: [], posters: [], videos: [], hidden: [] },
     audit: db.audit.slice(0, 40),
     kpis,
     alerts,
@@ -121,7 +126,7 @@ export async function POST(req: NextRequest) {
   const payload = (body.data || {}) as Record<string, unknown>;
   const actor = actorInfo.legacy ? str(body.actor, 60) || "ক্যাম্প ম্যানেজার" : actorInfo.name;
   const role = actorInfo.role;
-  if (role === "captain" && ["settings", "team", "expense", "booth", "page"].includes(entity)) {
+  if (role === "captain" && ["settings", "team", "expense", "booth", "page", "home", "photo", "poster", "video"].includes(entity)) {
     return fail("এই অংশে আপনার সম্পাদনার অনুমতি নেই", 403);
   }
   if (role === "captain" && entity === "challenge" && action === "delete") {
@@ -529,6 +534,140 @@ export async function POST(req: NextRequest) {
           break;
         }
 
+        case "home": {
+          const sectionId = str(id || payload.id, 40);
+          if (!sectionId) throw new Error("সেকশন পাওয়া যায়নি");
+          if (action === "reset") {
+            delete db.homeCopy[sectionId];
+            pushAudit(db, actor, "home.reset", sectionId);
+            break;
+          }
+          if (action !== "update") throw new Error("অসমর্থিত কাজ");
+          db.homeCopy[sectionId] = {
+            ...mergeHomeCopy(db.homeCopy[sectionId]),
+            eyebrow: str(payload.eyebrow, 120),
+            title: str(payload.title, 200),
+            description: str(payload.description, 600),
+            visible: payload.visible === undefined ? db.homeCopy[sectionId]?.visible !== false : bool(payload.visible),
+          };
+          pushAudit(db, actor, "home.update", `${sectionId} — ${db.homeCopy[sectionId].title || "লেখা বদল"}`);
+          break;
+        }
+
+        case "photo": {
+          const store = db.gallery;
+          if (action === "create") {
+            const src = str(payload.src, 400);
+            if (!src) throw new Error("ছবি দিন (আপলোড বা লিংক)");
+            store.photos.unshift({
+              id: makeId("IMG"),
+              src,
+              caption: str(payload.caption, 180) || "নতুন ছবি",
+              tag: str(payload.tag, 40) || "নতুন",
+              tall: bool(payload.tall),
+              createdAt: new Date().toISOString(),
+            });
+            pushAudit(db, actor, "photo.create", str(payload.caption, 80) || src);
+          } else if (action === "delete") {
+            const curated = galleryPhotos.some((p) => p.key === id);
+            if (curated) {
+              // Curated (coded) photos are hidden, never deleted.
+              store.hidden = Array.from(new Set([...store.hidden, id]));
+            } else {
+              store.photos = store.photos.filter((p) => p.id !== id);
+            }
+            pushAudit(db, actor, curated ? "photo.hide" : "photo.delete", id);
+          } else if (action === "update") {
+            const photo = store.photos.find((p) => p.id === id);
+            if (!photo) throw new Error("ছবি পাওয়া যায়নি");
+            if (payload.caption !== undefined) photo.caption = str(payload.caption, 180);
+            if (payload.tag !== undefined) photo.tag = str(payload.tag, 40);
+            if (payload.tall !== undefined) photo.tall = bool(payload.tall);
+            pushAudit(db, actor, "photo.update", photo.caption);
+          } else if (action === "restore") {
+            store.hidden = store.hidden.filter((h) => h !== id);
+            pushAudit(db, actor, "photo.restore", id);
+          } else throw new Error("অসমর্থিত কাজ");
+          break;
+        }
+
+        case "poster": {
+          const store = db.gallery;
+          if (action === "create") {
+            const src = str(payload.src, 400);
+            if (!src) throw new Error("পোস্টারের ছবি দিন");
+            store.posters.unshift({
+              id: makeId("PST"),
+              src,
+              title: str(payload.title, 160) || "নতুন পোস্টার",
+              subtitle: str(payload.subtitle, 200),
+              election: bool(payload.election),
+              createdAt: new Date().toISOString(),
+            });
+            pushAudit(db, actor, "poster.create", str(payload.title, 80) || src);
+          } else if (action === "delete") {
+            const curated = galleryPosters.some((p) => p.key === id);
+            if (curated) {
+              store.hidden = Array.from(new Set([...store.hidden, id]));
+            } else {
+              store.posters = store.posters.filter((p) => p.id !== id);
+            }
+            pushAudit(db, actor, curated ? "poster.hide" : "poster.delete", id);
+          } else if (action === "update") {
+            const poster = store.posters.find((p) => p.id === id);
+            if (!poster) throw new Error("পোস্টার পাওয়া যায়নি");
+            if (payload.title !== undefined) poster.title = str(payload.title, 160);
+            if (payload.subtitle !== undefined) poster.subtitle = str(payload.subtitle, 200);
+            if (payload.election !== undefined) poster.election = bool(payload.election);
+            pushAudit(db, actor, "poster.update", poster.title);
+          } else if (action === "restore") {
+            store.hidden = store.hidden.filter((h) => h !== id);
+            pushAudit(db, actor, "poster.restore", id);
+          } else throw new Error("অসমর্থিত কাজ");
+          break;
+        }
+
+        case "video": {
+          const store = db.gallery;
+          if (action === "create") {
+            const raw = str(payload.url || payload.youtubeId, 300);
+            const youtubeId =
+              raw.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/)([\w-]{6,})/)?.[1] ??
+              (/^[\w-]{6,}$/.test(raw) ? raw : "");
+            if (!youtubeId) throw new Error("সঠিক ইউটিউব লিংক বা আইডি দিন");
+            const existing = new Set([...campaignVideos.map((v) => v.id), ...store.videos.map((v) => v.youtubeId)]);
+            if (existing.has(youtubeId)) throw new Error("এই ভিডিও আগেই যোগ করা হয়েছে");
+            store.videos.unshift({
+              id: makeId("VID"),
+              youtubeId,
+              title: str(payload.title, 200) || "নতুন ভিডিও",
+              category: str(payload.category, 40) || "প্রচারণা",
+              note: str(payload.note, 300) || undefined,
+              createdAt: new Date().toISOString(),
+            });
+            pushAudit(db, actor, "video.create", `${str(payload.title, 80)} (${youtubeId})`);
+          } else if (action === "delete") {
+            const curated = campaignVideos.some((v) => v.id === id);
+            if (curated) {
+              store.hidden = Array.from(new Set([...store.hidden, id]));
+            } else {
+              store.videos = store.videos.filter((v) => v.id !== id);
+            }
+            pushAudit(db, actor, curated ? "video.hide" : "video.delete", id);
+          } else if (action === "update") {
+            const video = store.videos.find((v) => v.id === id);
+            if (!video) throw new Error("ভিডিও পাওয়া যায়নি");
+            if (payload.title !== undefined) video.title = str(payload.title, 200);
+            if (payload.category !== undefined) video.category = str(payload.category, 40);
+            if (payload.note !== undefined) video.note = str(payload.note, 300) || undefined;
+            pushAudit(db, actor, "video.update", video.title);
+          } else if (action === "restore") {
+            store.hidden = store.hidden.filter((h) => h !== id);
+            pushAudit(db, actor, "video.restore", id);
+          } else throw new Error("অসমর্থিত কাজ");
+          break;
+        }
+
         default:
           throw new Error("অসমর্থিত অনুরোধ");
       }
@@ -536,6 +675,14 @@ export async function POST(req: NextRequest) {
     });
 
     // Page edits must show up immediately, not after the ISR window.
+    if (["photo", "poster", "video"].includes(entity)) {
+      for (const path of ["/gallery", "/gallery/photos", "/gallery/posters", "/gallery/election-posters", "/video-gallery"]) {
+        revalidatePath(path);
+      }
+    }
+    if (entity === "home") {
+      revalidatePath("/");
+    }
     if (entity === "page") {
       const target = sitePageById.get(str(id || payload.id, 60));
       revalidatePath("/");
