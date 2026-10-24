@@ -74,6 +74,8 @@ async function snapshot() {
     challenges: [...db.challenges].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
     posts: [...db.posts].sort((a, b) => b.date.localeCompare(a.date)),
     siteContent: db.siteContent || {},
+    eventEdits: db.eventEdits || {},
+    pillarEdits: db.pillarEdits || {},
     homeCopy: db.homeCopy || {},
     gallery: db.gallery || { photos: [], posters: [], videos: [], hidden: [] },
     audit: db.audit.slice(0, 40),
@@ -126,7 +128,7 @@ export async function POST(req: NextRequest) {
   const payload = (body.data || {}) as Record<string, unknown>;
   const actor = actorInfo.legacy ? str(body.actor, 60) || "ক্যাম্প ম্যানেজার" : actorInfo.name;
   const role = actorInfo.role;
-  if (role === "captain" && ["settings", "team", "expense", "booth", "page", "home", "photo", "poster", "video"].includes(entity)) {
+  if (role === "captain" && ["settings", "team", "expense", "booth", "page", "home", "photo", "poster", "video", "eventitem", "pillar"].includes(entity)) {
     return fail("এই অংশে আপনার সম্পাদনার অনুমতি নেই", 403);
   }
   if (role === "captain" && entity === "challenge" && action === "delete") {
@@ -413,6 +415,7 @@ export async function POST(req: NextRequest) {
                 : typeof payload.body === "string"
                   ? str(payload.body, 6000).split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)
                   : existing?.body || [],
+              rich: payload.rich !== undefined ? str(payload.rich, 20000) : existing?.rich,
               image: str(payload.image, 240) || existing?.image || "campaign",
               status: (str(payload.status, 12) || existing?.status || "draft") as Post["status"],
               date: str(payload.date, 10) || existing?.date || todayIso(),
@@ -668,6 +671,69 @@ export async function POST(req: NextRequest) {
           break;
         }
 
+        case "eventitem": {
+          if (action === "reset") {
+            delete db.eventEdits[str(id, 80)];
+            pushAudit(db, actor, "event.reset", id);
+            break;
+          }
+          if (action !== "update") throw new Error("অসমর্থিত কাজ");
+          const eventId = str(id, 80);
+          if (!eventId) throw new Error("ইভেন্ট পাওয়া যায়নি");
+          const prevEvent = db.eventEdits[eventId] || {};
+          const status = str(payload.status, 10);
+          db.eventEdits[eventId] = {
+            ...prevEvent,
+            title: str(payload.title, 180),
+            date: str(payload.date, 10),
+            start: str(payload.start, 5),
+            end: str(payload.end, 5),
+            venue: str(payload.venue, 160),
+            ward: str(payload.ward, 60),
+            description: str(payload.description, 600),
+            status: (["upcoming", "past", "live"].includes(status) ? status : prevEvent.status) as
+              | "upcoming"
+              | "past"
+              | "live"
+              | undefined,
+            hidden: payload.hidden === undefined ? prevEvent.hidden : bool(payload.hidden),
+          };
+          pushAudit(db, actor, "event.update", `${eventId} — ${db.eventEdits[eventId].title || "আপডেট"}`);
+          break;
+        }
+
+        case "pillar": {
+          if (action === "reset") {
+            delete db.pillarEdits[str(id, 60)];
+            pushAudit(db, actor, "pillar.reset", id);
+            break;
+          }
+          if (action !== "update") throw new Error("অসমর্থিত কাজ");
+          const pillarId = str(id, 60);
+          if (!pillarId) throw new Error("স্তম্ভ পাওয়া যায়নি");
+          const prevPillar = db.pillarEdits[pillarId] || {};
+          const progress = payload.progress === undefined ? prevPillar.progress : num(payload.progress, 0);
+          db.pillarEdits[pillarId] = {
+            ...prevPillar,
+            title: str(payload.title, 160),
+            summary: str(payload.summary, 600),
+            problem: str(payload.problem, 600),
+            target: str(payload.target, 300),
+            budget: str(payload.budget, 80),
+            progress: progress === undefined ? undefined : Math.max(0, Math.min(100, Number(progress) || 0)),
+            hidden: payload.hidden === undefined ? prevPillar.hidden : bool(payload.hidden),
+            commitments: Array.isArray(payload.commitments)
+              ? (payload.commitments as Record<string, unknown>[]).slice(0, 12).map((c) => ({
+                  title: str(c.title, 160),
+                  detail: str(c.detail, 600),
+                  timeline: str(c.timeline, 80),
+                }))
+              : prevPillar.commitments,
+          };
+          pushAudit(db, actor, "pillar.update", `${pillarId} — ${db.pillarEdits[pillarId].title || "আপডেট"}`);
+          break;
+        }
+
         default:
           throw new Error("অসমর্থিত অনুরোধ");
       }
@@ -681,6 +747,15 @@ export async function POST(req: NextRequest) {
       }
     }
     if (entity === "home") {
+      revalidatePath("/");
+    }
+    if (entity === "eventitem") {
+      revalidatePath("/events");
+      revalidatePath("/");
+    }
+    if (entity === "pillar") {
+      revalidatePath("/manifesto");
+      revalidatePath("/manifesto/print");
       revalidatePath("/");
     }
     if (entity === "page") {

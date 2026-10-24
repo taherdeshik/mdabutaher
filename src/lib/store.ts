@@ -37,6 +37,33 @@ export type AdminVideo = {
   createdAt: string;
 };
 
+/** Fields an editor may change on a campaign event (curated or CMS). */
+export type EventEdit = {
+  title?: string;
+  date?: string;
+  start?: string;
+  end?: string;
+  venue?: string;
+  ward?: string;
+  description?: string;
+  status?: "upcoming" | "past" | "live";
+  hidden?: boolean;
+};
+
+export type CommitmentEdit = { title?: string; detail?: string; timeline?: string };
+
+/** Fields an editor may change on a manifesto pillar. */
+export type PillarEdit = {
+  title?: string;
+  summary?: string;
+  problem?: string;
+  target?: string;
+  progress?: number;
+  budget?: string;
+  hidden?: boolean;
+  commitments?: CommitmentEdit[];
+};
+
 export type GalleryStore = {
   photos: AdminPhoto[];
   posters: AdminPoster[];
@@ -194,6 +221,9 @@ export interface DBShape extends CommandCollections {
   homeCopy: Record<string, HomeSectionCopy>;
   /** Gallery items added from the admin panel + curated items that were hidden. */
   gallery: GalleryStore;
+  /** Per-item overrides for the campaign schedule and the manifesto. */
+  eventEdits: Record<string, EventEdit>;
+  pillarEdits: Record<string, PillarEdit>;
   meta: { seeded: boolean };
 }
 
@@ -213,6 +243,8 @@ function emptyDB(): DBShape {
     siteContent: {},
     homeCopy: {},
     gallery: { photos: [], posters: [], videos: [], hidden: [] },
+    eventEdits: {},
+    pillarEdits: {},
     settings: {
       pollingDate: "2027-01-15",
       rollDate: "2026-11-05",

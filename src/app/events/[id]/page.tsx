@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, CheckCircle2, Clock, MapPin, Share2, Users } from "lucide-react";
 import { events } from "@/content/events";
+import { findCampaignEvent, getCampaignEvents } from "@/lib/content-overrides";
 import { findCmsEvent } from "@/lib/cms";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
@@ -21,7 +22,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const event = events.find((e) => e.id === id) ?? (await findCmsEvent(id));
+  const event = (await findCampaignEvent(id)) ?? (await findCmsEvent(id));
   if (!event) return { title: "ইভেন্ট পাওয়া যায়নি" };
   return {
     title: event.title,
@@ -41,13 +42,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const event = events.find((e) => e.id === id) ?? (await findCmsEvent(id));
+  const event = (await findCampaignEvent(id)) ?? (await findCmsEvent(id));
   if (!event) notFound();
 
   const d = new Date(`${event.date}T00:00:00`);
   const startIso = new Date(`${event.date}T${event.start || "10:00"}:00+06:00`).toISOString();
   const endIso = new Date(`${event.date}T${event.end || event.start || "12:00"}:00+06:00`).toISOString();
-  const related = events.filter((e) => e.id !== event.id && e.status === "upcoming").slice(0, 3);
+  const related = (await getCampaignEvents()).filter((e) => e.id !== event.id && e.status === "upcoming").slice(0, 3);
   const pct = Math.round((event.registered / event.capacity) * 100);
 
   return (

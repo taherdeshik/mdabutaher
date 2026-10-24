@@ -1,7 +1,8 @@
 import type { HomeSectionCopy } from "@/content/home-sections";
 import Link from "next/link";
 import { ArrowUpRight, CircleDot } from "lucide-react";
-import { pillars, manifestoIntro } from "@/content/manifesto";
+import { manifestoIntro } from "@/content/manifesto";
+import { getPillars } from "@/lib/content-overrides";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
@@ -13,7 +14,8 @@ const accentStyles = {
   rose: "bg-rose-500/10 text-rose-600 group-hover:bg-rose-500",
 } as const;
 
-export function ManifestoPreview({ copy }: { copy?: HomeSectionCopy }) {
+export async function ManifestoPreview({ copy }: { copy?: HomeSectionCopy }) {
+  const pillars = await getPillars();
   return (
     <Section tone="sand" id="manifesto">
       <div className="container-x">

@@ -6,7 +6,8 @@ import { ManifestoExplorer } from "@/components/features/manifesto-explorer";
 import { Accordion } from "@/components/ui/accordion";
 import { Reveal } from "@/components/ui/reveal";
 import { CtaBand } from "@/components/home/cta-band";
-import { manifestoIntro, manifestoFaq, pillars } from "@/content/manifesto";
+import { manifestoIntro, manifestoFaq } from "@/content/manifesto";
+import { getPillars } from "@/lib/content-overrides";
 import { withBasePath } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -24,7 +25,8 @@ const roadmap = [
   { phase: "৫ বছর", title: "টেকসই রূপান্তর", items: ["১০০% নিরাপদ পানি", "৪২ কিমি সড়ক সংস্কার", "স্বাস্থ্য বীমা পাইলট সম্প্রসারণ", "সব সেবা ডিজিটাল"] },
 ];
 
-export default function ManifestoPage() {
+export default async function ManifestoPage() {
+  const pillars = await getPillars();
   return (
     <>
       <PageHero pageId="manifesto"
@@ -49,7 +51,7 @@ export default function ManifestoPage() {
 
       <Section tone="light" className="py-10 sm:py-14">
         <div className="container-x">
-          <ManifestoExplorer />
+          <ManifestoExplorer items={pillars} />
         </div>
       </Section>
 

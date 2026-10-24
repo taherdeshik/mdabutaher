@@ -5,6 +5,8 @@ export type NewsItem = {
   date: string;
   summary: string;
   body: string[];
+  /** Admin-authored Markdown-subset body; rendered instead of `body`. */
+  rich?: string;
   image: string;
   link?: string;
   featured?: boolean;

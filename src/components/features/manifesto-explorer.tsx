@@ -21,10 +21,10 @@ const accentSoft = {
   rose: "bg-rose-500/10 text-rose-600",
 } as const;
 
-export function ManifestoExplorer() {
-  const [active, setActive] = useState(pillars[0].id);
+export function ManifestoExplorer({ items = pillars }: { items?: Pillar[] } = {}) {
+  const [active, setActive] = useState(items[0].id);
   const [openCommitment, setOpenCommitment] = useState<string | null>(null);
-  const pillar: Pillar = pillars.find((p) => p.id === active) ?? pillars[0];
+  const pillar: Pillar = items.find((p) => p.id === active) ?? items[0];
 
   return (
     <div>

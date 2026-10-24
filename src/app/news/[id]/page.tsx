@@ -8,6 +8,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { SmartImage } from "@/components/ui/smart-image";
 import { formatBnDate } from "@/lib/utils";
+import { RichText, richToPlain } from "@/components/ui/rich-text";
 import { JsonLd } from "@/components/seo/json-ld";
 import { articleLd, breadcrumbLd, socialImage } from "@/lib/seo";
 import { site } from "@/content/site";
@@ -60,7 +61,7 @@ export default async function NewsDetail({ params }: { params: Promise<{ id: str
             published: n.date,
             section: n.outlet,
             tags: [n.outlet, "সংবাদ"],
-            body: n.body.join(" "),
+            body: n.rich ? richToPlain(n.rich) : n.body.join(" "),
           }),
           breadcrumbLd([{ label: "হোম", href: "/" }, { label: "সংবাদ", href: "/news" }, { label: n.outlet }]),
         ]}
@@ -78,7 +79,11 @@ export default async function NewsDetail({ params }: { params: Promise<{ id: str
               <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5 text-emerald" />{formatBnDate(n.date)}</span>
             </div>
             <div className="mt-5 space-y-4">
-              {n.body.map((p, i) => <p key={i} className="text-[0.94rem] leading-[1.85] text-ink/80">{p}</p>)}
+              {n.rich ? (
+                <RichText text={n.rich} />
+              ) : (
+                n.body.map((p, i) => <p key={i} className="text-[0.94rem] leading-[1.85] text-ink/80">{p}</p>)
+              )}
             </div>
             <div className="mt-6 flex items-center gap-2 rounded-xl border border-forest/10 bg-cream-2/50 px-3.5 py-2.5 text-[0.72rem] text-muted">
               <Newspaper className="h-3.5 w-3.5 text-emerald" />

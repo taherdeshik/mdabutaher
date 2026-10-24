@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
   CalendarDays,
@@ -8,6 +8,9 @@ import {
   Eye,
   FileText,
   ImageIcon,
+  Library,
+  Loader2,
+  Upload,
   Megaphone,
   Newspaper,
   Pencil,
@@ -20,15 +23,16 @@ import {
 import type { SectionProps } from "./types";
 import { Badge, Button, Card, CardHead, Field, Input, Modal, Select, Stat, Textarea } from "./admin-ui";
 import { SmartImage } from "@/components/ui/smart-image";
+import { RichEditor } from "./rich-editor";
 import { imageMap } from "@/content/media";
 import { postTypeLabels } from "./admin-labels";
-import { bn, formatBnDate } from "@/lib/utils";
+import { bn, formatBnDate, withBasePath } from "@/lib/utils";
 import type { Post, PostStatus, PostType } from "@/lib/command-types";
 
 const typeIcon = { news: Newspaper, event: CalendarDays, blog: FileText } as const;
 const typeTone = { news: "gold", event: "emerald", blog: "sky" } as const;
 
-export function CmsManager({ data, send }: SectionProps) {
+export function CmsManager({ data, send, adminKey }: SectionProps) {
   const { posts } = data;
   const [type, setType] = useState<"all" | PostType>("all");
   const [status, setStatus] = useState<"all" | PostStatus>("all");
@@ -171,6 +175,7 @@ export function CmsManager({ data, send }: SectionProps) {
         onClose={() => { setCreating(null); setEditing(null); }}
         data={data}
         send={send}
+        adminKey={adminKey}
       />
     </div>
   );
@@ -183,6 +188,7 @@ function PostEditor({
   onClose,
   data,
   send,
+  adminKey,
 }: {
   open: boolean;
   initial: Post | null;
@@ -190,12 +196,18 @@ function PostEditor({
   onClose: () => void;
   data: SectionProps["data"];
   send: SectionProps["send"];
+  adminKey: string;
 }) {
   const [type, setType] = useState<PostType>(initial?.type || defaultType);
   const [title, setTitle] = useState(initial?.title || "");
   const [slug, setSlug] = useState(initial?.slug || "");
   const [excerpt, setExcerpt] = useState(initial?.excerpt || "");
   const [body, setBody] = useState(initial?.body.join("\n\n") || "");
+  const [rich, setRich] = useState(initial?.rich || "");
+  const [uploading, setUploading] = useState(false);
+  const [coverNotice, setCoverNotice] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const coverRef = useRef<HTMLInputElement>(null);
   const [date, setDate] = useState(initial?.date || new Date().toISOString().slice(0, 10));
   const [status, setStatus] = useState<PostStatus>(initial?.status || "draft");
   const [outlet, setOutlet] = useState(initial?.outlet || "");
@@ -216,6 +228,8 @@ function PostEditor({
     setSlug(initial?.slug || "");
     setExcerpt(initial?.excerpt || "");
     setBody(initial?.body.join("\n\n") || "");
+    setRich(initial?.rich || "");
+    setCoverNotice("");
     setDate(initial?.date || new Date().toISOString().slice(0, 10));
     setStatus(initial?.status || "draft");
     setOutlet(initial?.outlet || "");
@@ -239,7 +253,8 @@ function PostEditor({
       title,
       slug: slug || undefined,
       excerpt,
-      body: body.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean),
+      body: (rich ? rich.split(/\n{2,}/).map((p) => p.replace(/[#>*`]/g, "").trim()).filter(Boolean) : body.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)),
+      rich,
       date,
       status,
       outlet: outlet || undefined,
@@ -273,22 +288,70 @@ function PostEditor({
         </div>
         <Field label="শিরোনাম"><Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="পোস্টের শিরোনাম" /></Field>
         <Field label="সংক্ষিপ্তসার"><Input value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="এক-দুই বাক্যে সারসংক্ষেপ" /></Field>
-        <Field label="বিস্তারিত (প্রতি প্যারাগ্রাফের মাঝে খালি লাইন)"><Textarea value={body} onChange={(e) => setBody(e.target.value)} className="min-h-[140px]" placeholder="প্রথম প্যারাগ্রাফ…&#10;&#10;দ্বিতীয় প্যারাগ্রাফ…" /></Field>
+        <Field label="বিস্তারিত লেখা" hint="টুলবার দিয়ে বোল্ড, শিরোনাম, তালিকা, লিংক ও ছবি — প্রিভিউতে সাইটের মতোই দেখায়">
+          <RichEditor
+            value={rich || body}
+            onChange={(next) => {
+              setRich(next);
+              if (next !== rich) setBody(next.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean).join("\n\n"));
+            }}
+            adminKey={adminKey}
+            placeholder={"প্রথম প্যারাগ্রাফ…\n\n## একটি উপ-শিরোনাম\n- গুরুত্বপূর্ণ পয়েন্ট\n> একটি উদ্ধৃতি"}
+          />
+        </Field>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="স্লাগ (URL)"><Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="auto-generate" className="font-latin text-[0.7rem]" /></Field>
           <Field label="ট্যাগ (কমা দিয়ে)"><Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="প্রচারণা, শিক্ষা" /></Field>
         </div>
-        <Field label="ছবি (রেজিস্ট্রি কী অথবা /media/... পাথ)">
-          <Input
-            list="cms-image-options"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            placeholder="campaign অথবা /media/legacy/foo.webp"
-            className="font-latin text-[0.68rem]"
-          />
+        <Field label="কভার ছবি" hint="আপলোড করুন, লাইব্রেরি থেকে বাছুন, অথবা রেজিস্ট্রি কী / পাথ লিখুন">
+          <div className="flex gap-1.5">
+            <Input
+              list="cms-image-options"
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
+              placeholder="campaign অথবা /media/legacy/foo.webp"
+              className="flex-1 font-latin text-[0.68rem]"
+            />
+            <input
+              ref={coverRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                void (async () => {
+                  setUploading(true);
+                  setCoverNotice("");
+                  try {
+                    const fd = new FormData();
+                    fd.append("file", file);
+                    const res = await fetch("/api/admin/media", { method: "POST", headers: { "x-admin-key": adminKey }, body: fd });
+                    const json = await res.json();
+                    if (!res.ok) throw new Error(json.error || "আপলোড ব্যর্থ");
+                    setImage(json.data.url as string);
+                    setCoverNotice("ছবি আপলোড হয়েছে");
+                  } catch (err) {
+                    setCoverNotice(err instanceof Error ? err.message : "আপলোড ব্যর্থ");
+                  } finally {
+                    setUploading(false);
+                    if (coverRef.current) coverRef.current.value = "";
+                  }
+                })();
+              }}
+            />
+            <Button size="sm" variant="gold" type="button" onClick={() => coverRef.current?.click()} disabled={uploading}>
+              {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
+            </Button>
+            <Button size="sm" variant="outline" type="button" onClick={() => setPickerOpen((v) => !v)}>
+              <Library className="h-3 w-3" />
+            </Button>
+          </div>
           <datalist id="cms-image-options">
             {Object.keys(imageMap).map((k) => <option key={k} value={k} />)}
           </datalist>
+          {coverNotice ? <p className="mt-1 text-[0.6rem] text-emerald-bright">{coverNotice}</p> : null}
+          {pickerOpen ? <MediaPicker adminKey={adminKey} onPick={(url) => { setImage(url); setPickerOpen(false); }} /> : null}
         </Field>
         <div className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
           <div className="w-24 shrink-0 overflow-hidden rounded-lg border border-white/10">
@@ -321,5 +384,41 @@ function PostEditor({
         </div>
       </div>
     </Modal>
+  );
+}
+
+/** Thumbnail picker over the shared image library (uploads + archive). */
+function MediaPicker({ adminKey, onPick }: { adminKey: string; onPick: (url: string) => void }) {
+  const [files, setFiles] = useState<{ url: string; name: string }[] | null>(null);
+  const [error, setError] = useState("");
+
+  if (files === null && !error) {
+    fetch("/api/admin/media", { headers: { "x-admin-key": adminKey }, cache: "no-store" })
+      .then((r) => r.json())
+      .then((j) => {
+        if (j.ok) setFiles(j.data.files);
+        else setError(j.error || "লাইব্রেরি লোড হয়নি");
+      })
+      .catch(() => setError("লাইব্রেরি লোড হয়নি"));
+  }
+
+  if (error) return <p className="mt-1.5 text-[0.62rem] text-rose-300">{error}</p>;
+  if (!files) return <p className="mt-1.5 flex items-center gap-1 text-[0.62rem] text-cream/40"><Loader2 className="h-3 w-3 animate-spin" /> লাইব্রেরি লোড হচ্ছে…</p>;
+
+  return (
+    <div className="mt-2 grid max-h-52 grid-cols-4 gap-1.5 overflow-y-auto rounded-lg border border-white/10 p-1.5 sm:grid-cols-6">
+      {files.map((f) => (
+        <button
+          key={f.url}
+          type="button"
+          onClick={() => onPick(f.url)}
+          className="overflow-hidden rounded border border-white/10 transition-colors hover:border-gold/60"
+          title={f.name}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- library thumbnail */}
+          <img src={withBasePath(f.url)} alt={f.name} className="aspect-square w-full object-cover" loading="lazy" />
+        </button>
+      ))}
+    </div>
   );
 }

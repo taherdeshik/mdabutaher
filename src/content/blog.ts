@@ -20,6 +20,8 @@ export type Post = {
   views: number;
   reactions: number;
   content: Block[];
+  /** Admin-authored Markdown-subset body; rendered instead of `content`. */
+  rich?: string;
 };
 
 const author = { name: "মোঃ আবু তাহের", role: "চেয়ারম্যান পদপ্রার্থী, মহাদান ইউনিয়ন" };

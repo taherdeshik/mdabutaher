@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import { manifestoIntro, pillars } from "@/content/manifesto";
+import { manifestoIntro } from "@/content/manifesto";
+import { getPillars } from "@/lib/content-overrides";
 import { site } from "@/content/site";
 import { PrintButton } from "@/components/features/print-button";
 
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/manifesto/print" },
 };
 
-export default function ManifestoPrintPage() {
+export default async function ManifestoPrintPage() {
+  const pillars = await getPillars();
   return (
     <div className="min-h-screen bg-[#e9e4d8] py-6 text-[#14201b] print:bg-white print:py-0">
       <style>{`

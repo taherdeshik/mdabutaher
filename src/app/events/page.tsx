@@ -3,8 +3,7 @@ import { CalendarDays, Download, MapPinned, Users } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { EventList } from "@/components/features/event-list";
-import { events } from "@/content/events";
-import { cmsEvents } from "@/lib/cms";
+import { getCampaignEvents } from "@/lib/content-overrides";
 import { bn, withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function EventsPage() {
-  const allEvents = [...(await cmsEvents()), ...events];
+  const allEvents = await getCampaignEvents();
   const upcoming = allEvents.filter((e) => e.status === "upcoming").length;
   const seats = allEvents.filter((e) => e.status === "upcoming").reduce((s, e) => s + (e.capacity - e.registered), 0);
   return (

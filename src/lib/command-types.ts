@@ -164,6 +164,8 @@ export interface Post {
   slug: string;
   excerpt: string;
   body: string[];
+  /** Markdown-subset rich body written in the admin editor. */
+  rich?: string;
   image: string;
   status: PostStatus;
   date: string;

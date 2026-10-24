@@ -7,6 +7,7 @@ import { Clock, Eye, Heart, MessageCircle, Share2, ThumbsUp } from "lucide-react
 import { SmartImage } from "@/components/ui/smart-image";
 import { posts, type Post } from "@/content/blog";
 import { cn, bn, formatBnDate } from "@/lib/utils";
+import { RichText } from "@/components/ui/rich-text";
 
 const reactions = [
   { id: "like", icon: ThumbsUp, label: "ভালো লেগেছে", count: 128 },
@@ -76,7 +77,8 @@ export function BlogArticle({ post }: { post: Post }) {
           </div>
 
           <div className="mt-7 space-y-4">
-            {post.content.map((block, i) => {
+            {post.rich && <RichText text={post.rich} className="space-y-4" />}
+            {(post.rich ? [] : post.content).map((block, i) => {
               if (block.type === "h2") return <h2 key={i} className="mt-8 text-xl font-bold text-forest">{block.text}</h2>;
               if (block.type === "p") return <p key={i} className="text-[0.98rem] leading-[1.9] text-ink/80">{block.text}</p>;
               if (block.type === "quote")

@@ -23,6 +23,7 @@ export async function cmsNews(): Promise<NewsItem[]> {
     date: p.date,
     summary: p.excerpt,
     body: p.body.length ? p.body : [p.excerpt],
+    rich: p.rich || undefined,
     image: p.image,
     featured: p.featured,
   }));
@@ -63,6 +64,7 @@ export async function cmsBlogPosts(): Promise<Post[]> {
     views: 0,
     reactions: 0,
     content: p.body.length ? p.body.map((text) => ({ type: "p" as const, text })) : [{ type: "p" as const, text: p.excerpt }],
+    rich: p.rich || undefined,
   }));
 }
 
