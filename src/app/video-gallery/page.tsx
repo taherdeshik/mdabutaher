@@ -74,7 +74,11 @@ export default function VideoGalleryPage() {
         <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur">
           {[
             { icon: Film, value: bn(campaignVideos.length), label: "ভিডিও" },
-            { icon: Megaphone, value: bn(campaignVideos.length - 1), label: "প্রচারণা" },
+            {
+              icon: Megaphone,
+              value: bn(campaignVideos.filter((v) => v.category === "প্রচারণা").length),
+              label: "প্রচারণা",
+            },
             { icon: Radio, value: "YouTube", label: "চ্যানেল" },
           ].map((s) => (
             <div key={s.label} className="text-center">
