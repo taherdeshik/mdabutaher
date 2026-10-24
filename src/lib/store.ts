@@ -6,6 +6,7 @@ import { seedCollections } from "@/content/command-seed";
 import type { VisitorEvent } from "@/lib/visitor-types";
 import type { SitePageContent } from "@/content/site-pages";
 import type { HomeSectionCopy } from "@/content/home-sections";
+import type { TickerItem, TickerSettings } from "@/content/ticker";
 import { mysqlEnabled, mysqlLoad, mysqlMutate } from "@/lib/mysql";
 
 export type AdminPhoto = {
@@ -224,6 +225,8 @@ export interface DBShape extends CommandCollections {
   /** Per-item overrides for the campaign schedule and the manifesto. */
   eventEdits: Record<string, EventEdit>;
   pillarEdits: Record<string, PillarEdit>;
+  /** Admin-curated news ticker (header strip). */
+  ticker: { settings: TickerSettings; items: TickerItem[] };
   meta: { seeded: boolean };
 }
 
@@ -245,6 +248,7 @@ function emptyDB(): DBShape {
     gallery: { photos: [], posters: [], videos: [], hidden: [] },
     eventEdits: {},
     pillarEdits: {},
+    ticker: { settings: { enabled: true, mode: "auto" }, items: [] },
     settings: {
       pollingDate: "2027-01-15",
       rollDate: "2026-11-05",

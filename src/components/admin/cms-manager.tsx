@@ -116,10 +116,24 @@ export function CmsManager({ data, send, adminKey }: SectionProps) {
               <div key={p.id} className="group rounded-xl border border-white/[0.07] bg-white/[0.025] p-3.5">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex min-w-0 items-start gap-2">
-                    <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-gold"><Icon className="h-3.5 w-3.5" /></span>
+                    <span className="relative mt-0.5 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10">
+                      <SmartImage
+                        imageKey={p.image}
+                        alt={p.title}
+                        className="aspect-[16/10] w-16"
+                        label=""
+                        sizes="64px"
+                      />
+                      {p.rich ? (
+                        <span className="absolute bottom-0 right-0 rounded-tl bg-night/85 px-1 text-[0.42rem] font-bold text-gold">রিচ</span>
+                      ) : null}
+                    </span>
                     <div className="min-w-0">
                       <p className="line-clamp-2 text-[0.76rem] font-bold leading-snug text-cream/85">{p.title}</p>
                       <p className="mt-0.5 line-clamp-1 text-[0.58rem] text-cream/35">{p.excerpt}</p>
+                      <p className="mt-0.5 flex items-center gap-1 truncate text-[0.5rem] text-cream/25">
+                        <Icon className="h-2 w-2" /> {p.image || "ছবি নেই"}
+                      </p>
                     </div>
                   </div>
                   <Badge tone={p.status === "published" ? "emerald" : "muted"}>{p.status === "published" ? "প্রকাশিত" : "খসড়া"}</Badge>
@@ -353,15 +367,21 @@ function PostEditor({
           {coverNotice ? <p className="mt-1 text-[0.6rem] text-emerald-bright">{coverNotice}</p> : null}
           {pickerOpen ? <MediaPicker adminKey={adminKey} onPick={(url) => { setImage(url); setPickerOpen(false); }} /> : null}
         </Field>
-        <div className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
-          <div className="w-24 shrink-0 overflow-hidden rounded-lg border border-white/10">
-            <SmartImage imageKey={image} alt="নির্বাচিত ছবি" className="aspect-[16/10]" label="পোস্টের ছবি" sizes="96px" />
+        <div className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
+          <div className="w-40 shrink-0 overflow-hidden rounded-lg border border-white/10">
+            <SmartImage imageKey={image} alt="নির্বাচিত ছবি" className="aspect-[16/10]" label="কভার ছবি" sizes="160px" />
           </div>
-          <p className="text-[0.6rem] leading-relaxed text-cream/40">
-            কী = <span className="font-latin text-cream/60">src/content/media.ts</span>-এর রেজিস্ট্রি। নতুন ছবি{" "}
-            <span className="font-latin text-cream/60">public/media/</span>-এ রেখে সরাসরি{" "}
-            <span className="font-latin text-cream/60">/media/...</span> পাথও দেওয়া যায়।
-          </p>
+          <div className="min-w-0 flex-1">
+            <p className="text-[0.62rem] font-semibold text-cream/70">তালিকা কার্ডে এভাবেই দেখাবে</p>
+            <p className="mt-1 text-[0.58rem] leading-relaxed text-cream/40">
+              যে ছবিটি সাইটের ব্লগ/সংবাদ তালিকায় ও বিস্তারিত পেজের উপরে বসবে। আপলোড করুন, লাইব্রেরি থেকে বাছুন,
+              অথবা রেজিস্ট্রি কী (<span className="font-latin text-cream/60">campaign</span>) /
+              পাথ (<span className="font-latin text-cream/60">/media/…</span>) লিখুন।
+            </p>
+            {!image ? (
+              <p className="mt-1 text-[0.58rem] text-amber-300/80">ছবি ছাড়া পোস্টে ডিজাইন করা প্লেসহোল্ডার দেখাবে।</p>
+            ) : null}
+          </div>
         </div>
         {type === "news" ? <Field label="গণমাধ্যম / উৎস"><Input value={outlet} onChange={(e) => setOutlet(e.target.value)} placeholder="যেমন: জাগো নিউজ" /></Field> : null}
         {type === "event" ? (

@@ -46,6 +46,7 @@ import { SiteContentManager } from "./site-content-manager";
 import { HomeSectionsManager } from "./home-sections-manager";
 import { GalleryManager } from "./gallery-manager";
 import { ContentItemsManager } from "./content-items-manager";
+import { TickerManager } from "./ticker-manager";
 import { CrmBoard } from "./crm-board";
 import { AdminSettings } from "./admin-settings";
 
@@ -83,6 +84,7 @@ const NAV: { group: string; items: { id: SectionId; label: string; short: string
       { id: "home", label: "হোমপেজ সেকশন", short: "হোম", icon: Home },
       { id: "gallery", label: "গ্যালারি ছবি ও ভিডিও", short: "গ্যালারি", icon: Images },
       { id: "items", label: "ইভেন্ট ও ম্যানিফেস্টো", short: "ইভেন্ট", icon: CalendarCheck2 },
+      { id: "ticker", label: "নিউজ টিকার", short: "টিকার", icon: Radio },
     ],
   },
   {
@@ -110,6 +112,7 @@ const TITLES: Record<SectionId, { title: string; sub: string }> = {
   home: { title: "হোমপেজ সেকশন", sub: "হোমপেজের প্রতিটি ব্লকের শিরোনাম, বর্ণনা ও দৃশ্যমানতা" },
   gallery: { title: "গ্যালারি ছবি ও ভিডিও", sub: "ছবি, পোস্টার ও ভিডিও যোগ-বদল — আপলোডসহ" },
   items: { title: "ইভেন্ট ও ম্যানিফেস্টো", sub: "প্রতিটি ইভেন্ট ও প্রতিটি অঙ্গীকার আলাদাভাবে সম্পাদনা" },
+  ticker: { title: "নিউজ টিকার", sub: "হেডারের চলমান খবর — নিজে লিখুন বা অটো রাখুন" },
   crm: { title: "CRM ও বার্তা", sub: "সম্পর্ক, অভিযোগ, অ্যাপয়েন্টমেন্ট ও বার্তা" },
   settings: { title: "সেটিংস ও রিপোর্ট", sub: "নির্বাচনী তারিখ, টার্নআউট ও রপ্তানি" },
 };
@@ -366,6 +369,7 @@ export function AdminShell() {
     home: HomeSectionsManager,
     gallery: GalleryManager,
     items: ContentItemsManager,
+    ticker: TickerManager,
     crm: CrmBoard,
     settings: AdminSettings,
   }[section];

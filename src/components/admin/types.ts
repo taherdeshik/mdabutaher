@@ -15,6 +15,7 @@ import type { CommandAlert, Kpis } from "@/lib/command-calc";
 import type { SitePageContent } from "@/content/site-pages";
 import type { HomeSectionCopy } from "@/content/home-sections";
 import type { AdminPhoto, AdminPoster, AdminVideo, EventEdit, GalleryStore, PillarEdit } from "@/lib/store";
+import type { TickerItem, TickerSettings } from "@/content/ticker";
 
 export interface WardCoverage {
   id: string;
@@ -104,6 +105,7 @@ export interface Snapshot {
   siteContent: Record<string, SitePageContent>;
   homeCopy: Record<string, HomeSectionCopy>;
   gallery: GalleryStore;
+  ticker: { settings: TickerSettings; items: TickerItem[] };
   eventEdits: Record<string, EventEdit>;
   pillarEdits: Record<string, PillarEdit>;
   audit: AuditEntry[];
@@ -142,5 +144,6 @@ export type SectionId =
   | "home"
   | "gallery"
   | "items"
+  | "ticker"
   | "crm"
   | "settings";

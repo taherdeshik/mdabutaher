@@ -74,6 +74,7 @@ async function snapshot() {
     challenges: [...db.challenges].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
     posts: [...db.posts].sort((a, b) => b.date.localeCompare(a.date)),
     siteContent: db.siteContent || {},
+    ticker: db.ticker || { settings: { enabled: true, mode: "auto" }, items: [] },
     eventEdits: db.eventEdits || {},
     pillarEdits: db.pillarEdits || {},
     homeCopy: db.homeCopy || {},
@@ -128,7 +129,7 @@ export async function POST(req: NextRequest) {
   const payload = (body.data || {}) as Record<string, unknown>;
   const actor = actorInfo.legacy ? str(body.actor, 60) || "ক্যাম্প ম্যানেজার" : actorInfo.name;
   const role = actorInfo.role;
-  if (role === "captain" && ["settings", "team", "expense", "booth", "page", "home", "photo", "poster", "video", "eventitem", "pillar"].includes(entity)) {
+  if (role === "captain" && ["settings", "team", "expense", "booth", "page", "home", "photo", "poster", "video", "eventitem", "pillar", "ticker"].includes(entity)) {
     return fail("এই অংশে আপনার সম্পাদনার অনুমতি নেই", 403);
   }
   if (role === "captain" && entity === "challenge" && action === "delete") {
@@ -731,6 +732,67 @@ export async function POST(req: NextRequest) {
               : prevPillar.commitments,
           };
           pushAudit(db, actor, "pillar.update", `${pillarId} — ${db.pillarEdits[pillarId].title || "আপডেট"}`);
+          break;
+        }
+
+        case "ticker": {
+          const store = db.ticker || { settings: { enabled: true, mode: "auto" }, items: [] };
+          if (action === "settings") {
+            const mode = str(payload.mode, 10);
+            store.settings = {
+              enabled: payload.enabled === undefined ? store.settings.enabled : bool(payload.enabled),
+              mode: mode === "custom" || mode === "auto" ? mode : store.settings.mode,
+            };
+            db.ticker = store;
+            pushAudit(db, actor, "ticker.settings", `${store.settings.enabled ? "চালু" : "বন্ধ"} · ${store.settings.mode}`);
+            break;
+          }
+          if (action === "create") {
+            const text = str(payload.text, 160);
+            if (!text) throw new Error("টিকারের লেখা দিন");
+            if (store.items.length >= 30) throw new Error("একসাথে সর্বোচ্চ ৩০টি টিকার লাইন রাখা যায়");
+            store.items.push({
+              id: makeId("TKR"),
+              text,
+              href: str(payload.href, 200) || "/",
+              active: payload.active === undefined ? true : bool(payload.active),
+            });
+            db.ticker = store;
+            pushAudit(db, actor, "ticker.create", text);
+            break;
+          }
+          if (action === "delete") {
+            store.items = store.items.filter((i) => i.id !== id);
+            db.ticker = store;
+            pushAudit(db, actor, "ticker.delete", id);
+            break;
+          }
+          if (action === "move") {
+            const index = store.items.findIndex((i) => i.id === id);
+            if (index < 0) throw new Error("আইটেম পাওয়া যায়নি");
+            const dir = str(payload.direction, 5) === "up" ? -1 : 1;
+            const target = index + dir;
+            if (target >= 0 && target < store.items.length) {
+              [store.items[index], store.items[target]] = [store.items[target], store.items[index]];
+            }
+            db.ticker = store;
+            pushAudit(db, actor, "ticker.move", `${id} → ${dir < 0 ? "উপরে" : "নিচে"}`);
+            break;
+          }
+          if (action === "reset") {
+            db.ticker = { settings: { enabled: true, mode: "auto" }, items: [] };
+            pushAudit(db, actor, "ticker.reset", "ডিফল্ট টিকারে ফেরানো হয়েছে");
+            break;
+          }
+          if (action !== "update") throw new Error("অসমর্থিত কাজ");
+          const item = store.items.find((i) => i.id === id);
+          if (!item) throw new Error("আইটেম পাওয়া যায়নি");
+          const nextText = str(payload.text, 160);
+          if (nextText) item.text = nextText;
+          if (payload.href !== undefined) item.href = str(payload.href, 200) || "/";
+          if (payload.active !== undefined) item.active = bool(payload.active);
+          db.ticker = store;
+          pushAudit(db, actor, "ticker.update", item.text);
           break;
         }
 

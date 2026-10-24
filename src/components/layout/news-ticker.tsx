@@ -3,25 +3,27 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Radio } from "lucide-react";
-
-const tickerItems = [
-  { text: "ম্যানিফেস্টো উন্মোচন ১৪ নভেম্বর, মহাদান ইউনিয়ন পরিষদ মাঠ", href: "/events" },
-  { text: "ফ্রি মেডিকেল ক্যাম্প ৮ নভেম্বর — রেজিস্ট্রেশন চলছে", href: "/events" },
-  { text: "আজকের উঠান বৈঠক: বিকাল ৪টা, বিলবালিয়া পূর্বপাড়া", href: "/campaign" },
-  { text: "জনমত জরিপ: এলাকার প্রধান সমস্যা কোনটি? ভোট দিন", href: "/polls" },
-  { text: "অ্যাপয়েন্টমেন্ট বুকিং এখন অনলাইনে — ২ মিনিটে সময় নিন", href: "/appointment" },
-  { text: "নিরাপদ পানির ৫০টি নতুন টিউবওয়েল প্রকল্প শুরু", href: "/manifesto#water" },
-];
+import { defaultTickerItems } from "@/content/ticker";
 
 export function NewsTicker() {
-  const [live, setLive] = useState<{ text: string; href: string }[]>([]);
+  const [live, setLive] = useState<{ text: string; href: string }[] | null>(null);
+  const [enabled, setEnabled] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     fetch("/api/site/ticker", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((json) => {
-        if (!cancelled && json?.ok && Array.isArray(json.data)) setLive(json.data.slice(0, 6));
+        if (cancelled || !json?.ok) return;
+        const data = json.data;
+        if (Array.isArray(data)) {
+          setLive(data.slice(0, 8));
+          return;
+        }
+        if (data && typeof data === "object") {
+          setEnabled(data.enabled !== false);
+          setLive(Array.isArray(data.items) ? data.items : []);
+        }
       })
       .catch(() => undefined);
     return () => {
@@ -29,7 +31,11 @@ export function NewsTicker() {
     };
   }, []);
 
-  const items = [...live, ...tickerItems];
+  // Only a failed request (e.g. the static GitHub Pages mirror) falls back to the
+  // coded defaults; an empty answer means the admin really removed every line.
+  const items = live ?? defaultTickerItems;
+
+  if (!enabled || items.length === 0) return null;
 
   return (
     <div className="relative z-30 overflow-hidden border-b border-white/10 bg-forest text-cream">
