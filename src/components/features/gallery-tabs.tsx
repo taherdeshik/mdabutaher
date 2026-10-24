@@ -4,23 +4,42 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Camera, Film, Maximize2, Play, X } from "lucide-react";
 import { SmartImage } from "@/components/ui/smart-image";
-import { galleryPhotos, galleryPosters, galleryVideos } from "@/content/gallery";
+import { galleryPhotos, galleryPosters, galleryVideos, type GalleryPoster } from "@/content/gallery";
 import { cn } from "@/lib/utils";
 
-const tabs = [
-  { id: "photos", label: "ছবি", icon: Camera, count: galleryPhotos.length },
-  { id: "posters", label: "পোস্টার", icon: Maximize2, count: galleryPosters.length },
-  { id: "videos", label: "ভিডিও", icon: Film, count: galleryVideos.length },
-] as const;
-
-type TabId = (typeof tabs)[number]["id"];
+type TabId = "photos" | "posters" | "videos";
 
 const filters = ["সব", ...Array.from(new Set(galleryPhotos.map((p) => p.tag)))];
 
-export function GalleryTabs() {
-  const [tab, setTab] = useState<TabId>("photos");
+type Props = {
+  /** কোন ট্যাব খোলা থাকবে — ফটো/পোস্টার/নির্বাচনী পোস্টার পেজ থেকে আসে */
+  initialTab?: TabId;
+  /** শুধু নির্বাচনী পোস্টার দেখান (`/gallery/election-posters`) */
+  electionOnly?: boolean;
+};
+
+export function GalleryTabs({ initialTab = "photos", electionOnly = false }: Props) {
+  const posters: GalleryPoster[] = electionOnly
+    ? galleryPosters.filter((p) => p.election)
+    : galleryPosters;
+
+  const tabs = [
+    ...(electionOnly ? [] : [{ id: "photos" as TabId, label: "ছবি", icon: Camera, count: galleryPhotos.length }]),
+    {
+      id: "posters" as TabId,
+      label: electionOnly ? "নির্বাচনী পোস্টার" : "পোস্টার",
+      icon: Maximize2,
+      count: posters.length,
+    },
+    ...(electionOnly
+      ? []
+      : [{ id: "videos" as TabId, label: "ভিডিও", icon: Film, count: galleryVideos.length }]),
+  ];
+
+  const [tab, setTab] = useState<TabId>(initialTab);
   const [filter, setFilter] = useState("সব");
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [posterBox, setPosterBox] = useState<number | null>(null);
 
   const photos = useMemo(
     () => galleryPhotos.filter((p) => filter === "সব" || p.tag === filter),
@@ -37,12 +56,31 @@ export function GalleryTabs() {
     [photos.length],
   );
 
+  const posterStep = useCallback(
+    (dir: 1 | -1) => {
+      setPosterBox((current) => {
+        if (current === null) return current;
+        return (current + dir + posters.length) % posters.length;
+      });
+    },
+    [posters.length],
+  );
+
   useEffect(() => {
-    if (lightbox === null) return;
+    if (lightbox === null && posterBox === null) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightbox(null);
-      if (e.key === "ArrowRight") step(1);
-      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "Escape") {
+        setLightbox(null);
+        setPosterBox(null);
+      }
+      if (e.key === "ArrowRight") {
+        step(1);
+        posterStep(1);
+      }
+      if (e.key === "ArrowLeft") {
+        step(-1);
+        posterStep(-1);
+      }
     };
     window.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -51,9 +89,10 @@ export function GalleryTabs() {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [lightbox, step]);
+  }, [lightbox, posterBox, step, posterStep]);
 
   const active = lightbox === null ? null : photos[lightbox];
+  const activePoster = posterBox === null ? null : posters[posterBox];
 
   return (
     <div>
@@ -134,7 +173,7 @@ export function GalleryTabs() {
 
           {tab === "posters" && (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {galleryPosters.map((poster, i) => (
+              {posters.map((poster, i) => (
                 <motion.div
                   key={poster.key}
                   initial={{ opacity: 0, y: 12 }}
@@ -143,7 +182,7 @@ export function GalleryTabs() {
                   className="group overflow-hidden rounded-2xl border border-forest/10 bg-white"
                 >
                   <button
-                    onClick={() => setLightbox(null)}
+                    onClick={() => setPosterBox(i)}
                     className="block w-full"
                     aria-label={`${poster.title} বড় করে দেখুন`}
                   >
@@ -232,6 +271,65 @@ export function GalleryTabs() {
                 <ArrowLeft className="h-4 w-4" />
               </button>
               <button onClick={() => step(1)} className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-night/55 text-cream backdrop-blur hover:bg-night" aria-label="পরের ছবি">
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {activePoster && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] grid place-items-center bg-night/92 p-4 backdrop-blur"
+            onClick={() => setPosterBox(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <SmartImage
+                imageKey={activePoster.key}
+                alt={activePoster.title}
+                className="aspect-[3/4] max-h-[80vh]"
+                label={activePoster.title}
+                sizes="90vw"
+                priority
+              />
+              <div className="flex items-center justify-between gap-3 bg-white p-3">
+                <div className="min-w-0">
+                  <p className="truncate text-[0.84rem] font-bold text-forest">{activePoster.title}</p>
+                  <p className="truncate text-[0.68rem] text-muted">{activePoster.subtitle}</p>
+                </div>
+                <span className="shrink-0 font-latin text-[0.7rem] text-muted/70">
+                  {(posterBox ?? 0) + 1} / {posters.length}
+                </span>
+              </div>
+              <button
+                onClick={() => setPosterBox(null)}
+                className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-night/60 text-cream backdrop-blur hover:bg-night"
+                aria-label="বন্ধ"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => posterStep(-1)}
+                className="absolute left-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-night/55 text-cream backdrop-blur hover:bg-night"
+                aria-label="আগের পোস্টার"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => posterStep(1)}
+                className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-night/55 text-cream backdrop-blur hover:bg-night"
+                aria-label="পরের পোস্টার"
+              >
                 <ArrowRight className="h-4 w-4" />
               </button>
             </motion.div>

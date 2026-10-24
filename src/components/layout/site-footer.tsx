@@ -29,6 +29,9 @@ const columns = [
       { label: "আসন্ন ইভেন্ট", href: "/events" },
       { label: "স্বেচ্ছাসেবক হোন", href: "/campaign#volunteer" },
       { label: "ব্লগ", href: "/blog" },
+      { label: "ফটো গ্যালারী", href: "/gallery/photos" },
+      { label: "পোস্টার গ্যালারী", href: "/gallery/posters" },
+      { label: "নির্বাচনী পোস্টার", href: "/gallery/election-posters" },
     ],
   },
 ];

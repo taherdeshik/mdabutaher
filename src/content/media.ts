@@ -60,6 +60,9 @@ export const imageMap: Record<string, string> = {
   posterEid: "/media/legacy/poster-eid-2027.webp",
   posterEducation: "/media/legacy/poster-daridro-2027.webp",
   poster2: "/media/legacy/123484324_10224488721953479_2034934907087761587_-0de3b56e.webp",
+  // ২০২৭ নির্বাচনী পোস্টার — চশমা প্রতীক ও প্রার্থীর আহ্বান।
+  posterSymbol: "/media/legacy/Poster_Taher_BHai-024c3b89.webp",
+  posterPortrait: "/media/legacy/poster-portrait-2027.webp",
 };
 
 export function imageFor(key?: string) {

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Camera, Film, Maximize2 } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Camera, Film, Maximize2, Vote } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { GalleryTabs } from "@/components/features/gallery-tabs";
@@ -36,6 +37,28 @@ export default function GalleryPage() {
       </PageHero>
       <Section tone="light" className="py-10 sm:py-14">
         <div className="container-x">
+          <div className="mb-6 grid gap-2 sm:grid-cols-3">
+            {[
+              { href: "/gallery/photos", label: "ফটো গ্যালারী", desc: "মাঠের মুহূর্ত", icon: Camera },
+              { href: "/gallery/posters", label: "পোস্টার গ্যালারী", desc: "প্রচারণার ডিজাইন", icon: Maximize2 },
+              { href: "/gallery/election-posters", label: "নির্বাচনী পোস্টার", desc: "চশমা প্রতীক", icon: Vote },
+            ].map(({ href, label, desc, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="group flex items-center gap-3 rounded-2xl border border-forest/10 bg-white px-4 py-3 transition-colors hover:border-forest/30 hover:bg-cream"
+              >
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-forest/5 text-forest transition-colors group-hover:bg-forest group-hover:text-gold">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[0.8rem] font-bold text-forest">{label}</span>
+                  <span className="block text-[0.66rem] text-muted">{desc}</span>
+                </span>
+                <ArrowRight className="h-4 w-4 text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-forest" />
+              </Link>
+            ))}
+          </div>
           <GalleryTabs />
         </div>
       </Section>

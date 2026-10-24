@@ -135,6 +135,27 @@ The block in the about section adds the স্বাক্ষর label and sizes
 page (filters, captions, keyboard-navigable lightbox). Each photo needs a unique key — the gallery
 prints a duplicate/missing warning through `node` checks in code review.
 
+### গ্যালারি মেনু — কোন ফাইল কী চালায়
+
+| মেনু | রুট | কনটেন্ট | নতুন কিছু যোগ করতে |
+|---|---|---|---|
+| ফটো গ্যালারী | `/gallery/photos` | `galleryPhotos` | ছবি `public/media/`-তে রেখে `galleryPhotos`-এ `{ key, caption, tag }` যোগ করুন |
+| পোস্টার গ্যালারী | `/gallery/posters` | `galleryPosters` | `{ key, title, subtitle }` যোগ করুন |
+| নির্বাচনী পোস্টার | `/gallery/election-posters` | `galleryPosters` যেখানে `election: true` | `{ key, title, subtitle, election: true }` |
+| সব গ্যালারি | `/gallery` | উপরের সব | স্বয়ংক্রিয়ভাবে যুক্ত হবে |
+
+উদাহরণ — নতুন নির্বাচনী পোস্টার:
+
+1. পোস্টারটি WebP করে `public/media/legacy/my-poster-2027.webp` হিসেবে রাখুন (3:4, ≤ 300 KB)।
+2. `src/content/media.ts`-এ কী যোগ করুন: `myPoster: "/media/legacy/my-poster-2027.webp",`
+3. `src/content/gallery.ts` → `galleryPosters`-এ যোগ করুন:
+   `{ key: "myPoster", title: "পোস্টারের শিরোনাম", subtitle: "ছোট বার্তা", election: true },`
+4. `node scripts/build-ghpages.mjs --publish` (GitHub Pages মিরর) — সাধারণ সার্ভারে শুধু রিবিল্ড।
+5. `key` ছাড়া সরাসরি পথও চলে: `{ key: "/media/campaign/new-poster.webp", … }`.
+
+পোস্টার গ্রিডে ক্লিক করলে লাইটবক্স খোলে (কিবোর্ড: ← → এবং Esc); নির্বাচনী পোস্টার পাতায় শুধু
+`election: true` পোস্টারগুলো দেখায়।
+
 If a key is missing or the file 404s, `SmartImage` renders a designed forest-green placeholder with
 the caption — never a broken-image icon. This keeps layout and client demos intact while photos are
 being cleared.

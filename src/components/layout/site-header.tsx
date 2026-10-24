@@ -115,7 +115,7 @@ export function SiteHeader() {
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-0.5 lg:flex" aria-label="প্রধান মেনু">
+          <nav className="hidden items-center gap-0 xl:flex" aria-label="প্রধান মেনু">
             {site.nav.map((item) => {
               const active = pathname === item.href || (item.href !== "/" && Boolean(pathname?.startsWith(item.href)));
               const children = "children" in item ? item.children : undefined;
@@ -129,7 +129,7 @@ export function SiteHeader() {
                   <Link
                     href={item.href}
                     className={cn(
-                      "relative flex items-center gap-1 rounded-full px-3.5 py-2 text-[0.86rem] font-semibold transition-colors",
+                      "relative flex items-center gap-1 rounded-full px-2.5 py-2 text-[0.82rem] font-semibold transition-colors",
                       active ? "text-forest" : "text-forest/65 hover:text-forest",
                     )}
                   >
@@ -151,7 +151,7 @@ export function SiteHeader() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 6, scale: 0.98 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute left-1/2 top-full z-50 w-[26rem] -translate-x-1/2 pt-3"
+                        className="absolute left-1/2 top-full z-50 w-[24rem] -translate-x-1/2 pt-3"
                       >
                         <div className="overflow-hidden rounded-2xl border border-forest/10 bg-white p-2 shadow-[0_30px_60px_-24px_rgba(6,30,22,.35)]">
                           {children.map((c) => (
@@ -178,7 +178,7 @@ export function SiteHeader() {
             })}
           </nav>
 
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="hidden items-center gap-2 xl:flex">
             <ButtonLink href="/appointment" variant="primary" size="sm" className="gap-2">
               <CalendarCheck className="h-4 w-4" />
               অ্যাপয়েন্টমেন্ট
@@ -194,7 +194,7 @@ export function SiteHeader() {
 
           <button
             onClick={() => setOpen(true)}
-            className="grid h-11 w-11 place-items-center rounded-full border border-forest/12 text-forest lg:hidden"
+            className="grid h-11 w-11 place-items-center rounded-full border border-forest/12 text-forest xl:hidden"
             aria-label="মেনু খুলুন"
           >
             <Menu className="h-5 w-5" />

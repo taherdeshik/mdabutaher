@@ -26,6 +26,17 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: { optimizePackageImports: ["lucide-react"] },
+  // পুরোনো সাইটের গ্যালারি ঠিকানা → নতুন রুট (SEO 301)
+  async redirects() {
+    return [
+      { source: "/picture-gallery/:path*", destination: "/gallery/photos", permanent: true },
+      { source: "/picture-gallery", destination: "/gallery/photos", permanent: true },
+      { source: "/poster/:path*", destination: "/gallery/posters", permanent: true },
+      { source: "/poster", destination: "/gallery/posters", permanent: true },
+      { source: "/video-gallery/:path*", destination: "/gallery", permanent: true },
+      { source: "/video-gallery", destination: "/gallery", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

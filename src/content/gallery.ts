@@ -6,6 +6,9 @@
  * the real campaign history instead of stock imagery.
  */
 
+/** Which gallery tab a page opens. */
+export type GalleryTab = "photos" | "posters" | "videos";
+
 export type GalleryPhoto = {
   key: string;
   caption: string;
@@ -44,14 +47,35 @@ export const galleryPhotos: GalleryPhoto[] = [
   { key: "mosque", caption: "মসজিদ কমিটির সাথে দোয়া মাহফিল", tag: "সমাজসেবা" },
 ];
 
-export type GalleryPoster = { key: string; title: string; subtitle: string };
+export type GalleryPoster = {
+  key: string;
+  title: string;
+  subtitle: string;
+  /** নির্বাচনী পোস্টার — `/gallery/election-posters`-এ আলাদাভাবে দেখানো হয় */
+  election?: boolean;
+};
 
 export const galleryPosters: GalleryPoster[] = [
+  {
+    key: "posterSymbol",
+    title: "চশমা প্রতীকে ভোট দিন",
+    subtitle: "৮ নং মহাদান ইউনিয়ন পরিষদ নির্বাচন — ২৬ ডিসেম্বর",
+    election: true,
+  },
+  {
+    key: "posterPortrait",
+    title: "আপনাদের দোয়া ও ভালোবাসা চাই",
+    subtitle: "চেয়ারম্যান পদপ্রার্থী হিসেবে — ডিজিটাল ইউনিয়ন গড়ার লক্ষ্যে",
+    election: true,
+  },
   { key: "poster", title: "চেয়ারম্যান পদপ্রার্থী", subtitle: "নির্দলীয় ইউপি নির্বাচন ২০২৭" },
   { key: "poster2", title: "স্বাস্থ্যসেবা ও সচেতনতা", subtitle: "মাস্ক, পরিষ্কার-পরিচ্ছন্নতা" },
   { key: "posterEid", title: "ঈদ উপহার ও শুভেচ্ছা", subtitle: "উৎসবের খুশি সবার ঘরে" },
   { key: "posterEducation", title: "দারিদ্র্য ও মেধা", subtitle: "শিক্ষার সুযোগ সবার জন্য" },
 ];
+
+/** নির্বাচনী পোস্টার — প্রতীক, প্রার্থী ও ভোটের আহ্বান। */
+export const electionPosters = galleryPosters.filter((p) => p.election);
 
 export const galleryVideos = [
   { id: "13_YsIbYnAI", title: "স্বতন্ত্র চেয়ারম্যান প্রার্থীর ভোট প্রার্থনা" },

@@ -63,8 +63,16 @@ export const site = {
         { label: "কার্যক্রম", href: "/activities", desc: "জনকল্যাণের কাজ" },
         { label: "সংবাদ", href: "/news", desc: "গণমাধ্যমে আমরা" },
         { label: "ব্লগ", href: "/blog", desc: "ভাবনা, বিশ্লেষণ ও আপডেট" },
-        { label: "গ্যালারি", href: "/gallery", desc: "ছবি, পোস্টার ও ভিডিও" },
         { label: "মিডিয়া কিট", href: "/media-kit", desc: "প্রেস ছবি ও জীবনী" },
+      ],
+    },
+    {
+      label: "গ্যালারি",
+      href: "/gallery",
+      children: [
+        { label: "ফটো গ্যালারী", href: "/gallery/photos", desc: "মাঠের মুহূর্ত — কাজের ছবি" },
+        { label: "পোস্টার গ্যালারী", href: "/gallery/posters", desc: "প্রচারণা ও সচেতনতার ডিজাইন" },
+        { label: "নির্বাচনী পোস্টার", href: "/gallery/election-posters", desc: "চশমা প্রতীক ও ভোটের আহ্বান" },
       ],
     },
     { label: "যোগাযোগ", href: "/contact" },
