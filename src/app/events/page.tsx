@@ -21,7 +21,7 @@ export default async function EventsPage() {
   const seats = allEvents.filter((e) => e.status === "upcoming").reduce((s, e) => s + (e.capacity - e.registered), 0);
   return (
     <>
-      <PageHero
+      <PageHero pageId="events"
         eyebrow="ইভেন্ট ক্যালেন্ডার"
         title={<>আপনার এলাকায় <span className="text-gold">আমরা</span></>}
         description="প্রতিটি ইভেন্টে সরাসরি উপস্থিত থাকুন, প্রশ্ন করুন, মতামত দিন। অনলাইনে রেজিস্ট্রেশন করলে আসন নিশ্চিত ও এসএমএস রিমাইন্ডার পাবেন।"

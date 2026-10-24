@@ -4,6 +4,8 @@ import { GalleryShowcase } from "@/components/features/gallery-showcase";
 import { galleryPosters } from "@/content/gallery";
 import { bn } from "@/lib/utils";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "পোস্টার গ্যালারী",
   description:
@@ -19,6 +21,7 @@ export const metadata: Metadata = {
 export default function PosterGalleryPage() {
   return (
     <GalleryShowcase
+      pageId="gallery-posters"
       eyebrow="পোস্টার গ্যালারী"
       title={<>দেয়ালে দেয়ালে{" "}<span className="ml-1.5 inline-block text-gold">আমাদের কথা</span></>}
       description="প্রচারণার পোস্টার ও সচেতনতামূলক ডিজাইন — প্রতিটি পোস্টারে একেকটি বার্তা। ক্লিক করে পূর্ণ আকারে দেখুন।"

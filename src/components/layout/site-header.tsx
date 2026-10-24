@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import {
   ArrowUpRight,
@@ -16,7 +16,8 @@ import {
   Youtube,
 } from "lucide-react";
 import { site } from "@/content/site";
-import { cn } from "@/lib/utils";
+import { applyNavOverrides, type NavOverride } from "@/content/site-pages";
+import { cn, withBasePath } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/button";
 
 function Monogram({ light = false }: { light?: boolean }) {
@@ -40,6 +41,8 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [pageOverrides, setPageOverrides] = useState<Record<string, NavOverride>>({});
+  const nav = useMemo(() => applyNavOverrides(site.nav, pageOverrides), [pageOverrides]);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.2 });
 
@@ -54,6 +57,22 @@ export function SiteHeader() {
     setOpen(false);
     setOpenGroup(null);
   }, [pathname]);
+
+  // Menu labels / hidden pages come from the admin "সাইট কনটেন্ট" editor.
+  useEffect(() => {
+    let alive = true;
+    fetch(withBasePath("/api/site/content"), { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (alive && json?.ok && json.data?.pages) setPageOverrides(json.data.pages);
+      })
+      .catch(() => {
+        /* static mirror: keep the built-in menu */
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -116,7 +135,7 @@ export function SiteHeader() {
           </Link>
 
           <nav className="hidden items-center gap-0 xl:flex" aria-label="প্রধান মেনু">
-            {site.nav.map((item) => {
+            {nav.map((item) => {
               const active = pathname === item.href || (item.href !== "/" && Boolean(pathname?.startsWith(item.href)));
               const children = "children" in item ? item.children : undefined;
               return (
@@ -236,7 +255,7 @@ export function SiteHeader() {
 
               <div className="flex-1 overflow-y-auto px-4 py-4">
                 <nav className="flex flex-col gap-0.5">
-                  {site.nav.map((item, i) => {
+                  {nav.map((item, i) => {
                     const children = "children" in item ? item.children : undefined;
                     return (
                       <motion.div

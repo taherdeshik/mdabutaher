@@ -6,6 +6,8 @@ import { ActivityGrid } from "@/components/features/activity-grid";
 import { Counter } from "@/components/ui/counter";
 import { withBasePath } from "@/lib/utils";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "সাম্প্রতিক কার্যক্রম",
   description: "শিক্ষা, নিরাপদ পানি, স্বাস্থ্য, দুর্যোগ ত্রাণ ও পরিবেশ — মহাদান ইউনিয়নে সম্পন্ন জনকল্যাণমূলক কার্যক্রমের আর্কাইভ।",
@@ -24,7 +26,7 @@ const summary = [
 export default function ActivitiesPage() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="activities"
         eyebrow="আমাদের কাজ"
         title={<>কথা নয়, <span className="text-gold">কাজ</span> — মাঠের প্রমাণ</>}
         description="প্রতিটি উদ্যোগের ছবি, তথ্য ও প্রভাব এখানে সংরক্ষিত। কোনো কাজ ছোট নয় — মানুষের জন্য হলে তা বড়।"

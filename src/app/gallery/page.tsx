@@ -5,6 +5,8 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { GalleryTabs } from "@/components/features/gallery-tabs";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "গ্যালারি — ছবি, পোস্টার ও ভিডিও",
   description: "মহাদান ইউনিয়নের কার্যক্রম, প্রচারণা, পোস্টার ও ভিডিওর ভিজ্যুয়াল আর্কাইভ।",
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
 export default function GalleryPage() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="gallery"
         eyebrow="ভিজ্যুয়াল আর্কাইভ"
         title={<>স্মৃতির ফ্রেমে{" "}<span className="ml-1.5 inline-block text-gold">আমরা</span></>}
         description="মাঠের মুহূর্ত, প্রচারণার পোস্টার ও ভিডিও — সব এক জায়গায়। ছবিতে ক্লিক করে বড় করে দেখুন।"

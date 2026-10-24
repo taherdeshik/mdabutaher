@@ -8,6 +8,8 @@ import { SmartImage } from "@/components/ui/smart-image";
 import { site } from "@/content/site";
 import { mediaKitBio } from "@/content/media-kit";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "মিডিয়া কিট — লোগো, ছবি, জীবনী ও তথ্য",
   description: "সাংবাদিক ও সংগঠকদের জন্য মোঃ আবু তাহেরের অফিসিয়াল মিডিয়া কিট: জীবনের সংক্ষিপ্ত ও পূর্ণ বিবরণ, প্রেস ছবি, ব্র্যান্ড রঙ ও যোগাযোগ।",
@@ -33,7 +35,7 @@ const factSheet = [
 export default function MediaKitPage() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="media-kit"
         eyebrow="প্রেস ও মিডিয়া"
         title={<>মিডিয়া <span className="text-gold">কিট</span></>}
         description="সাংবাদিক, ফটোগ্রাফার ও সংগঠকদের জন্য প্রয়োজনীয় সব উপকরণ এক জায়গায় — প্রেস ছবি, জীবনী, ব্র্যান্ড রঙ ও সরাসরি যোগাযোগ।"

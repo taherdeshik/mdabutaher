@@ -10,6 +10,7 @@ import {
   Database,
   Footprints,
   LayoutDashboard,
+  LayoutTemplate,
   LifeBuoy,
   Loader2,
   LogOut,
@@ -39,6 +40,7 @@ import { TeamBoard } from "./team-board";
 import { ChallengesBoard } from "./challenges-board";
 import { MoneyBoard } from "./money-board";
 import { CmsManager } from "./cms-manager";
+import { SiteContentManager } from "./site-content-manager";
 import { CrmBoard } from "./crm-board";
 import { AdminSettings } from "./admin-settings";
 
@@ -72,6 +74,7 @@ const NAV: { group: string; items: { id: SectionId; label: string; short: string
     items: [
       { id: "money", label: "ব্যয় ট্র্যাকার", short: "অর্থ", icon: Wallet },
       { id: "cms", label: "কনটেন্ট স্টুডিও", short: "কনটেন্ট", icon: Newspaper },
+      { id: "site", label: "সাইট কনটেন্ট", short: "সাইট", icon: LayoutTemplate },
     ],
   },
   {
@@ -95,6 +98,7 @@ const TITLES: Record<SectionId, { title: string; sub: string }> = {
   challenges: { title: "চ্যালেঞ্জ ও সহায়তা", sub: "সমস্যা রেজিস্টার, সমাধান ও আইনি নির্দেশিকা" },
   money: { title: "ব্যয় ট্র্যাকার", sub: "ব্যয়সীমা, রশিদ ও নির্বাচনী হিসাব" },
   cms: { title: "কনটেন্ট স্টুডিও", sub: "সংবাদ, ইভেন্ট ও ব্লগ প্রকাশ — সাইটে সরাসরি" },
+  site: { title: "সাইট কনটেন্ট", sub: "সব মেনু ও সাব-মেনুর লেখা, ছবি ও ভিডিও — এখান থেকেই" },
   crm: { title: "CRM ও বার্তা", sub: "সম্পর্ক, অভিযোগ, অ্যাপয়েন্টমেন্ট ও বার্তা" },
   settings: { title: "সেটিংস ও রিপোর্ট", sub: "নির্বাচনী তারিখ, টার্নআউট ও রপ্তানি" },
 };
@@ -347,6 +351,7 @@ export function AdminShell() {
     challenges: ChallengesBoard,
     money: MoneyBoard,
     cms: CmsManager,
+    site: SiteContentManager,
     crm: CrmBoard,
     settings: AdminSettings,
   }[section];

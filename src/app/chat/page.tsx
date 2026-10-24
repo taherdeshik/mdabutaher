@@ -3,6 +3,8 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { ChatPage } from "@/components/features/chat-page";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "লাইভ চ্যাট ও বার্তা",
   description: "মহাদান ইউনিয়নের জনসংযোগ ডেস্কের সাথে সরাসরি চ্যাট করুন — প্রশ্ন, পরামর্শ বা সহায়তা।",
@@ -12,7 +14,7 @@ export const metadata: Metadata = {
 export default function Chat() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="chat"
         eyebrow="সরাসরি যোগাযোগ"
         title={<>কথা বলুন <span className="text-gold">সরাসরি</span></>}
         description="প্রশ্ন, পরামর্শ বা সহায়তা — আমাদের ডেস্ক আপনার জন্য প্রস্তুত। বার্তাগুলো সংরক্ষিত থাকে যাতে পরে যোগাযোগ করা যায়।"

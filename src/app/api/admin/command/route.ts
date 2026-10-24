@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { fail, ok, requireAdmin } from "@/lib/api";
 import { actorFromRequest } from "@/lib/auth";
 import { makeId, mutate, pushAudit, read } from "@/lib/store";
@@ -15,6 +16,7 @@ import type {
 } from "@/lib/command-types";
 import { computeAlerts, computeBrief, computeKpis, wardStats } from "@/lib/command-calc";
 import { slugify } from "@/lib/utils";
+import { sitePageById, type SitePageContent } from "@/content/site-pages";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +70,7 @@ async function snapshot() {
     expenses: [...db.expenses].sort((a, b) => b.date.localeCompare(a.date)),
     challenges: [...db.challenges].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
     posts: [...db.posts].sort((a, b) => b.date.localeCompare(a.date)),
+    siteContent: db.siteContent || {},
     audit: db.audit.slice(0, 40),
     kpis,
     alerts,
@@ -118,7 +121,7 @@ export async function POST(req: NextRequest) {
   const payload = (body.data || {}) as Record<string, unknown>;
   const actor = actorInfo.legacy ? str(body.actor, 60) || "ক্যাম্প ম্যানেজার" : actorInfo.name;
   const role = actorInfo.role;
-  if (role === "captain" && ["settings", "team", "expense", "booth"].includes(entity)) {
+  if (role === "captain" && ["settings", "team", "expense", "booth", "page"].includes(entity)) {
     return fail("এই অংশে আপনার সম্পাদনার অনুমতি নেই", 403);
   }
   if (role === "captain" && entity === "challenge" && action === "delete") {
@@ -496,11 +499,48 @@ export async function POST(req: NextRequest) {
           break;
         }
 
+        case "page": {
+          const pageId = str(id || payload.id, 60);
+          const def = sitePageById.get(pageId);
+          if (!def) throw new Error("পেজ পাওয়া যায়নি");
+
+          if (action === "reset") {
+            delete db.siteContent[pageId];
+            pushAudit(db, actor, "page.reset", `${def.label} (${def.href})`);
+            break;
+          }
+          if (action !== "update") throw new Error("অসমর্থিত কাজ");
+
+          const prev = db.siteContent[pageId];
+          const next: SitePageContent = {
+            label: str(payload.label, 60),
+            eyebrow: str(payload.eyebrow, 90),
+            title: str(payload.title, 160),
+            description: str(payload.description, 500),
+            body: str(payload.body, 2500),
+            image: str(payload.image, 400),
+            video: str(payload.video, 300),
+            visible: payload.visible === undefined ? prev?.visible !== false : bool(payload.visible),
+            updatedAt: new Date().toISOString(),
+            updatedBy: actor,
+          };
+          db.siteContent[pageId] = next;
+          pushAudit(db, actor, "page.update", `${def.href} — ${next.title || next.label || "আপডেট"}`);
+          break;
+        }
+
         default:
           throw new Error("অসমর্থিত অনুরোধ");
       }
       db.meta.seeded = true;
     });
+
+    // Page edits must show up immediately, not after the ISR window.
+    if (entity === "page") {
+      const target = sitePageById.get(str(id || payload.id, 60));
+      revalidatePath("/");
+      if (target && target.href !== "/") revalidatePath(target.href);
+    }
 
     return ok(await snapshot());
   } catch (error) {

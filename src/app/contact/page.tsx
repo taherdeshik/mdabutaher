@@ -6,6 +6,8 @@ import { ContactForm } from "@/components/features/contact-form";
 import { site } from "@/content/site";
 import { Reveal } from "@/components/ui/reveal";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "যোগাযোগ",
   description: "কার্যালয়ের ঠিকানা, ফোন, ইমেইল ও ম্যাপ — মোঃ আবু তাহেরের সাথে যোগাযোগের সব মাধ্যম।",
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="contact"
         eyebrow="যোগাযোগ"
         title={<>আপনার কথা <span className="text-gold">শুনতে</span> প্রস্তুত</>}
         description="ফোন, ইমেইল, সরাসরি সাক্ষাৎ বা অনলাইন বার্তা — যেভাবে সুবিধা, সেভাবেই যোগাযোগ করুন।"

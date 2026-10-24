@@ -22,7 +22,7 @@ export default async function NewsPage() {
   const [lead, ...rest] = items;
   return (
     <>
-      <PageHero
+      <PageHero pageId="news"
         eyebrow="প্রেস কভারেজ"
         title={<>গণমাধ্যমে <span className="text-gold">আমরা</span></>}
         description="জাতীয় ও স্থানীয় গণমাধ্যমে প্রকাশিত সংবাদ — কোনো প্রচার নয়, কাজের স্বীকৃতি।"

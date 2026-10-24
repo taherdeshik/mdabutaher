@@ -4,6 +4,8 @@ import { GalleryShowcase } from "@/components/features/gallery-showcase";
 import { galleryPhotos, galleryVideos } from "@/content/gallery";
 import { bn } from "@/lib/utils";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "ফটো গ্যালারী",
   description:
@@ -19,6 +21,7 @@ export const metadata: Metadata = {
 export default function PhotoGalleryPage() {
   return (
     <GalleryShowcase
+      pageId="gallery-photos"
       eyebrow="ফটো গ্যালারী"
       title={<>মাঠের প্রতিটি{" "}<span className="ml-1.5 inline-block text-gold">মুহূর্ত</span></>}
       description="ত্রাণ বিতরণ থেকে উঠান বৈঠক — কাজের প্রমাণ ছবিতে। যেকোনো ছবিতে ক্লিক করে বড় করে দেখুন।"

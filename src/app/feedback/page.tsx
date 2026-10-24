@@ -7,6 +7,8 @@ import { Reveal } from "@/components/ui/reveal";
 import { FeedbackStats } from "@/components/features/feedback-stats";
 import { withBasePath } from "@/lib/utils";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "সমস্যা, পরামর্শ ও হুমকি রিপোর্ট",
   description: "মহাদান ইউনিয়নের স্থানীয় সমস্যা, উন্নয়ন পরামর্শ ও নিরাপত্তা হুমকি সরাসরি জানান — ট্র্যাকিং আইডিসহ।",
@@ -22,7 +24,7 @@ const channels = [
 export default function FeedbackPage() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="feedback"
         eyebrow="জনগণের কণ্ঠস্বর"
         title={<>আপনার সমস্যা জানুন, <span className="text-gold">সমাধান</span> হোক</>}
         description="এই প্ল্যাটফর্ম আপনার কথা শোনার জন্য। প্রতিটি রিপোর্ট একটি ট্র্যাকিং আইডি পায়, সংশ্লিষ্ট ওয়ার্ডে পাঠানো হয় এবং অগ্রগতি প্রকাশ্যে আপডেট হয়।"

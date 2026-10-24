@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import type { AuditEntry, CommandCollections } from "@/lib/command-types";
 import { seedCollections } from "@/content/command-seed";
 import type { VisitorEvent } from "@/lib/visitor-types";
+import type { SitePageContent } from "@/content/site-pages";
 import { mysqlEnabled, mysqlLoad, mysqlMutate } from "@/lib/mysql";
 
 /**
@@ -149,6 +150,8 @@ export interface DBShape extends CommandCollections {
   visitorEvents: VisitorEvent[];
   adminUsers: AdminUser[];
   adminSessions: AdminSession[];
+  /** Per-page overrides written by the admin "সাইট কনটেন্ট" editor. */
+  siteContent: Record<string, SitePageContent>;
   meta: { seeded: boolean };
 }
 
@@ -165,6 +168,7 @@ function emptyDB(): DBShape {
     visitorEvents: [],
     adminUsers: [],
     adminSessions: [],
+    siteContent: {},
     settings: {
       pollingDate: "2027-01-15",
       rollDate: "2026-11-05",

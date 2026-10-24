@@ -9,6 +9,8 @@ import { CtaBand } from "@/components/home/cta-band";
 import { manifestoIntro, manifestoFaq, pillars } from "@/content/manifesto";
 import { withBasePath } from "@/lib/utils";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "নির্বাচনী ম্যানিফেস্টো ২০২৭",
   description: "৮টি স্তম্ভে ৩২টি সুনির্দিষ্ট অঙ্গীকার — শিক্ষা, পানি, স্বাস্থ্য, অবকাঠামো, নিরাপত্তা, কৃষি, ডিজিটাল ও অন্তর্ভুক্তি। প্রতিটি অঙ্গীকারের সময়সীমা ও অগ্রগতি।",
@@ -25,7 +27,7 @@ const roadmap = [
 export default function ManifestoPage() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="manifesto"
         eyebrow="ম্যানিফেস্টো ২০২৭"
         title={<>প্রতিশ্রুতি নয়, <span className="text-gold">পরিকল্পনা</span></>}
         description={manifestoIntro.quote}

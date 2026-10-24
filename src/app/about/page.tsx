@@ -16,6 +16,8 @@ import { bio, site, stats, values, faqs } from "@/content/site";
 import { Icon } from "@/components/ui/icon";
 import { withBasePath } from "@/lib/utils";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "আমার পরিচিতি",
   description:
@@ -35,7 +37,7 @@ const journey = [
 export default function AboutPage() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="about"
         eyebrow="পরিচিতি"
         title={<>যে মানুষ মাঠে থাকে, <span className="text-gold">সে-ই নেতা</span></>}
         description={site.intro}

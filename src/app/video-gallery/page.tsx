@@ -10,6 +10,8 @@ import { campaignVideos, embedUrl, thumbnailUrl, watchUrl } from "@/content/vide
 import { site } from "@/content/site";
 import { bn } from "@/lib/utils";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "ভিডিও গ্যালারি",
   description:
@@ -59,7 +61,7 @@ export default function VideoGalleryPage() {
         ]}
       />
 
-      <PageHero
+      <PageHero pageId="video-gallery"
         eyebrow="ভিডিও গ্যালারি"
         title={
           <>

@@ -9,6 +9,8 @@ import { VolunteerForm } from "@/components/features/volunteer-form";
 import { campaignKpis, campaignOverview, campaignResources, phases, weeklyRhythm, zones } from "@/content/campaign";
 import { bn, withBasePath } from "@/lib/utils";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "প্রচারণা পরিকল্পনা ও সময়সূচি",
   description: "মহাদান ইউনিয়নের ২০২৭ নির্বাচনী প্রচারণার ধাপ, ওয়ার্ডভিত্তিক পরিকল্পনা, সাপ্তাহিক রুটিন ও স্বেচ্ছাসেবক সুযোগ।",
@@ -18,7 +20,7 @@ export const metadata: Metadata = {
 export default function CampaignPage() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="campaign"
         eyebrow="প্রচারণা ২০২৭"
         title={<>২১ সপ্তাহের <span className="text-gold">পরিকল্পিত পথচলা</span></>}
         description={campaignOverview.goal}

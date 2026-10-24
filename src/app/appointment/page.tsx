@@ -8,6 +8,8 @@ import { Reveal } from "@/components/ui/reveal";
 import { site, faqs } from "@/content/site";
 import { withBasePath } from "@/lib/utils";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "অ্যাপয়েন্টমেন্ট বুকিং",
   description: "মোঃ আবু তাহেরের সাথে সরাসরি সাক্ষাৎ, ফোন কল বা বাড়ি পরিদর্শনের জন্য অনলাইনে সময় বুক করুন — ২ মিনিটে।",
@@ -23,7 +25,7 @@ const info = [
 export default function AppointmentPage() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="appointment"
         eyebrow="জনসেবা"
         title={<>সাক্ষাতের সময় নিন — <span className="text-gold">লাইনে দাঁড়ানো নয়</span></>}
         description="আপনার সময়ও মূল্যবান, আমাদেরও। অনলাইনে সময় বুক করুন — নিশ্চিতকরণ, রিমাইন্ডার ও স্ট্যাটাস সবকিছু এসএমএস ও এই প্ল্যাটফর্মে।"

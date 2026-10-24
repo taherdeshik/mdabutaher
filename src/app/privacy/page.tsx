@@ -3,6 +3,8 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { AnalyticsOptOut } from "@/components/privacy/analytics-opt-out";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "গোপনীয়তা নীতি",
   description: "এই প্ল্যাটফর্মে সংগৃহীত তথ্য কীভাবে ব্যবহার ও সুরক্ষিত রাখা হয়।",
@@ -22,7 +24,7 @@ const sections = [
 export default function PrivacyPage() {
   return (
     <>
-      <PageHero eyebrow="গোপনীয়তা" title="আপনার তথ্য, আপনার নিয়ন্ত্রণে" description="স্বচ্ছতা শুধু বাজেটে নয় — ডেটাতেও। কী সংগ্রহ করি, কেন করি এবং কীভাবে সুরক্ষিত রাখি তার সহজ ভাষায় ব্যাখ্যা।" crumbs={[{ label: "গোপনীয়তা নীতি" }]} />
+      <PageHero pageId="privacy" eyebrow="গোপনীয়তা" title="আপনার তথ্য, আপনার নিয়ন্ত্রণে" description="স্বচ্ছতা শুধু বাজেটে নয় — ডেটাতেও। কী সংগ্রহ করি, কেন করি এবং কীভাবে সুরক্ষিত রাখি তার সহজ ভাষায় ব্যাখ্যা।" crumbs={[{ label: "গোপনীয়তা নীতি" }]} />
       <Section tone="light" className="py-10 sm:py-14">
         <div className="container-x max-w-3xl">
           <div className="space-y-3">

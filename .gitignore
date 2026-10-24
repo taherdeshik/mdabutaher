@@ -19,3 +19,7 @@ tsconfig.tsbuildinfo
 # GitHub Pages static mirror build
 .ghpages-build/
 out-ghpages/
+
+# runtime image uploads (admin panel)
+public/media/uploads/
+data/uploads/

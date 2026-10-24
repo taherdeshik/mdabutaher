@@ -13,6 +13,9 @@ import { BlogPreview } from "@/components/home/blog-preview";
 import { Testimonials } from "@/components/home/testimonials";
 import { CtaBand } from "@/components/home/cta-band";
 import { site } from "@/content/site";
+import { getPageContent } from "@/lib/site-content";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: `${site.name} — ${site.role}, ${site.union}`,
@@ -21,10 +24,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const cms = await getPageContent("home");
   return (
     <>
-      <Hero />
+      <Hero cms={cms} />
       <QuickActions />
       <StatsBand />
       <IntroVideoSection />

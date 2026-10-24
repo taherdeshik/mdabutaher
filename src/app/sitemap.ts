@@ -4,6 +4,8 @@ import { activities } from "@/content/activities";
 import { events } from "@/content/events";
 import { news } from "@/content/news";
 import { cmsBlogPosts, cmsEvents, cmsNews } from "@/lib/cms";
+import { getAllSiteContent } from "@/lib/site-content";
+import { pageIdForHref } from "@/content/site-pages";
 
 export const dynamic = "force-dynamic";
 
@@ -17,11 +19,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const now = new Date();
+  const pageContent = await getAllSiteContent();
   const staticRoutes = [
     "", "/about", "/manifesto", "/campaign", "/events", "/activities", "/news",
     "/blog", "/gallery", "/gallery/photos", "/gallery/posters", "/gallery/election-posters", "/video-gallery", "/polls", "/appointment", "/appointment/status", "/feedback",
     "/feedback/board", "/chat", "/contact", "/media-kit", "/privacy",
-  ].map((p) => ({
+  ]
+    // Pages hidden in the admin panel stay out of the sitemap too.
+    .filter((p) => {
+      const id = pageIdForHref(p || "/");
+      return !id || pageContent[id]?.visible !== false;
+    })
+    .map((p) => ({
     url: base + p,
     lastModified: now,
     changeFrequency: "weekly" as const,

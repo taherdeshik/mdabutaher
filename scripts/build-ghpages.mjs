@@ -148,6 +148,8 @@ async function main() {
   // Server-only surfaces.
   await fs.rm(path.join(workDir, "src/app/api"), { recursive: true, force: true });
   await fs.rm(path.join(workDir, "src/app/admin"), { recursive: true, force: true });
+  // Runtime image uploads have no meaning on a static host.
+  await fs.rm(path.join(workDir, "src/app/media/uploads"), { recursive: true, force: true });
   await fs.rm(path.join(workDir, "server.js"), { force: true });
 
   // A static mirror cannot store form submissions; start from an empty store
@@ -161,10 +163,16 @@ async function main() {
   await walk(path.join(workDir, "src/app"), async (file) => {
     const src = await fs.readFile(file, "utf8");
     const isRoute = file.endsWith("route.ts") || file.endsWith("sitemap.ts");
-    const next = src.replace(/^export const dynamic = "force-dynamic";?\s*$/gm, () => {
-      stripped += 1;
-      return isRoute ? 'export const dynamic = "force-static";' : "";
-    });
+    const next = src
+      .replace(/^export const dynamic = "force-dynamic";?\s*$/gm, () => {
+        stripped += 1;
+        return isRoute ? 'export const dynamic = "force-static";' : "";
+      })
+      // ISR is meaningless in a one-shot export.
+      .replace(/^export const revalidate = \d+;?\s*$/gm, () => {
+        stripped += 1;
+        return "";
+      });
     if (next !== src) await fs.writeFile(file, next, "utf8");
   });
   console.log(`  rewrote ${stripped} force-dynamic directive(s)`);

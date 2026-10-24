@@ -20,7 +20,7 @@ export default async function BlogPage() {
   const views = posts.reduce((s, p) => s + p.views, 0);
   return (
     <>
-      <PageHero
+      <PageHero pageId="blog"
         eyebrow="ব্লগ"
         title={<>সমস্যার কথা নয়, <span className="text-gold">সমাধানের</span> কথা</>}
         description="প্রতিটি লেখায় একটি সমস্যা, একটি বিশ্লেষণ এবং একটি বাস্তবায়নযোগ্য পরিকল্পনা। পাঠকের মতামত ও সংশোধনী সবসময় স্বাগত।"

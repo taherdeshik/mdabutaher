@@ -4,6 +4,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 
 type Props = {
+  pageId: string;
   eyebrow: string;
   title: React.ReactNode;
   description: string;
@@ -15,10 +16,11 @@ type Props = {
 };
 
 /** Shared shell for the gallery sub-pages (ছবি / পোস্টার / নির্বাচনী পোস্টার). */
-export function GalleryShowcase({ eyebrow, title, description, crumb, accent, tab, electionOnly, stats }: Props) {
+export function GalleryShowcase({ pageId, eyebrow, title, description, crumb, accent, tab, electionOnly, stats }: Props) {
   return (
     <>
       <PageHero
+        pageId={pageId}
         eyebrow={eyebrow}
         title={title}
         description={description}

@@ -12,6 +12,7 @@ import type {
   Ward,
 } from "@/lib/command-types";
 import type { CommandAlert, Kpis } from "@/lib/command-calc";
+import type { SitePageContent } from "@/content/site-pages";
 
 export interface WardCoverage {
   id: string;
@@ -98,6 +99,7 @@ export interface Snapshot {
   expenses: Expense[];
   challenges: Challenge[];
   posts: Post[];
+  siteContent: Record<string, SitePageContent>;
   audit: AuditEntry[];
   kpis: Kpis;
   alerts: CommandAlert[];
@@ -130,5 +132,6 @@ export type SectionId =
   | "challenges"
   | "money"
   | "cms"
+  | "site"
   | "crm"
   | "settings";

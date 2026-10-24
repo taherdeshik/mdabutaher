@@ -3,6 +3,8 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { PollsPage } from "@/components/features/polls-page";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "জনমত জরিপ ও পাবলিক পোল",
   description: "এলাকার সমস্যা, সেবার অগ্রাধিকার ও প্রচারণা নিয়ে জনমত জানুন — লাইভ ফলাফলসহ।",
@@ -12,7 +14,7 @@ export const metadata: Metadata = {
 export default function Polls() {
   return (
     <>
-      <PageHero
+      <PageHero pageId="polls"
         eyebrow="জনমত"
         title={<>আপনার ভোট, <span className="text-gold">আমাদের পথ</span></>}
         description="আমরা সিদ্ধান্ত নিই একা নয় — জনমতের সাথে। প্রতিটি জরিপের ফলাফল প্রকাশ্য এবং ম্যানিফেস্টো ও অগ্রাধিকার নির্ধারণে ব্যবহৃত হয়।"

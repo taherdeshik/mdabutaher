@@ -8,10 +8,11 @@ import { site } from "@/content/site";
 import { SmartImage } from "@/components/ui/smart-image";
 import { ButtonLink } from "@/components/ui/button";
 import { introVideo } from "@/content/videos";
+import type { SitePageContent } from "@/content/site-pages";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export function Hero() {
+export function Hero({ cms }: { cms?: SitePageContent }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -51,22 +52,32 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.08, ease }}
             className="mt-6 text-balance-tight text-[clamp(2.3rem,6.2vw,4.5rem)] font-bold leading-[1.08]"
           >
-            মানুষের পাশে
-            <br />
-            <span className="relative inline-block">
-              <span className="bg-gradient-to-r from-gold via-[#f5d79b] to-gold bg-clip-text text-transparent">সবসময়</span>
-              <motion.svg
-                viewBox="0 0 320 18"
-                className="absolute -bottom-3 left-0 w-full text-gold/60"
-                fill="none"
-                initial={reduce ? false : { pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 1.3, delay: 0.9 }}
-              >
-                <motion.path d="M4 12C70 4 190 3 316 9" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-              </motion.svg>
-            </span>
-            <span className="block text-[0.52em] font-semibold text-cream/80">— একটি পরিকল্পিত মহাদানের প্রতিশ্রুতি</span>
+            {cms?.title ? (
+              <span className="text-balance-tight">{cms.title}</span>
+            ) : (
+              <>
+                মানুষের পাশে
+                <br />
+                <span className="relative inline-block">
+                  <span className="bg-gradient-to-r from-gold via-[#f5d79b] to-gold bg-clip-text text-transparent">
+                    সবসময়
+                  </span>
+                  <motion.svg
+                    viewBox="0 0 320 18"
+                    className="absolute -bottom-3 left-0 w-full text-gold/60"
+                    fill="none"
+                    initial={reduce ? false : { pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 1.3, delay: 0.9 }}
+                  >
+                    <motion.path d="M4 12C70 4 190 3 316 9" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+                  </motion.svg>
+                </span>
+                <span className="block text-[0.52em] font-semibold text-cream/80">
+                  — একটি পরিকল্পিত মহাদানের প্রতিশ্রুতি
+                </span>
+              </>
+            )}
           </motion.h1>
 
           <motion.p
@@ -75,7 +86,7 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.2, ease }}
             className="mt-6 max-w-xl text-[0.95rem] leading-relaxed text-cream/60 sm:text-base"
           >
-            {site.heroQuote}
+            {cms?.description || site.heroQuote}
           </motion.p>
 
           <motion.div
@@ -148,7 +159,7 @@ export function Hero() {
             <div className="absolute -inset-3 rounded-[2.4rem] border border-gold/25" />
             <div className="absolute -inset-3 rounded-[2.4rem] bg-gradient-to-b from-gold/10 to-transparent" />
             <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-forest-2 shadow-[0_40px_80px_-30px_rgba(0,0,0,.7)]">
-              <SmartImage imageKey="hero" alt={`${site.name} — ${site.role}`} className="aspect-[4/5]" label="প্রার্থীর ছবি" priority sizes="(max-width: 1024px) 90vw, 40vw" />
+              <SmartImage imageKey="hero" src={cms?.image || undefined} alt={`${site.name} — ${site.role}`} className="aspect-[4/5]" label="প্রার্থীর ছবি" priority sizes="(max-width: 1024px) 90vw, 40vw" />
               <div className="absolute inset-0 bg-gradient-to-t from-night/95 via-night/10 to-transparent" />
               <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-night/55 via-night/15 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-5">
