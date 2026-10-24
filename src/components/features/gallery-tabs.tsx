@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Camera, Film, Maximize2, Play, X } from "lucide-react";
+import Link from "next/link";
 import { SmartImage } from "@/components/ui/smart-image";
 import { galleryPhotos, galleryPosters, galleryVideos, type GalleryPoster } from "@/content/gallery";
 import { cn } from "@/lib/utils";
@@ -227,6 +228,16 @@ export function GalleryTabs({ initialTab = "photos", electionOnly = false }: Pro
                   <p className="p-3 text-[0.8rem] font-semibold leading-snug text-forest">{v.title}</p>
                 </div>
               ))}
+              <Link
+                href="/video-gallery"
+                className="group flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-forest/25 bg-white p-6 text-center transition-colors hover:border-forest/50 hover:bg-cream"
+              >
+                <span className="grid h-11 w-11 place-items-center rounded-full bg-gold text-night">
+                  <Play className="h-5 w-5 fill-current" />
+                </span>
+                <span className="text-[0.82rem] font-bold text-forest">সব ভিডিও দেখুন</span>
+                <span className="text-[0.66rem] text-muted">পূর্ণ ভিডিও গ্যালারি পেজ</span>
+              </Link>
             </div>
           )}
         </motion.div>

@@ -142,6 +142,7 @@ prints a duplicate/missing warning through `node` checks in code review.
 | ফটো গ্যালারী | `/gallery/photos` | `galleryPhotos` | ছবি `public/media/`-তে রেখে `galleryPhotos`-এ `{ key, caption, tag }` যোগ করুন |
 | পোস্টার গ্যালারী | `/gallery/posters` | `galleryPosters` | `{ key, title, subtitle }` যোগ করুন |
 | নির্বাচনী পোস্টার | `/gallery/election-posters` | `galleryPosters` যেখানে `election: true` | `{ key, title, subtitle, election: true }` |
+| ভিডিও গ্যালারি | `/video-gallery` | `campaignVideos` (`src/content/videos.ts`) | `{ id, title, category }` যোগ করুন — `id` হলো YouTube ভিডিও আইডি |
 | সব গ্যালারি | `/gallery` | উপরের সব | স্বয়ংক্রিয়ভাবে যুক্ত হবে |
 
 উদাহরণ — নতুন নির্বাচনী পোস্টার:
@@ -155,6 +156,21 @@ prints a duplicate/missing warning through `node` checks in code review.
 
 পোস্টার গ্রিডে ক্লিক করলে লাইটবক্স খোলে (কিবোর্ড: ← → এবং Esc); নির্বাচনী পোস্টার পাতায় শুধু
 `election: true` পোস্টারগুলো দেখায়।
+
+### ভিডিও গ্যালারি — নতুন ভিডিও যোগ করা
+
+`src/content/videos.ts` → `campaignVideos`-এ একটি লাইন:
+
+```ts
+{ id: "YouTubeVideoID", title: "ভিডিওর শিরোনাম", category: "প্রচারণা" },
+```
+
+- `id` = YouTube লিংকের শেষ অংশ (`https://www.youtube.com/watch?v=**hnD09TA3Vj8**`)
+- `category` = `প্রচারণা` | `ইশতেহার` | `সাংবাদিক সম্মেলন` | `মিডিয়া`
+- প্রথম ভিডিওটি বড় "প্রধান ভিডিও" হিসেবে দেখাতে চাইলে `featured: true`
+- থাম্বনেইল YouTube থেকে অটো আসে (`i.ytimg.com`) — আলাদা ছবি লাগে না
+- ক্লিক না করা পর্যন্ত কোনো YouTube iframe লোড হয় না (গতি ও প্রাইভেসি), প্লে করলে
+  `youtube-nocookie.com` থেকে চলে
 
 If a key is missing or the file 404s, `SmartImage` renders a designed forest-green placeholder with
 the caption — never a broken-image icon. This keeps layout and client demos intact while photos are

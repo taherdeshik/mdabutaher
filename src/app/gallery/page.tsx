@@ -37,11 +37,12 @@ export default function GalleryPage() {
       </PageHero>
       <Section tone="light" className="py-10 sm:py-14">
         <div className="container-x">
-          <div className="mb-6 grid gap-2 sm:grid-cols-3">
+          <div className="mb-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { href: "/gallery/photos", label: "ফটো গ্যালারী", desc: "মাঠের মুহূর্ত", icon: Camera },
               { href: "/gallery/posters", label: "পোস্টার গ্যালারী", desc: "প্রচারণার ডিজাইন", icon: Maximize2 },
               { href: "/gallery/election-posters", label: "নির্বাচনী পোস্টার", desc: "চশমা প্রতীক", icon: Vote },
+              { href: "/video-gallery", label: "ভিডিও গ্যালারি", desc: "প্রচারণা ও ইশতেহার", icon: Film },
             ].map(({ href, label, desc, icon: Icon }) => (
               <Link
                 key={href}

@@ -32,6 +32,7 @@ const columns = [
       { label: "ফটো গ্যালারী", href: "/gallery/photos" },
       { label: "পোস্টার গ্যালারী", href: "/gallery/posters" },
       { label: "নির্বাচনী পোস্টার", href: "/gallery/election-posters" },
+      { label: "ভিডিও গ্যালারি", href: "/video-gallery" },
     ],
   },
 ];

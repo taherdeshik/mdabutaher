@@ -73,6 +73,7 @@ export const site = {
         { label: "ফটো গ্যালারী", href: "/gallery/photos", desc: "মাঠের মুহূর্ত — কাজের ছবি" },
         { label: "পোস্টার গ্যালারী", href: "/gallery/posters", desc: "প্রচারণা ও সচেতনতার ডিজাইন" },
         { label: "নির্বাচনী পোস্টার", href: "/gallery/election-posters", desc: "চশমা প্রতীক ও ভোটের আহ্বান" },
+        { label: "ভিডিও গ্যালারি", href: "/video-gallery", desc: "প্রচারণা, ইশতেহার ও সংবাদ সম্মেলন" },
       ],
     },
     { label: "যোগাযোগ", href: "/contact" },

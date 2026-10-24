@@ -33,8 +33,6 @@ const nextConfig: NextConfig = {
       { source: "/picture-gallery", destination: "/gallery/photos", permanent: true },
       { source: "/poster/:path*", destination: "/gallery/posters", permanent: true },
       { source: "/poster", destination: "/gallery/posters", permanent: true },
-      { source: "/video-gallery/:path*", destination: "/gallery", permanent: true },
-      { source: "/video-gallery", destination: "/gallery", permanent: true },
     ];
   },
 };
