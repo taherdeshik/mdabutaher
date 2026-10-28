@@ -347,8 +347,8 @@ class Poll(models.Model):
 
     @property
     def total_votes(self) -> int:
-        live = PollVote.objects.filter(option__poll=self).count()
-        return self.base_votes + live
+        """সিড ভোট + লাইভ ভোট + ঐতিহাসিক বেস ভোট।"""
+        return self.base_votes + sum(option.votes for option in self.options.all())
 
     @property
     def is_open(self) -> bool:

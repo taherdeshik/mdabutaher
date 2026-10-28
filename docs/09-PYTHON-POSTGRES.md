@@ -140,6 +140,35 @@ python manage.py import_legacy --path /home/user/backup/db.json
 
 ---
 
+## ৫ক. ব্যবস্থাপনা কমান্ড এক নজরে
+
+```bash
+python manage.py migrate                 # টেবিল তৈরি
+python manage.py seed_content            # সব বাংলা কনটেন্ট + জরিপ + ওয়ার্ড + অ্যাডমিন
+python manage.py seed_content --force    # কোডের ডিফল্ট মান আবার বসায়
+python manage.py seed_demo               # ড্যাশবোর্ড দেখার জন্য ডেমো CRM ডেটা
+python manage.py seed_demo --clear       # ডেমো ডেটা মুছে ফেলে (আসল কাজ শুরুর আগে)
+python manage.py collect_media           # ../public/media → media/ (ছবি স্বয়ংসম্পূর্ণ)
+python manage.py import_legacy           # পুরোনো data/db.json নিয়ে আসা
+python manage.py test web                # ২৪টি টেস্ট
+```
+
+`seed_content` সবসময় নিরাপদ — আগে থেকে থাকা লেখা মুছে দেয় না। ডেমো ডেটা
+(ওয়ার্ড-ভিত্তিক কেন্দ্র, ৩২৪ পরিবার, কাজ, খরচ, চ্যাট, ভিজিটর) শুধু অনুশীলনের জন্য;
+আসল ক্যাম্পেইন শুরুর আগে `seed_demo --clear` চালিয়ে পরিষ্কার করে নিন।
+
+`collect_media` একবার চালালে পুরোনো Next.js ফোল্ডার ছাড়াই `python/` ফোল্ডার
+একা চলবে — ডিপ্লয়ে আপলোডের আগে এটি চালানোই ভালো।
+
+### Django-র নিজস্ব অ্যাডমিন (`/django-admin/`)
+
+কমান্ড সেন্টার (`/admin/`) বাংলায় তৈরি; ডেটা-লেভেলে দ্রুত কাজ (বাল্ক এডিট, ফিল্টার,
+CSV, ইনলাইন অপশন) করতে চাইলে সুপারইউজার দিয়ে `/django-admin/`-এ ঢুকুন।
+এখানে সব কনটেন্ট ও CRM মডেল নিবন্ধিত — জরিপের অপশন ইনলাইন, খরচ, পরিবার,
+ভিজিট-লগ, অডিট লগ (রিড-অনলি) সবই।
+
+---
+
 ## 6. রিচ টেক্সট নিয়ম (ব্লগ/সংবাদ)
 
 ```

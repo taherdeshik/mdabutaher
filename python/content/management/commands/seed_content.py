@@ -181,6 +181,44 @@ class Command(BaseCommand):
                 },
             )
 
+        # ---------------------------------------------------------- polls
+        from django.utils.dateparse import parse_datetime
+
+        from crm.models import Poll, PollOption
+
+        for order, item in enumerate(data.polls()):
+            closes_at = parse_datetime(item.get("closesAt") or "") or None
+            poll, _ = Poll.objects.get_or_create(
+                slug=item["id"],
+                defaults={
+                    "question": item["question"],
+                    "description": item.get("description", ""),
+                    "category": item.get("category", ""),
+                    "status": item.get("status", "active"),
+                    "closes_at": closes_at,
+                    "sort_order": order,
+                },
+            )
+            if force:
+                poll.question = item["question"]
+                poll.description = item.get("description", "")
+                poll.category = item.get("category", "")
+                poll.status = item.get("status", "active")
+                poll.closes_at = closes_at
+                poll.sort_order = order
+                poll.save()
+            for pos, opt in enumerate(item.get("options", [])):
+                option, made = PollOption.objects.get_or_create(
+                    poll=poll,
+                    key=opt["id"],
+                    defaults={"label": opt["label"], "seed_votes": opt.get("votes", 0), "position": pos},
+                )
+                if force and not made:
+                    option.label = opt["label"]
+                    option.seed_votes = opt.get("votes", 0)
+                    option.position = pos
+                    option.save()
+
         # ------------------------------------------------------- admin user
         from django.contrib.auth import get_user_model
 

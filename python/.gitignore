@@ -10,8 +10,9 @@ staticfiles/
 .env.*
 !.env.example
 
-# আপলোড (আলাদা ব্যাকআপ রাখুন)
-media/uploads/
+# মিডিয়া — আপলোড ও পুরোনো আর্কাইভ (ডিপ্লয়ে `collect_media` চালান, ব্যাকআপ রাখুন)
+media/*
+!media/.gitkeep
 
 # OS/editor
 .DS_Store

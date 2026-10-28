@@ -34,6 +34,9 @@ python manage.py runserver 0.0.0.0:8000   # http://localhost:8000 · /admin/
 
 - `DATABASE_URL` থাকলে **PostgreSQL**, না থাকলে লোকালে SQLite (ডেমো/টেস্ট)।
 - আগের ডেটা আনতে: `python manage.py import_legacy` (dry-run সহ)।
+- ড্যাশবোর্ডের ডেমো ডেটা: `python manage.py seed_demo` (আসল কাজের আগে `--clear`)।
+- ছবি স্বয়ংসম্পূর্ণ করতে: `python manage.py collect_media`।
+- ডেটা-লেভেল অ্যাডমিন: `/django-admin/`।
 - টেস্ট: `python manage.py test web` (২৪টি)।
 - বিস্তারিত: [`docs/09-PYTHON-POSTGRES.md`](docs/09-PYTHON-POSTGRES.md)।
 

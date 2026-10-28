@@ -19,6 +19,7 @@
   <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml" />
   <link rel="preload" href="{% static 'fonts/anek-bangla-bengali.woff2' %}" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="{% static 'css/site.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/reveal.css' %}" />
   {% block head %}{% endblock %}
   <script type="application/ld+json">
     {{ site_ld|default_if_none:"" }}{% block jsonld %}

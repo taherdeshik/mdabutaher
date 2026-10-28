@@ -527,3 +527,10 @@ table.data tr:hover td { background: rgba(241, 235, 221, 0.4); }
   .card, .form-card { box-shadow: none; border-color: #bbb; break-inside: avoid; }
   .page-break { break-after: page; }
 }
+
+/* ---- ছোট ইউটিলিটি (পুরোনো Tailwind ক্লাসের সমতুল্য) ---- */
+.w-full { width: 100%; }
+.min-h-28 { min-height: 7rem; }
+.h-full { height: 100%; }
+.object-cover { object-fit: cover; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
