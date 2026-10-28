@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}যোগাযোগ — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="যোগাযোগ ও কার্যালয়" eyebrow="যোগাযোগ" subtitle="ফোন, ইমেইল বা সরাসরি কার্যালয়ে — যেভাবে সুবিধা।" crumb="যোগাযোগ" %}
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <div class="grid-2">
+        <div class="card" style="padding:1.1rem">
+          <strong style="font-size:0.85rem">মোবাইল</strong>
+          <a href="tel:{{ site.phoneHref }}" style="display:block;font-size:1.05rem;font-weight:700;color:var(--forest);margin-top:0.35rem">{{ site.phone }}</a>
+          <span style="font-size:0.72rem;color:var(--muted)">সকাল ৯টা – রাত ৯টা</span>
+        </div>
+        <div class="card" style="padding:1.1rem">
+          <strong style="font-size:0.85rem">ইমেইল</strong>
+          <a href="mailto:{{ site.email }}" style="display:block;font-size:0.92rem;font-weight:700;color:var(--forest);margin-top:0.35rem;word-break:break-all">{{ site.email }}</a>
+          <span style="font-size:0.72rem;color:var(--muted)">২৪ ঘণ্টায় উত্তর</span>
+        </div>
+      </div>
+
+      <div class="card" style="padding:1.1rem;margin-top:1rem">
+        <strong style="font-size:0.85rem">কার্যালয়</strong>
+        <p style="font-size:0.86rem;margin:0.4rem 0 0">{{ site.office }}</p>
+        <p style="font-size:0.76rem;color:var(--muted);margin:0.3rem 0 0">{{ hours }} · {{ site.officeHoursNote }}</p>
+        <div class="row" style="margin-top:0.9rem">
+          <a class="btn btn-primary btn-sm" href="/appointment/">সাক্ষাতের সময় নিন</a>
+          <a class="btn btn-ghost btn-sm" href="{{ site.mapUrl }}" target="_blank" rel="noopener">ম্যাপে দেখুন</a>
+        </div>
+      </div>
+
+      <div style="margin-top:1rem;border-radius:1rem;overflow:hidden;border:1px solid var(--line);min-height:18rem">
+        <iframe src="{{ site.mapUrl }}" title="কার্যালয়ের ম্যাপ" style="width:100%;height:20rem;border:0" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <aside class="stack">
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">সামাজিক মাধ্যম</strong>
+        {% for social in site.socials %}
+          <div class="kv"><a href="{{ social.href }}" target="_blank" rel="noopener">{{ social.label }}</a><span style="font-size:0.7rem;color:var(--muted)">{{ social.handle }}</span></div>
+        {% endfor %}
+      </div>
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">জরুরি নম্বর</strong>
+        {% for c in emergency %}<div class="kv"><span>{{ c.label }}</span><strong style="font-weight:600">{{ c.number }}</strong></div>{% endfor %}
+      </div>
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">সাধারণ জিজ্ঞাসা</strong>
+        {% for faq in faqs|slice:":3" %}
+          <details class="accordion" style="margin-top:0.5rem"><summary style="font-size:0.78rem">{{ faq.q }}</summary><div class="body">{{ faq.a }}</div></details>
+        {% endfor %}
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,6 @@
+# মোঃ আবু তাহের — ক্যাম্পেইন সাইট (Django + PostgreSQL)
+Django==5.2.18
+psycopg[binary]==3.3.6
+whitenoise==6.11.0
+Pillow==11.3.0
+gunicorn==23.0.0

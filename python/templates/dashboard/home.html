@@ -1,0 +1,34 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="cols-2">
+  <section class="adm-card">
+    <header><strong>{{ base.label }}</strong><span class="sub">{{ base.id }}</span><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/" target="_blank">হোমপেজ ↗</a></header>
+    <div class="pad">
+      <form method="post" class="adm-form">
+        {% csrf_token %}
+        <div><label for="{{ form.eyebrow.id_for_label }}">আইব্রো</label>{{ form.eyebrow }}</div>
+        <div><label for="{{ form.title.id_for_label }}">শিরোনাম</label>{{ form.title }}</div>
+        <div><label for="{{ form.description.id_for_label }}">বর্ণনা</label>{{ form.description }}</div>
+        <label class="check-row">{{ form.visible }} সেকশনটি দেখান</label>
+        <button class="btn btn-primary">সংরক্ষণ করুন</button>
+        {% if base.hint %}<p class="adm-help">{{ base.hint }}</p>{% endif %}
+        <p class="adm-help">ডিফল্ট: “{{ base.builtin }}”</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="adm-card">
+    <header><strong>হোমপেজের ১২টি সেকশন</strong></header>
+    <div class="pad">
+      {% for row in section_rows %}
+        <a class="list-row" href="?section={{ row.id }}" style="text-decoration:none">
+          <span class="badge {% if row.visible %}green{% else %}muted{% endif %}">{{ forloop.counter|bn }}</span>
+          <span style="flex:1">{{ row.label }}<br><span style="font-size:0.64rem;color:var(--muted)">{{ row.title|default:row.builtin|truncatechars:52 }}</span></span>
+          {% if row.id == current %}<span class="badge gold">সম্পাদনা</span>{% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

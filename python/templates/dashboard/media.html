@@ -1,0 +1,34 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="cols-2">
+  <section class="adm-card">
+    <header><strong>মিডিয়া লাইব্রেরি</strong><span class="sub">{{ assets|length|bn }}টি সাম্প্রতিক ফাইল</span></header>
+    <div class="pad" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(7rem,1fr));gap:0.5rem">
+      {% for asset in assets %}
+        <div>
+          <div class="thumb" style="width:100%;height:4.6rem">
+            {% if asset.is_image %}<img src="{{ asset.url }}" alt="{{ asset.original_name }}" />{% endif %}
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" style="width:100%;margin-top:0.25rem" data-copy-url="{{ asset.url }}">কপি</button>
+          <div style="font-size:0.58rem;color:var(--muted);word-break:break-all;margin-top:0.15rem">{{ asset.original_name|truncatechars:22 }}</div>
+        </div>
+      {% empty %}
+        <p style="font-size:0.76rem;color:var(--muted);margin:0">এখনো কোনো ফাইল নেই।</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="adm-card">
+    <header><strong>ফাইল আপলোড</strong><span class="sub">ছবি বা ভিডিও · সর্বোচ্চ ৬ MB</span></header>
+    <div class="pad">
+      <form method="post" enctype="multipart/form-data" class="adm-form">
+        {% csrf_token %}
+        <div><label for="{{ form.file.id_for_label }}">ফাইল</label>{{ form.file }}{% if form.file.errors %}<div class="adm-error">{{ form.file.errors.0 }}</div>{% endif %}</div>
+        <button class="btn btn-primary">আপলোড করুন</button>
+      </form>
+      <p class="adm-help">আপলোডের পর পাথ কপি করে পোস্টের কভার, গ্যালারি বা ইনলাইন ছবিতে ব্যবহার করুন।</p>
+    </div>
+  </section>
+</div>
+{% endblock %}

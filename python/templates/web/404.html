@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}পেজটি পাওয়া যায়নি — {{ site.name }}{% endblock %}
+{% block content %}
+<section class="section" style="min-height:60vh;display:grid;place-items:center">
+  <div class="container center">
+    <p class="eyebrow" style="justify-content:center">৪০৪</p>
+    <h1 style="font-size:clamp(2rem,6vw,3.5rem)">পেজটি খুঁজে পাওয়া গেল না</h1>
+    <p class="muted">লিংকটি পুরোনো হতে পারে, অথবা ঠিকানায় ভুল আছে। নিচ থেকে চালিয়ে যান।</p>
+    <div class="row" style="justify-content:center;margin-top:1.2rem">
+      <a class="btn btn-primary" href="/">হোমপেজে ফিরুন</a>
+      <a class="btn btn-ghost" href="/contact/">যোগাযোগ করুন</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

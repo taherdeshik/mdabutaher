@@ -1,0 +1,96 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>পেজ ভিউ</span><strong>{{ total|bn_month }}</strong><small>শেষ {{ days|bn }} দিন</small></div>
+  <div class="kpi green"><span>ইউনিক ভিজিটর</span><strong>{{ unique|bn_month }}</strong></div>
+  <div class="kpi gold"><span>নতুন ভিজিটর</span><strong>{{ new_visitors|bn_month }}</strong></div>
+  <div class="kpi"><span>রেকর্ড</span><strong>{{ recent|length|bn }}</strong><small>সাম্প্রতিক ইভেন্ট</small></div>
+</div>
+
+<div class="tabs" style="margin-bottom:0.2rem">
+  {% for option in "7 14 30"|make_list %}{% endfor %}
+  <a class="tab {% if days == 7 %}active{% endif %}" href="?days=7">৭ দিন</a>
+  <a class="tab {% if days == 14 %}active{% endif %}" href="?days=14">১৪ দিন</a>
+  <a class="tab {% if days == 30 %}active{% endif %}" href="?days=30">৩০ দিন</a>
+</div>
+
+<section class="adm-card">
+  <header><strong>দৈনিক ভিজিট</strong></header>
+  <div class="pad">
+    {% if chart %}
+      <div class="chart">
+        {% for point in chart %}<div class="bar"><i style="height:{% widthratio point.value chart_max 100 %}%"></i><b>{{ point.label }}</b></div>{% endfor %}
+      </div>
+    {% else %}<p style="font-size:0.76rem;color:var(--muted);margin:0">এই সময়ে কোনো ভিজিট রেকর্ড হয়নি।</p>{% endif %}
+  </div>
+</section>
+
+<div class="cols-2">
+  <section class="adm-card">
+    <header><strong>পেজ-ভিত্তিক ভিজিট</strong></header>
+    <div class="table-scroll">
+      <table class="adm-table">
+        <thead><tr><th>পেজ</th><th>ভিউ</th><th></th></tr></thead>
+        <tbody>
+          {% for row in top_pages %}
+            <tr>
+              <td class="num">{{ row.path }}</td>
+              <td class="num">{{ row.n|bn }}</td>
+              <td style="width:35%"><div class="progress"><span style="width:{% widthratio row.n top_pages.0.n 100 %}%"></span></div></td>
+            </tr>
+          {% empty %}<tr><td colspan="3">কোনো ডেটা নেই।</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>ডিভাইস</strong></header>
+      <div class="pad">
+        {% for row in devices %}
+          <div class="list-row"><span style="flex:1">{{ row.device|default:"অজানা" }}</span><span class="badge">{{ row.n|bn }}</span></div>
+        {% empty %}<p style="font-size:0.74rem;color:var(--muted);margin:0">ডেটা নেই।</p>{% endfor %}
+      </div>
+    </section>
+    <section class="adm-card">
+      <header><strong>দেশ</strong></header>
+      <div class="pad">
+        {% for row in countries %}
+          <div class="list-row"><span style="flex:1">{{ row.country|default:"—" }}{% if row.city %} · {{ row.city }}{% endif %}</span><span class="badge">{{ row.n|bn }}</span></div>
+        {% empty %}<p style="font-size:0.74rem;color:var(--muted);margin:0">ডেটা নেই।</p>{% endfor %}
+      </div>
+    </section>
+    <section class="adm-card">
+      <header><strong>ব্রাউজার</strong></header>
+      <div class="pad">
+        {% for row in browsers %}
+          <div class="list-row"><span style="flex:1">{{ row.browser|default:"—" }}</span><span class="badge">{{ row.n|bn }}</span></div>
+        {% empty %}<p style="font-size:0.74rem;color:var(--muted);margin:0">ডেটা নেই।</p>{% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+
+<section class="adm-card">
+  <header><strong>সাম্প্রতিক ভিজিট</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/export/visitors.csv">CSV</a></header>
+  <div class="table-scroll">
+    <table class="adm-table">
+      <thead><tr><th>সময়</th><th>পেজ</th><th>ডিভাইস</th><th>ব্রাউজার</th><th>দেশ</th><th>রেফারার</th></tr></thead>
+      <tbody>
+        {% for row in recent %}
+          <tr>
+            <td class="num">{{ row.created_at|date:"d/m H:i" }}</td>
+            <td class="num">{{ row.path }}</td>
+            <td>{{ row.device }}</td>
+            <td>{{ row.browser }}</td>
+            <td>{{ row.country|default:"—" }}</td>
+            <td style="max-width:14rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.referrer|default:"সরাসরি" }}</td>
+          </tr>
+        {% empty %}<tr><td colspan="6">কোনো ভিজিট নেই।</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

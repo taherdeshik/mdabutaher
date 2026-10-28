@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}মিডিয়া কিট — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="সাংবাদিকদের জন্য মিডিয়া কিট" eyebrow="মিডিয়া" subtitle="সংক্ষিপ্ত পরিচিতি, ছবি, পোস্টার ও তথ্যসূত্র — সরাসরি ব্যবহারযোগ্য।" crumb="মিডিয়া কিট" %}
+<section class="section">
+  <div class="container split">
+    <div>
+      <h2 style="font-size:1.3rem">সংক্ষিপ্ত পরিচিতি</h2>
+      <div class="prose"><p>{{ bio.short }}</p></div>
+      <h2 style="font-size:1.2rem;margin-top:1.6rem">বিস্তারিত পরিচিতি</h2>
+      <div class="prose"><p>{{ bio.long }}</p></div>
+
+      <h2 style="font-size:1.2rem;margin-top:1.6rem">মূল সংখ্যা</h2>
+      <div class="grid-4">
+        {% for stat in stats %}
+          <div class="stat-tile"><strong>{{ stat.value|bn }}{{ stat.suffix }}</strong><span>{{ stat.label }}</span></div>
+        {% endfor %}
+      </div>
+
+      <h2 style="font-size:1.2rem;margin-top:1.6rem">ডাউনলোডযোগ্য ছবি</h2>
+      <div class="grid-3">
+        {% for photo in photos %}
+          <figure style="margin:0">
+            <a href="{{ photo.image_src }}" data-lightbox>
+              {% include "partials/smart_image.html" with src=photo.image_src alt=photo.caption label=photo.caption style="aspect-ratio:4/3;border-radius:0.8rem" %}
+            </a>
+            <figcaption style="font-size:0.68rem;color:var(--muted);margin-top:0.3rem">{{ photo.caption }}</figcaption>
+          </figure>
+        {% endfor %}
+      </div>
+    </div>
+    <aside class="stack">
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">প্রেস যোগাযোগ</strong>
+        <div class="kv"><span>মোবাইল</span><a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a></div>
+        <div class="kv"><span>ইমেইল</span><a href="mailto:{{ site.email }}">{{ site.email }}</a></div>
+        <div class="kv"><span>কার্যালয়</span><span style="text-align:right">{{ site.office }}</span></div>
+      </div>
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">নির্বাচনী তথ্য</strong>
+        <div class="kv"><span>পদ</span><span>{{ site.role }}</span></div>
+        <div class="kv"><span>ইউনিয়ন</span><span>{{ site.union }}</span></div>
+        <div class="kv"><span>নির্বাচন</span><span>{{ site.electionYear }}</span></div>
+        <div class="kv"><span>প্রতীক</span><span>চশমা</span></div>
+      </div>
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">নির্বাচনী পোস্টার</strong>
+        {% for poster in posters %}
+          <div class="kv"><span>{{ poster.title|truncatechars:30 }}</span><a href="{{ poster.image_src }}" data-lightbox style="font-size:0.7rem;color:var(--emerald)">দেখুন</a></div>
+        {% endfor %}
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

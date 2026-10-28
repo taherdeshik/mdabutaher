@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>লগইন — কমান্ড সেন্টার</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml" />
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}" />
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="adm-brand" style="color:var(--forest)">
+        <span class="mark" style="background:rgba(10,48,37,0.1);color:var(--forest)">তা</span>
+        <div><strong style="color:var(--forest)">কমান্ড সেন্টার</strong><span style="color:var(--muted)">CMS + CRM · মোঃ আবু তাহের</span></div>
+      </div>
+      <h1>লগইন করুন</h1>
+      <p>দলীয় সদস্যদের জন্য — ভূমিকা অনুযায়ী সীমিত অ্যাক্সেস।</p>
+      {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors.0 }}</div>{% endif %}
+      <form method="post" class="adm-form">
+        {% csrf_token %}
+        <div>
+          <label for="{{ form.username.id_for_label }}">ইউজারনেম</label>
+          {{ form.username }}
+          {% if form.username.errors %}<div class="adm-error">{{ form.username.errors.0 }}</div>{% endif %}
+        </div>
+        <div>
+          <label for="{{ form.password.id_for_label }}">পাসওয়ার্ড</label>
+          {{ form.password }}
+          {% if form.password.errors %}<div class="adm-error">{{ form.password.errors.0 }}</div>{% endif %}
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">প্রবেশ করুন</button>
+      </form>
+      <div class="demo">ডেমো: <strong>admin</strong> / <strong>mahadan-2027</strong> — প্রথম লগইনের পর সেটিংস থেকে পাসওয়ার্ড বদলে নিন।</div>
+      <p style="margin-top:1rem;font-size:0.7rem"><a href="/" style="color:var(--emerald)">← পাবলিক সাইটে ফিরুন</a></p>
+    </div>
+  </div>
+</body>
+</html>

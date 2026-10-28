@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}লাইভ চ্যাট — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="সরাসরি কথা বলুন" eyebrow="চ্যাট" subtitle="বার্তা লিখুন — ক্যাম্পেইন টিম যত দ্রুত সম্ভব উত্তর দেবে। জরুরি হলে ফোন করুন।" crumb="চ্যাট" %}
+
+<section class="section">
+  <div class="container split">
+    <div class="form-card">
+      <div class="between" style="margin-bottom:1rem">
+        <strong style="font-size:0.9rem">কথোপকথন</strong>
+        <span class="badge badge-green">টিম অনলাইনে</span>
+      </div>
+
+      <div class="chat-log" id="chat-log">
+        <div class="bubble bot">
+          আসসালামু আলাইকুম। আপনি কী বিষয়ে কথা বলতে চান — সেবা, অভিযোগ, নাকি সাক্ষাতের সময়?
+          নিচে লিখে পাঠান, টিম দেখে উত্তর দেবে।
+        </div>
+        {% for message in messages %}
+          <div class="bubble {{ message.sender }}">{{ message.body }}</div>
+        {% endfor %}
+      </div>
+
+      <form method="post" action="/chat/" id="chat-form" style="margin-top:1rem">
+        {% csrf_token %}
+        <div class="form-grid">
+          <div class="field">
+            <label for="{{ form.name.id_for_label }}">নাম</label>
+            {{ form.name }}
+          </div>
+          <div class="field">
+            <label for="{{ form.phone.id_for_label }}">মোবাইল</label>
+            {{ form.phone }}
+          </div>
+        </div>
+        <div class="field">
+          <label for="{{ form.message.id_for_label }}">বার্তা *</label>
+          {{ form.message }}
+        </div>
+        <p id="chat-errors" style="font-size:0.72rem;color:#b91c1c"></p>
+        <button class="btn btn-primary" type="submit">পাঠান</button>
+      </form>
+    </div>
+
+    <aside class="stack">
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">সাধারণ জিজ্ঞাসা</strong>
+        {% for faq in faqs %}
+          <details class="accordion" style="margin-top:0.5rem"><summary style="font-size:0.78rem">{{ faq.q }}</summary><div class="body">{{ faq.a }}</div></details>
+        {% endfor %}
+      </div>
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">নিজে সমাধান করুন</strong>
+        {% for article in help %}
+          <details class="accordion" style="margin-top:0.5rem"><summary style="font-size:0.76rem">{{ article.title }}</summary><div class="body">{{ article.body }}</div></details>
+        {% endfor %}
+      </div>
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">ফোনে কথা বলুন</strong>
+        <a class="btn btn-gold btn-block" style="margin-top:0.6rem" href="tel:{{ site.phoneHref }}">{{ site.phone }}</a>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

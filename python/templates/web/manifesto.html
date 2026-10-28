@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}ম্যানিফেস্টো — {{ site.name }}{% endblock %}
+{% block description %}৮টি স্তম্ভ, {{ totals.commitments|bn }}টি অঙ্গীকার, ৫ বছরের রোডম্যাপ — সময়সীমা ও বাজেটসহ প্রকাশ্য ম্যানিফেস্টো।{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title=intro.title eyebrow="নির্বাচনী অঙ্গীকার" subtitle=intro.subtitle crumb="ম্যানিফেস্টো" %}
+
+<section class="section-tight">
+  <div class="container">
+    <div class="grid-4">
+      <div class="stat-tile"><strong>{{ totals.pillars|bn }}</strong><span>স্তম্ভ</span></div>
+      <div class="stat-tile"><strong>{{ totals.commitments|bn }}</strong><span>সুনির্দিষ্ট অঙ্গীকার</span></div>
+      <div class="stat-tile"><strong>{{ totals.progress|bn }}%</strong><span>গড় অগ্রগতি</span></div>
+      <div class="stat-tile"><strong>৫</strong><span>বছরের রোডম্যাপ</span></div>
+    </div>
+    <blockquote class="quote" style="margin-top:1.5rem">“{{ intro.quote }}”<footer>{{ site.name }} · প্রকাশ: {{ intro.published }}</footer></blockquote>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="container split">
+    <div>
+      {% for pillar in pillars %}
+        <article id="{{ pillar.slug }}" class="card" style="margin-bottom:1.1rem" >
+          <div class="card-body">
+            <div class="between" style="align-items:flex-start">
+              <div>
+                <span class="latin" style="font-size:0.7rem;color:var(--gold-deep);font-weight:700">{{ pillar.number }}</span>
+                <h2 style="font-size:1.3rem;margin:0.2rem 0 0.3rem">{{ pillar.title }}</h2>
+              </div>
+              <span class="badge badge-green">অগ্রগতি {{ pillar.progress|bn }}%</span>
+            </div>
+            <p>{{ pillar.summary }}</p>
+            <div class="progress" style="margin-bottom:1rem"><span style="width:{{ pillar.progress }}%"></span></div>
+
+            <div class="grid-2" style="gap:1rem">
+              <div>
+                <strong style="font-size:0.78rem;color:var(--forest)">সমস্যা / প্রেক্ষাপট</strong>
+                <p style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem">{{ pillar.problem }}</p>
+              </div>
+              <div>
+                <strong style="font-size:0.78rem;color:var(--forest)">৫ বছরের লক্ষ্য</strong>
+                <p style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem">{{ pillar.target }}</p>
+                {% if pillar.budget %}<p style="font-size:0.74rem;margin:0">বাজেট: {{ pillar.budget }}</p>{% endif %}
+              </div>
+            </div>
+
+            {% if pillar.metrics %}
+              <div class="pill-list" style="margin:0.8rem 0">
+                {% for metric in pillar.metrics %}
+                  <span class="chip">{{ metric.label }} <strong>{{ metric.value }}</strong></span>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <details class="accordion" style="margin-top:0.6rem">
+              <summary>{{ pillar.commitment_count|bn }}টি অঙ্গীকার ও সময়সীমা</summary>
+              <div class="body">
+                {% for c in pillar.commitments %}
+                  <div style="padding:0.5rem 0;border-bottom:1px solid rgba(10,48,37,0.08)">
+                    <strong style="font-size:0.8rem">{{ forloop.counter|bn }}. {{ c.title }}</strong>
+                    <span class="badge badge-gold" style="margin-left:0.35rem">{{ c.timeline }}</span>
+                    <p style="font-size:0.76rem;color:var(--muted);margin:0.25rem 0 0">{{ c.detail }}</p>
+                  </div>
+                {% endfor %}
+              </div>
+            </details>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    <aside class="sticky-box">
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">৮টি স্তম্ভ</strong>
+        <div style="margin-top:0.6rem">
+          {% for pillar in pillars %}
+            <a class="kv" href="#{{ pillar.slug }}" style="text-decoration:none">
+              <span>{{ pillar.number }} · {{ pillar.short|default:pillar.title }}</span>
+              <strong style="font-weight:600">{{ pillar.progress|bn }}%</strong>
+            </a>
+          {% endfor %}
+        </div>
+        <a class="btn btn-primary btn-block" style="margin-top:1rem" href="/manifesto/print/">প্রিন্ট / PDF সংস্করণ</a>
+      </div>
+
+      <div class="card" style="padding:1.1rem;margin-top:1rem">
+        <strong style="font-size:0.85rem">সাধারণ জিজ্ঞাসা</strong>
+        {% for faq in faq %}
+          <details class="accordion" style="margin-top:0.5rem"><summary style="font-size:0.78rem">{{ faq.q }}</summary><div class="body">{{ faq.a }}</div></details>
+        {% endfor %}
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

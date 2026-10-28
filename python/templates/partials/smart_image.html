@@ -1,0 +1,11 @@
+{% load campaign %}{% firstof src image_key as raw %}{% with resolved=raw|image %}
+<div class="smart-image {{ extra }}" style="{{ style }}" data-smart-image>
+  {% if resolved %}<img src="{{ resolved }}" alt="{{ alt }}" loading="{{ lazy|default:'lazy' }}" />{% endif %}
+  <div class="smart-fallback" {% if resolved %}hidden{% endif %}>
+    <div>
+      <span>{{ site.nameEn }}</span>
+      <strong>{{ label|default:alt }}</strong>
+    </div>
+  </div>
+</div>
+{% endwith %}

@@ -1,0 +1,144 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>অ্যাপয়েন্টমেন্ট</span><strong>{{ counts.appointments|bn }}</strong></div>
+  <div class="kpi gold"><span>অভিযোগ ও পরামর্শ</span><strong>{{ counts.feedback|bn }}</strong></div>
+  <div class="kpi green"><span>চ্যাট</span><strong>{{ counts.chats|bn }}</strong></div>
+  <div class="kpi red"><span>হুমকি</span><strong>{{ counts.threats|bn }}</strong></div>
+</div>
+
+<div class="tabs" style="margin-bottom:0.2rem">
+  <a class="tab {% if tab == 'appointments' %}active{% endif %}" href="?tab=appointments">অ্যাপয়েন্টমেন্ট</a>
+  <a class="tab {% if tab == 'feedback' %}active{% endif %}" href="?tab=feedback">সমস্যা ও পরামর্শ</a>
+  <a class="tab {% if tab == 'chats' %}active{% endif %}" href="?tab=chats">চ্যাট</a>
+  <a class="tab {% if tab == 'polls' %}active{% endif %}" href="?tab=polls">জরিপ</a>
+</div>
+
+{% if tab == 'appointments' %}
+  <section class="adm-card">
+    <header><strong>সাক্ষাতের অনুরোধ</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/export/appointments.csv">CSV</a></header>
+    <div class="table-scroll">
+      <table class="adm-table">
+        <thead><tr><th>নাম</th><th>মোবাইল</th><th>বিষয়</th><th>তারিখ/সময়</th><th>অবস্থা</th><th>টিমের নোট</th></tr></thead>
+        <tbody>
+          {% for row in appointments %}
+            <tr>
+              <td>{{ row.name }}<br><span style="font-size:0.62rem;color:var(--muted)">{{ row.ward|default:"—" }}</span></td>
+              <td class="num"><a href="tel:{{ row.phone }}">{{ row.phone }}</a></td>
+              <td>{{ row.get_topic_display }}</td>
+              <td class="num">{{ row.preferred_date|bn_date_short|default:"—" }}<br><span style="font-size:0.62rem;color:var(--muted)">{{ row.slot|default:"যেকোনো সময়" }}</span></td>
+              <td>
+                <form method="post" style="display:flex;gap:0.3rem">
+                  {% csrf_token %}<input type="hidden" name="kind" value="appointment" /><input type="hidden" name="id" value="{{ row.pk }}" />
+                  <select class="adm-input" name="status" style="width:6.5rem" onchange="this.form.submit()">
+                    <option value="pending" {% if row.status == 'pending' %}selected{% endif %}>অপেক্ষমাণ</option>
+                    <option value="confirmed" {% if row.status == 'confirmed' %}selected{% endif %}>নিশ্চিত</option>
+                    <option value="done" {% if row.status == 'done' %}selected{% endif %}>সম্পন্ন</option>
+                    <option value="cancelled" {% if row.status == 'cancelled' %}selected{% endif %}>বাতিল</option>
+                  </select>
+                </form>
+              </td>
+              <td>{{ row.admin_note|default:"—"|truncatechars:30 }}</td>
+            </tr>
+          {% empty %}<tr><td colspan="6">এখনো কোনো অনুরোধ আসেনি।</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+{% elif tab == 'feedback' %}
+  <section class="adm-card">
+    <header><strong>সমস্যা, পরামর্শ ও হুমকি</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/export/feedback.csv">CSV</a></header>
+    <div class="pad">
+      {% for row in feedback %}
+        <details class="row-edit" id="row-{{ row.pk }}">
+          <summary>
+            <span class="badge {% if row.kind == 'threat' %}red{% elif row.kind == 'problem' %}gold{% else %}muted{% endif %}">{{ row.get_kind_display }}</span>
+            <strong style="font-size:0.76rem">{{ row.message|truncatechars:64 }}</strong>
+            <span class="badge {% if row.status == 'new' %}gold{% elif row.status == 'resolved' %}green{% else %}muted{% endif %}" style="margin-left:auto">{{ row.get_status_display }}</span>
+          </summary>
+          <div class="detail-body">
+            <p style="font-size:0.78rem">{{ row.message }}</p>
+            <p style="font-size:0.68rem;color:var(--muted)">{{ row.name|default:"অজ্ঞাত" }} · {{ row.phone|default:"—" }} · {{ row.ward|default:"—" }} · {{ row.created_at|date:"d/m/Y H:i" }}</p>
+            <form method="post" class="adm-form">
+              {% csrf_token %}<input type="hidden" name="kind" value="feedback" /><input type="hidden" name="id" value="{{ row.pk }}" />
+              <div class="row">
+                <div><label>অবস্থা</label>
+                  <select class="adm-input" name="status">
+                    <option value="new" {% if row.status == 'new' %}selected{% endif %}>নতুন</option>
+                    <option value="reviewing" {% if row.status == 'reviewing' %}selected{% endif %}>পর্যালোচনায়</option>
+                    <option value="resolved" {% if row.status == 'resolved' %}selected{% endif %}>সমাধান</option>
+                    <option value="archived" {% if row.status == 'archived' %}selected{% endif %}>আর্কাইভ</option>
+                  </select>
+                </div>
+                <div><label>গুরুত্ব</label>
+                  <select class="adm-input" name="priority">
+                    <option value="low" {% if row.priority == 'low' %}selected{% endif %}>কম</option>
+                    <option value="medium" {% if row.priority == 'medium' %}selected{% endif %}>মাঝারি</option>
+                    <option value="high" {% if row.priority == 'high' %}selected{% endif %}>জরুরি</option>
+                  </select>
+                </div>
+              </div>
+              <div><label>টিমের নোট</label><textarea class="adm-input" name="admin_note" rows="2">{{ row.admin_note }}</textarea></div>
+              <button class="btn btn-primary btn-sm">আপডেট করুন</button>
+            </form>
+          </div>
+        </details>
+      {% empty %}<p style="font-size:0.76rem;color:var(--muted);margin:0">কোনো বার্তা নেই।</p>{% endfor %}
+    </div>
+  </section>
+
+{% elif tab == 'chats' %}
+  <section class="adm-card">
+    <header><strong>লাইভ চ্যাট</strong><span class="sub">ভিজিটরের বার্তার উত্তর দিন</span></header>
+    <div class="pad">
+      {% for convo in conversations %}
+        <details class="row-edit" id="row-{{ convo.pk }}">
+          <summary>
+            <span class="badge {% if convo.unread %}gold{% else %}muted{% endif %}">{{ convo.name|default:convo.key }}</span>
+            <strong style="font-size:0.74rem">{{ convo.preview|truncatechars:50 }}</strong>
+            <span class="badge green" style="margin-left:auto">{{ convo.messages.count|bn }} বার্তা</span>
+          </summary>
+          <div class="detail-body">
+            <div style="display:grid;gap:0.35rem;max-height:16rem;overflow-y:auto;margin-bottom:0.6rem">
+              {% for msg in convo.messages.all %}
+                <div style="font-size:0.74rem;padding:0.4rem 0.6rem;border-radius:0.5rem;background:{% if msg.sender == 'team' %}rgba(23,160,106,0.1){% else %}var(--cream-2){% endif %}">
+                  <strong>{{ msg.get_sender_display }}:</strong> {{ msg.body }}
+                  <span style="font-size:0.6rem;color:var(--muted);float:right">{{ msg.created_at|date:"d/m H:i" }}</span>
+                </div>
+              {% endfor %}
+            </div>
+            <form method="post" class="adm-form">
+              {% csrf_token %}<input type="hidden" name="kind" value="reply" /><input type="hidden" name="id" value="{{ convo.pk }}" />
+              <div><label>উত্তর লিখুন</label><textarea class="adm-input" name="body" rows="2" placeholder="আসসালামু আলাইকুম…"></textarea></div>
+              <button class="btn btn-primary btn-sm">পাঠান</button>
+            </form>
+          </div>
+        </details>
+      {% empty %}<p style="font-size:0.76rem;color:var(--muted);margin:0">কোনো কথোপকথন নেই।</p>{% endfor %}
+    </div>
+  </section>
+
+{% else %}
+  <section class="adm-card">
+    <header><strong>জনমত জরিপ</strong><span class="sub">ভোটের ফলাফল</span></header>
+    <div class="pad">
+      {% for poll in polls %}
+        <div style="margin-bottom:1rem">
+          <div class="between" style="display:flex;justify-content:space-between;font-size:0.8rem">
+            <strong>{{ poll.question }}</strong>
+            <span class="badge {% if poll.is_open %}green{% else %}muted{% endif %}">{{ poll.total_votes|bn }} ভোট</span>
+          </div>
+          {% for option in poll.options.all %}
+            <div style="margin-top:0.35rem">
+              <div style="display:flex;justify-content:space-between;font-size:0.72rem"><span>{{ option.label }}</span><span class="num">{{ option.votes|bn }}</span></div>
+              <div class="progress" style="margin-top:0.2rem"><span style="width:{% widthratio option.votes poll.total_votes 100 %}%"></span></div>
+            </div>
+          {% endfor %}
+        </div>
+      {% empty %}<p style="font-size:0.76rem;color:var(--muted);margin:0">কোনো জরিপ নেই।</p>{% endfor %}
+    </div>
+  </section>
+{% endif %}
+{% endblock %}

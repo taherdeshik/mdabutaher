@@ -1,0 +1,75 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="tabs" style="margin-bottom:0.2rem">
+  <a class="tab {% if tab == 'events' %}active{% endif %}" href="?tab=events">ইভেন্ট ({{ events|length|bn }})</a>
+  <a class="tab {% if tab == 'pillars' %}active{% endif %}" href="?tab=pillars">ম্যানিফেস্টো ({{ pillars|length|bn }})</a>
+</div>
+
+{% if tab == 'events' %}
+  <section class="adm-card">
+    <header><strong>ইভেন্ট ও কর্মসূচি</strong><span class="sub">প্রতিটি আলাদাভাবে সম্পাদনা</span></header>
+    <div class="pad">
+      {% for row in events %}
+        {% with form=event_forms|get_item:row.pk %}
+        <details class="row-edit" id="row-{{ row.pk }}">
+          <summary>
+            <span class="badge {% if row.hidden %}muted{% else %}green{% endif %}">{{ row.date|bn_date_short }}</span>
+            <strong>{{ row.title }}</strong>
+            <span class="badge gold" style="margin-left:auto">{{ row.type }}</span>
+            {% if row.ward %}<span class="badge">{{ row.ward|bn }} নং</span>{% endif %}
+          </summary>
+          <div class="detail-body">
+            <form method="post" class="adm-form">
+              {% csrf_token %}
+              <input type="hidden" name="kind" value="event" /><input type="hidden" name="id" value="{{ row.pk }}" />
+              {% for field in form %}
+                <div><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>
+              {% endfor %}
+              <button class="btn btn-primary btn-sm">সেভ করুন</button>
+            </form>
+          </div>
+        </details>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  </section>
+{% else %}
+  <section class="adm-card">
+    <header><strong>ম্যানিফেস্টোর ৮টি স্তম্ভ</strong><span class="sub">অগ্রগতি, লক্ষ্য ও দৃশ্যমানতা</span></header>
+    <div class="pad">
+      {% for row in pillars %}
+        {% with form=pillar_forms|get_item:row.pk %}
+        <details class="row-edit" id="row-{{ row.pk }}">
+          <summary>
+            <span class="badge gold">{{ row.number }}</span>
+            <strong>{{ row.title }}</strong>
+            <span class="badge {% if row.hidden %}muted{% else %}green{% endif %}" style="margin-left:auto">{{ row.progress|bn }}%</span>
+            <span class="badge">{{ row.commitment_count|bn }} অঙ্গীকার</span>
+          </summary>
+          <div class="detail-body">
+            <form method="post" class="adm-form">
+              {% csrf_token %}
+              <input type="hidden" name="kind" value="pillar" /><input type="hidden" name="id" value="{{ row.pk }}" />
+              {% for field in form %}
+                <div><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>
+              {% endfor %}
+              <button class="btn btn-primary btn-sm">সেভ করুন</button>
+            </form>
+            <div style="margin-top:0.6rem">
+              <span class="adm-label">অঙ্গীকারসমূহ ({{ row.commitments|length|bn }})</span>
+              {% for c in row.commitments %}
+                <div style="font-size:0.72rem;padding:0.3rem 0;border-bottom:1px solid var(--line)">
+                  <strong>{{ c.title }}</strong> <span class="badge gold">{{ c.timeline }}</span><br>
+                  <span style="color:var(--muted)">{{ c.detail }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </details>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}
+{% endblock %}

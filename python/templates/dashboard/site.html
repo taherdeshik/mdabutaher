@@ -1,0 +1,48 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="cols-2">
+  <section class="adm-card">
+    <header><strong>পেজ: {{ page.label }}</strong><span class="sub">{{ page.href }}</span><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="{{ page.href }}" target="_blank">সাইটে দেখুন ↗</a></header>
+    <div class="pad">
+      <form method="post" class="adm-form">
+        {% csrf_token %}
+        <div class="row">
+          <div><label for="{{ form.label.id_for_label }}">মেনুর নাম</label>{{ form.label }}</div>
+          <div><label for="{{ form.eyebrow.id_for_label }}">আইব্রো</label>{{ form.eyebrow }}</div>
+        </div>
+        <div><label for="{{ form.title.id_for_label }}">শিরোনাম</label>{{ form.title }}</div>
+        <div><label for="{{ form.description.id_for_label }}">বর্ণনা</label>{{ form.description }}</div>
+        <div><label for="{{ form.body.id_for_label }}">অতিরিক্ত লেখা</label>{{ form.body }}</div>
+        <div class="row">
+          <div><label for="{{ form.image.id_for_label }}">ছবি (কী/পাথ)</label>{{ form.image }}</div>
+          <div><label for="{{ form.video.id_for_label }}">ভিডিও (YouTube)</label>{{ form.video }}</div>
+        </div>
+        <label class="check-row">{{ form.visible }} মেনুতে দেখান</label>
+        <button class="btn btn-primary">সংরক্ষণ করুন</button>
+        <p class="adm-help">খালি ঘর = কোডে থাকা ডিফল্ট লেখা। ডিফল্ট: “{{ page.builtin }}”</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="adm-card">
+    <header><strong>সব পেজ</strong><span class="sub">গোষ্ঠী অনুযায়ী</span></header>
+    <div class="pad">
+      {% for group in groups %}
+        <div style="margin-bottom:0.7rem">
+          <span class="badge gold">{{ group }}</span>
+          <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.35rem">
+            {% for row in page_rows %}
+              {% if row.group == group %}
+                <a class="tab {% if row.id == page_id %}active{% endif %}" href="?page={{ row.id }}">
+                  {{ row.label }}{% if not row.visible %} <span style="opacity:0.6">(লুকানো)</span>{% endif %}
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

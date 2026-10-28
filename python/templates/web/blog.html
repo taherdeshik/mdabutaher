@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}ব্লগ — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="সমস্যার কথা নয়, সমাধানের কথা" eyebrow="ব্লগ" subtitle="প্রতিটি লেখায় একটি সমস্যা, একটি বিশ্লেষণ এবং একটি বাস্তবায়নযোগ্য পরিকল্পনা।" crumb="ব্লগ" %}
+
+<section class="section-tight">
+  <div class="container">
+    <div class="grid-4">
+      <div class="stat-tile"><strong>{{ total|bn }}</strong><span>প্রকাশিত লেখা</span></div>
+      <div class="stat-tile"><strong>{{ views|bn }}</strong><span>মোট পাঠ</span></div>
+      <div class="stat-tile"><strong>{{ tag_count|bn }}</strong><span>বিষয়</span></div>
+      <div class="stat-tile"><strong>সাপ্তাহিক</strong><span>নতুন লেখা</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="between" style="margin-bottom:1.2rem">
+      <div class="tabs" style="margin:0">
+        <a class="tab {% if not active_category %}active{% endif %}" href="/blog/">সব</a>
+        {% for category in categories %}
+          <a class="tab {% if active_category == category %}active{% endif %}" href="?category={{ category|urlencode }}">{{ category }}</a>
+        {% endfor %}
+      </div>
+      <form method="get" class="row" style="gap:0.4rem">
+        <input class="field-input" type="search" name="q" value="{{ query }}" placeholder="লেখা খুঁজুন…" style="max-width:12rem;padding:0.45rem 0.7rem;font-size:0.8rem" />
+        <button class="btn btn-primary btn-sm" type="submit">খুঁজুন</button>
+      </form>
+    </div>
+
+    {% if active_tag or query %}
+      <p class="muted" style="font-size:0.78rem">
+        ফিল্টার: {% if active_tag %}#{{ active_tag }}{% endif %} {% if query %}“{{ query }}”{% endif %} —
+        {{ total|bn }}টি লেখা · <a href="/blog/" style="color:var(--emerald)">সব দেখুন</a>
+      </p>
+    {% endif %}
+
+    {% if featured %}
+      <article class="card" style="margin-bottom:1.5rem;display:grid;grid-template-columns:1fr;overflow:hidden">
+        <a class="card-media" href="{{ featured.get_absolute_url }}" style="aspect-ratio:21/9">
+          {% include "partials/smart_image.html" with image_key=featured.image alt=featured.title label=featured.title lazy="eager" %}
+        </a>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="badge badge-gold">সম্পাদকের পছন্দ</span>
+            <span class="badge badge-dark">{{ featured.category }}</span>
+            <span>{{ featured.published_on|bn_date }}</span><span class="sep"></span><span>{{ featured.read_time|bn }} মিনিট</span>
+          </div>
+          <h2 style="font-size:1.5rem;margin:0.6rem 0 0.4rem"><a href="{{ featured.get_absolute_url }}">{{ featured.title }}</a></h2>
+          <p>{{ featured.excerpt }}</p>
+          <div class="pill-list" style="margin-bottom:0.8rem">{% for tag in featured.tags %}<span class="chip">#{{ tag }}</span>{% endfor %}</div>
+          <a class="btn btn-primary btn-sm" href="{{ featured.get_absolute_url }}">পড়ুন</a>
+        </div>
+      </article>
+    {% endif %}
+
+    <div class="grid-3">
+      {% for post in page %}
+        <article class="card">
+          <a class="card-media" href="{{ post.get_absolute_url }}">
+            {% include "partials/smart_image.html" with image_key=post.image alt=post.title label=post.title %}
+          </a>
+          <div class="card-body">
+            <div class="card-meta"><span class="badge badge-dark">{{ post.category }}</span><span>{{ post.published_on|bn_date_short }}</span><span class="sep"></span><span>{{ post.read_time|bn }} মিনিট</span><span class="sep"></span><span>{{ post.views|bn }}</span></div>
+            <h3 style="margin-top:0.5rem"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+            <p>{{ post.excerpt|truncatechars:110 }}</p>
+            <a class="card-link" href="{{ post.get_absolute_url }}">পড়ুন →</a>
+          </div>
+        </article>
+      {% empty %}
+        {% if not featured %}<p class="muted">কোনো লেখা পাওয়া যায়নি।</p>{% endif %}
+      {% endfor %}
+    </div>
+
+    {% if page.has_other_pages %}
+      <div class="row" style="justify-content:center;margin-top:2rem">
+        {% if page.has_previous %}<a class="btn btn-ghost btn-sm" href="{% query_replace page=page.previous_page_number %}">← আগের</a>{% endif %}
+        <span style="font-size:0.76rem;color:var(--muted)">পৃষ্ঠা {{ page.number|bn }} / {{ page.paginator.num_pages|bn }}</span>
+        {% if page.has_next %}<a class="btn btn-ghost btn-sm" href="{% query_replace page=page.next_page_number %}">পরের →</a>{% endif %}
+      </div>
+    {% endif %}
+
+    <div class="pill-list" style="margin-top:2rem">
+      <span class="chip chip-gold" style="pointer-events:none">বিষয়:</span>
+      {% for tag in tags %}<a class="chip" href="?tag={{ tag|urlencode }}">#{{ tag }}</a>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

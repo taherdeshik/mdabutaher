@@ -1,0 +1,82 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>আজকের কাজ</span><strong>{{ total_count|bn }}</strong></div>
+  <div class="kpi green"><span>সম্পন্ন</span><strong>{{ done_count|bn }}</strong></div>
+  <div class="kpi gold"><span>আজকের তালিকা</span><strong>{{ total_count|bn }}</strong><small>কাজের সংখ্যা</small></div>
+  <div class="kpi red"><span>সময় পার</span><strong>{{ overdue|length|bn }}</strong></div>
+</div>
+
+<div class="cols-2">
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>আজকের কাজ</strong><span class="sub">{{ today|bn_date }}</span></header>
+      <div class="pad">
+        {% for task in today_tasks %}
+          <div class="list-row">
+            <form method="post" style="display:inline">{% csrf_token %}
+              <input type="hidden" name="action" value="toggle" /><input type="hidden" name="id" value="{{ task.pk }}" />
+              <button class="icon-btn" title="সম্পন্ন">{% if task.done %}✓{% else %}○{% endif %}</button>
+            </form>
+            <span style="flex:1;{% if task.done %}text-decoration:line-through;color:var(--muted){% endif %}">
+              {{ task.title }}<br>
+              <span style="font-size:0.64rem;color:var(--muted)">{{ task.get_type_display }} · {{ task.time|bn }}{% if task.ward %} · ওয়ার্ড {{ task.ward.no|bn }}{% endif %} · {{ task.assignee|default:"—" }}</span>
+            </span>
+            <span class="badge {% if task.priority == 'high' %}red{% elif task.priority == 'medium' %}gold{% else %}muted{% endif %}">{{ task.get_priority_display }}</span>
+            <form method="post" data-confirm="কাজটি মুছে ফেলবেন?">{% csrf_token %}
+              <input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="{{ task.pk }}" />
+              <button class="icon-btn danger">✕</button>
+            </form>
+          </div>
+        {% empty %}<p style="font-size:0.76rem;color:var(--muted);margin:0">আজকের তালিকা খালি — ডান দিকের ফর্ম থেকে যোগ করুন।</p>{% endfor %}
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>আসন্ন দিনগুলো</strong></header>
+      <div class="table-scroll">
+        <table class="adm-table">
+          <thead><tr><th>তারিখ</th><th>সময়</th><th>কাজ</th><th>ধরন</th><th>দায়িত্ব</th></tr></thead>
+          <tbody>
+            {% for task in upcoming %}
+              <tr><td class="num">{{ task.date|bn_date_short }}</td><td class="num">{{ task.time|bn }}</td><td>{{ task.title }}</td><td>{{ task.get_type_display }}</td><td>{{ task.assignee|default:"—" }}</td></tr>
+            {% empty %}<tr><td colspan="5">আসন্ন কোনো কাজ নেই।</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>নতুন কাজ যোগ করুন</strong></header>
+      <div class="pad">
+        <form method="post" class="adm-form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="create" />
+          {% for field in form %}
+            <div>{% if field.field.widget.input_type == 'checkbox' %}
+              <label class="check-row">{{ field }} {{ field.label }}</label>
+            {% else %}
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+            {% endif %}
+            {% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>
+          {% endfor %}
+          <button class="btn btn-primary" type="submit">যোগ করুন</button>
+        </form>
+      </div>
+    </section>
+    {% if overdue %}
+      <section class="adm-card">
+        <header><strong>সময় পার হয়েছে</strong></header>
+        <div class="pad">
+          {% for task in overdue %}
+            <div class="list-row"><span class="badge red">{{ task.date|bn_date_short }}</span><span style="flex:1">{{ task.title }}</span></div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

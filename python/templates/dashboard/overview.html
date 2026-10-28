@@ -1,0 +1,111 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>মোট ভোটার</span><strong>{{ total_voters|bn_month }}</strong><small>আনুমানিক টার্নআউট {{ turnout|bn }}% = {{ projected|bn_month }}</small></div>
+  <div class="kpi green"><span>পরিবার কভারেজ</span><strong>{{ coverage_pct|bn }}%</strong><small>{{ covered|bn }} / {{ households|bn }} পরিবার</small></div>
+  <div class="kpi gold"><span>নিশ্চিত সমর্থক</span><strong>{{ committed|bn }}</strong><small>{{ committed_pct|bn }}% পরিবার</small></div>
+  <div class="kpi red"><span>ব্যয়</span><strong>{{ spend|bdt }}</strong><small>সীমার {{ spend_pct|bn }}%</small></div>
+</div>
+
+<div class="cols-2">
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>শেষ ৭ দিনের পেজ ভিজিট</strong><span class="sub">পাবলিক সাইট</span></header>
+      <div class="pad">
+        <div class="chart">
+          {% for point in chart %}
+            <div class="bar"><i style="height:{% widthratio point.value chart_max 100 %}%"></i><b>{{ point.label }}</b></div>
+          {% endfor %}
+        </div>
+        <div style="display:flex;gap:0.6rem;margin-top:0.7rem">
+          <a class="btn btn-ghost btn-sm" href="/admin/analytics/">বিস্তারিত অ্যানালিটিক্স →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>আজকের পরিকল্পনা</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/plan/">সব কাজ</a></header>
+      <div class="pad">
+        {% for task in today_tasks %}
+          <div class="list-row">
+            <span class="badge {% if task.done %}green{% else %}gold{% endif %}">{{ task.time|bn }}</span>
+            <span style="flex:1">{{ task.title }}</span>
+            <span class="badge muted">{{ task.get_priority_display }}</span>
+          </div>
+        {% empty %}
+          <p style="font-size:0.76rem;color:var(--muted);margin:0">আজকের জন্য কোনো কাজ যোগ করা হয়নি।</p>
+        {% endfor %}
+        {% if late_tasks %}
+          <p style="font-size:0.68rem;color:var(--danger);margin:0.6rem 0 0">⚠ {{ late_tasks|length|bn }}টি কাজ সময় পার হয়েছে</p>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>ওয়ার্ডভিত্তিক কভারেজ</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/coverage/">ম্যাপ</a></header>
+      <div class="table-scroll">
+        <table class="adm-table">
+          <thead><tr><th>ওয়ার্ড</th><th>এলাকা</th><th>কেন্দ্র</th><th>শক্তি</th></tr></thead>
+          <tbody>
+            {% for ward in wards %}
+              <tr><td class="num">{{ ward.no|bn }}</td><td>{{ ward.name }}</td><td class="num">{{ ward.booth_count|bn }}</td><td><span class="badge {% if ward.strength == 'strong' %}green{% elif ward.strength == 'lean' %}gold{% elif ward.strength == 'hostile' %}red{% else %}muted{% endif %}">{{ ward.get_strength_display }}</span></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>অপেক্ষমাণ অ্যাপয়েন্টমেন্ট</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/crm/?tab=appointments">সব</a></header>
+      <div class="pad">
+        {% for row in appointments %}
+          <div class="list-row">
+            <span style="flex:1">{{ row.name }}<br><span style="font-size:0.66rem;color:var(--muted)">{{ row.phone }} · {{ row.get_topic_display }}</span></span>
+            <span class="badge {% if row.status == 'pending' %}gold{% elif row.status == 'confirmed' %}green{% else %}muted{% endif %}">{{ row.get_status_display }}</span>
+          </div>
+        {% empty %}<p style="font-size:0.74rem;color:var(--muted);margin:0">কোনো অপেক্ষমাণ অনুরোধ নেই।</p>{% endfor %}
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>নতুন অভিযোগ ও পরামর্শ</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/crm/?tab=feedback">সব</a></header>
+      <div class="pad">
+        {% for row in feedback %}
+          <div class="list-row">
+            <span style="flex:1">{{ row.message|truncatechars:60 }}<br><span style="font-size:0.66rem;color:var(--muted)">{{ row.get_kind_display }} · {{ row.ward|default:"—" }}</span></span>
+            {% if row.kind == 'threat' %}<span class="badge red">হুমকি</span>{% endif %}
+          </div>
+        {% empty %}<p style="font-size:0.74rem;color:var(--muted);margin:0">নতুন কোনো বার্তা নেই।</p>{% endfor %}
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>আসন্ন কর্মসূচি</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/items/">সম্পাদনা</a></header>
+      <div class="pad">
+        {% for event in upcoming %}
+          <div class="list-row">
+            <span class="badge">{{ event.date|bn_date_short }}</span>
+            <span style="flex:1">{{ event.title }}<br><span style="font-size:0.64rem;color:var(--muted)">{{ event.venue|truncatechars:40 }}</span></span>
+          </div>
+        {% empty %}<p style="font-size:0.74rem;color:var(--muted);margin:0">আসন্ন কোনো কর্মসূচি নেই।</p>{% endfor %}
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>সাম্প্রতিক অডিট লগ</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/settings/">সব</a></header>
+      <div class="pad">
+        {% for row in audit %}
+          <div class="list-row">
+            <span class="badge muted">{{ row.action }}</span>
+            <span style="flex:1">{{ row.detail|truncatechars:40 }}</span>
+            <span style="font-size:0.62rem;color:var(--muted)">{{ row.created_at|date:"d/m H:i" }}</span>
+          </div>
+        {% empty %}<p style="font-size:0.74rem;color:var(--muted);margin:0">লগ খালি।</p>{% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

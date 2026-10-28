@@ -1,0 +1,78 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>ছবি</span><strong>{{ counts.photos|bn }}</strong></div>
+  <div class="kpi gold"><span>পোস্টার</span><strong>{{ counts.posters|bn }}</strong></div>
+  <div class="kpi green"><span>ভিডিও</span><strong>{{ counts.videos|bn }}</strong></div>
+  <div class="kpi red"><span>লুকানো</span><strong>{{ counts.hidden|bn }}</strong></div>
+</div>
+
+<div class="tabs" style="margin-bottom:0.2rem">
+  <a class="tab {% if tab == 'photos' %}active{% endif %}" href="?tab=photos">ছবি</a>
+  <a class="tab {% if tab == 'posters' %}active{% endif %}" href="?tab=posters">পোস্টার</a>
+  <a class="tab {% if tab == 'videos' %}active{% endif %}" href="?tab=videos">ভিডিও</a>
+</div>
+
+<div class="cols-2">
+  <section class="adm-card">
+    <header><strong>{% if tab == 'photos' %}ছবি{% elif tab == 'posters' %}পোস্টার{% else %}ভিডিও{% endif %}</strong></header>
+    <div class="pad">
+      {% if tab == 'photos' %}
+        {% for row in photos %}
+          <div class="list-row">
+            <div class="thumb">{% if row.image_src %}<img src="{{ row.image_src }}" alt="" />{% endif %}</div>
+            <span style="flex:1">{{ row.caption }}<br><span style="font-size:0.64rem;color:var(--muted)">{{ row.tag }}{% if row.tall %} · লম্বা{% endif %}{% if row.hidden %} · লুকানো{% endif %}</span></span>
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="toggle" /><input type="hidden" name="kind" value="photo" /><input type="hidden" name="id" value="{{ row.pk }}" /><button class="icon-btn" title="লুকান/দেখান">{% if row.hidden %}◌{% else %}◉{% endif %}</button></form>
+            <form method="post" data-confirm="মুছে ফেলবেন?">{% csrf_token %}<input type="hidden" name="action" value="delete" /><input type="hidden" name="kind" value="photo" /><input type="hidden" name="id" value="{{ row.pk }}" /><button class="icon-btn danger">✕</button></form>
+          </div>
+        {% endfor %}
+      {% elif tab == 'posters' %}
+        {% for row in posters %}
+          <div class="list-row">
+            <div class="thumb">{% if row.image_src %}<img src="{{ row.image_src }}" alt="" />{% endif %}</div>
+            <span style="flex:1">{{ row.title }}<br><span style="font-size:0.64rem;color:var(--muted)">{{ row.subtitle }}{% if row.election %} · নির্বাচনী{% endif %}{% if row.hidden %} · লুকানো{% endif %}</span></span>
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="toggle" /><input type="hidden" name="kind" value="poster" /><input type="hidden" name="id" value="{{ row.pk }}" /><button class="icon-btn">{% if row.hidden %}◌{% else %}◉{% endif %}</button></form>
+            <form method="post" data-confirm="মুছে ফেলবেন?">{% csrf_token %}<input type="hidden" name="action" value="delete" /><input type="hidden" name="kind" value="poster" /><input type="hidden" name="id" value="{{ row.pk }}" /><button class="icon-btn danger">✕</button></form>
+          </div>
+        {% endfor %}
+      {% else %}
+        {% for row in videos %}
+          <div class="list-row">
+            <div class="thumb"><img src="{{ row.thumb }}" alt="" /></div>
+            <span style="flex:1">{{ row.title }}<br><span style="font-size:0.64rem;color:var(--muted)">{{ row.youtube_id }} · {{ row.category }}{% if row.hidden %} · লুকানো{% endif %}</span></span>
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="toggle" /><input type="hidden" name="kind" value="video" /><input type="hidden" name="id" value="{{ row.pk }}" /><button class="icon-btn">{% if row.hidden %}◌{% else %}◉{% endif %}</button></form>
+            <form method="post" data-confirm="মুছে ফেলবেন?">{% csrf_token %}<input type="hidden" name="action" value="delete" /><input type="hidden" name="kind" value="video" /><input type="hidden" name="id" value="{{ row.pk }}" /><button class="icon-btn danger">✕</button></form>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="adm-card">
+    <header><strong>নতুন যোগ করুন</strong><span class="sub">ছবি সরাসরি আপলোড করা যায়</span></header>
+    <div class="pad">
+      {% if tab == 'photos' %}
+        <form method="post" enctype="multipart/form-data" class="adm-form">
+          {% csrf_token %}<input type="hidden" name="action" value="create_photo" />
+          {% for field in photo_form %}<div><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>{% endfor %}
+          <button class="btn btn-primary">ছবি যোগ করুন</button>
+        </form>
+      {% elif tab == 'posters' %}
+        <form method="post" enctype="multipart/form-data" class="adm-form">
+          {% csrf_token %}<input type="hidden" name="action" value="create_poster" />
+          {% for field in poster_form %}<div><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>{% endfor %}
+          <button class="btn btn-primary">পোস্টার যোগ করুন</button>
+        </form>
+      {% else %}
+        <form method="post" class="adm-form">
+          {% csrf_token %}<input type="hidden" name="action" value="create_video" />
+          {% for field in video_form %}<div><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>{% endfor %}
+          <button class="btn btn-primary">ভিডিও যোগ করুন</button>
+        </form>
+        <p class="adm-help">YouTube লিংকের শেষ অংশটুকু বসান — যেমন https://youtu.be/<strong>hnD09TA3Vj8</strong></p>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}

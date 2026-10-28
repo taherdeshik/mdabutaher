@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}জনমত জরিপ — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="আপনার মতই আমাদের অগ্রাধিকার" eyebrow="জনমত জরিপ" subtitle="একটি ভোট দিন — ফলাফল প্রকাশ্যে, কোনো নিবন্ধন লাগে না।" crumb="জনমত জরিপ" %}
+
+<section class="section">
+  <div class="container split">
+    <div>
+      {% for poll in polls %}
+        {% with result=results|get_item:poll.pk %}
+        <div class="poll-card" style="margin-bottom:1.2rem">
+          <div class="between">
+            <div>
+              <span class="eyebrow">{{ poll.category }}</span>
+              <h3 style="margin:0.35rem 0 0.3rem">{{ poll.question }}</h3>
+              <p class="muted" style="font-size:0.8rem;margin:0">{{ poll.description }}</p>
+            </div>
+            <span class="badge {% if poll.is_open %}badge-green{% else %}badge-dark{% endif %}">{% if poll.is_open %}চালু{% else %}বন্ধ{% endif %}</span>
+          </div>
+
+          {% if result.option %}
+            <p style="font-size:0.74rem;color:var(--emerald);margin:0.8rem 0 0.5rem">✓ আপনার ভোট গণনা হয়েছে — মোট {{ result.total|bn }} ভোট</p>
+            {% for option in result.options %}
+              <div class="poll-option {% if option.id == result.option %}chosen{% endif %}" style="cursor:default">
+                <div class="bar" style="width:{{ option.pct }}%"></div>
+                <div class="fill"><span>{{ option.label }}</span><span class="latin">{{ option.pct|bn }}% · {{ option.votes|bn }}</span></div>
+              </div>
+            {% endfor %}
+          {% elif poll.is_open %}
+            <form method="post" style="margin-top:0.9rem">
+              {% csrf_token %}
+              {% for option in result.options %}
+                <label class="poll-option" data-poll-option>
+                  <input type="radio" name="option" value="{{ option.id }}" class="sr-only" required />
+                  <div class="fill"><span>{{ option.label }}</span><span style="font-size:0.7rem;color:var(--muted)">{{ option.votes|bn }}</span></div>
+                </label>
+              {% endfor %}
+              <button class="btn btn-primary btn-sm" type="submit" style="margin-top:0.5rem">ভোট দিন</button>
+            </form>
+          {% else %}
+            {% for option in result.options %}
+              <div class="poll-option" style="cursor:default">
+                <div class="bar" style="width:{{ option.pct }}%"></div>
+                <div class="fill"><span>{{ option.label }}</span><span class="latin">{{ option.pct|bn }}% · {{ option.votes|bn }}</span></div>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <p style="font-size:0.66rem;color:var(--muted);margin:0.6rem 0 0">
+            মোট ভোট: {{ result.total|bn }}{% if poll.closes_at %} · শেষ: {{ poll.closes_at|bn_date }}{% endif %}
+          </p>
+        </div>
+        {% endwith %}
+      {% empty %}
+        <p class="muted">এখন কোনো জরিপ চালু নেই।</p>
+      {% endfor %}
+    </div>
+
+    <aside class="sticky-box">
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">গোপনীয়তা</strong>
+        <p style="font-size:0.76rem;color:var(--muted);margin-top:0.4rem">ভোটের সাথে কোনো ব্যক্তিগত তথ্য সংরক্ষণ করা হয় না — শুধু একবার গণনার জন্য একটি অস্থায়ী কী।</p>
+        <div class="kv"><span>মোট সক্রিয় জরিপ</span><strong style="font-weight:600">{{ polls|length|bn }}</strong></div>
+        <a class="btn btn-ghost btn-block" style="margin-top:0.8rem" href="/feedback/">বিষয় প্রস্তাব করুন</a>
+      </div>
+      <div class="card" style="padding:1.1rem;margin-top:1rem">
+        <strong style="font-size:0.85rem">জরিপ আর্কাইভ</strong>
+        {% for key, value in summary.items %}
+          <div class="kv"><span>{{ key }}</span><strong style="font-weight:600">{{ value }}</strong></div>
+        {% endfor %}
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

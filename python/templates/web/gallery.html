@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}গ্যালারি — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="ছবি, পোস্টার ও ভিডিও" eyebrow="মিডিয়া গ্যালারি" subtitle="দুই দশকের কাজ, কর্মসূচি ও মানুষের মুখ — বাছাই করা আর্কাইভ।" crumb="গ্যালারি" %}
+
+<section class="section-tight">
+  <div class="container">
+    <div class="grid-4">
+      <div class="stat-tile"><strong>{{ counts.photos|bn }}</strong><span>ছবি</span></div>
+      <div class="stat-tile"><strong>{{ counts.posters|bn }}</strong><span>পোস্টার</span></div>
+      <div class="stat-tile"><strong>{{ counts.videos|bn }}</strong><span>ভিডিও</span></div>
+      <div class="stat-tile"><strong>{{ photo_tags|length|bn }}</strong><span>বিভাগ</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="tabs">
+      <a class="tab {% if tab == 'photos' %}active{% endif %}" href="/gallery/photos/">ছবি <span class="latin">{{ counts.photos|bn }}</span></a>
+      <a class="tab {% if tab == 'posters' %}active{% endif %}" href="/gallery/posters/">পোস্টার <span class="latin">{{ counts.posters|bn }}</span></a>
+      <a class="tab {% if tab == 'videos' %}active{% endif %}" href="/gallery/videos/">ভিডিও <span class="latin">{{ counts.videos|bn }}</span></a>
+    </div>
+
+    {% if tab == 'photos' %}
+      <div class="pill-list" style="margin-bottom:1.2rem">
+        <span class="chip chip-gold" style="pointer-events:none">বিভাগ:</span>
+        {% for tag in photo_tags %}<span class="chip">{{ tag }}</span>{% endfor %}
+      </div>
+      <div class="masonry">
+        {% for photo in photo_rows %}
+          <figure>
+            <a href="{{ photo.image_src }}" data-lightbox>
+              {% include "partials/smart_image.html" with src=photo.image_src alt=photo.caption label=photo.caption style="aspect-ratio:4/3" %}
+            </a>
+            <figcaption>{{ photo.caption }}{% if photo.tag %} · {{ photo.tag }}{% endif %}</figcaption>
+          </figure>
+        {% empty %}
+          <p class="muted">কোনো ছবি নেই।</p>
+        {% endfor %}
+      </div>
+    {% elif tab == 'posters' %}
+      <div class="grid-3">
+        {% for poster in poster_rows %}
+          <a class="card" href="{{ poster.image_src }}" data-lightbox style="text-decoration:none">
+            <div class="card-media" style="aspect-ratio:3/4">
+              {% include "partials/smart_image.html" with src=poster.image_src alt=poster.title label=poster.title %}
+            </div>
+            <div class="card-body">
+              {% if poster.election %}<span class="badge badge-gold">নির্বাচনী পোস্টার</span>{% endif %}
+              <h3 style="font-size:0.92rem;margin-top:0.4rem">{{ poster.title }}</h3>
+              <p style="margin:0">{{ poster.subtitle }}</p>
+            </div>
+          </a>
+        {% empty %}
+          <p class="muted">কোনো পোস্টার নেই।</p>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="video-grid">
+        {% for video in video_rows %}
+          <article class="video-card">
+            <div class="video-frame">
+              <iframe src="{{ video.embed }}" title="{{ video.title }}" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+            <div class="meta">
+              <strong>{{ video.title }}</strong>
+              <span>{{ video.category }}{% if video.note %} · {{ video.note }}{% endif %}</span>
+            </div>
+          </article>
+        {% empty %}
+          <p class="muted">কোনো ভিডিও নেই।</p>
+        {% endfor %}
+      </div>
+      {% if featured_video %}
+        <p style="font-size:0.74rem;color:var(--muted);margin-top:1rem">
+          সব ভিডিও আমাদের অফিশিয়াল চ্যানেলে — <a href="{{ featured_video.url }}" target="_blank" rel="noopener" style="color:var(--emerald)">YouTube-এ দেখুন</a>
+        </p>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

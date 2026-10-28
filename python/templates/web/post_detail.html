@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}{{ post.title }} — {{ site.name }}{% endblock %}
+{% block description %}{{ post.excerpt|truncatechars:150 }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ post.title }}{% endblock %}
+{% block og_image %}{% with cover=post.image|image %}{% if cover %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ cover }}" />{% endif %}{% endwith %}{% endblock %}
+{% block jsonld %}
+    {
+      "@context": "https://schema.org",
+      "@type": "{% if post.kind == 'news' %}NewsArticle{% else %}BlogPosting{% endif %}",
+      "headline": "{{ post.title|escapejs }}",
+      "datePublished": "{{ post.published_on|date:'Y-m-d' }}",
+      "dateModified": "{{ post.updated_at|date:'Y-m-d' }}",
+      "author": {"@type": "Person", "name": "{{ post.author_name|escapejs }}"},
+      "publisher": {"@type": "Person", "name": "{{ site.name|escapejs }}"},
+      "description": "{{ post.excerpt|escapejs }}",
+      "inLanguage": "bn"
+    }
+{% endblock %}
+
+{% block content %}
+<section class="hero-mini">
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="/">হোম</a><span>›</span>
+      <a href="{% if post.kind == 'news' %}/news/{% else %}/blog/{% endif %}">{% if post.kind == 'news' %}সংবাদ{% else %}ব্লগ{% endif %}</a>
+      <span>›</span><span>{{ post.category }}</span>
+    </nav>
+    <div class="row" style="gap:0.5rem;margin-bottom:0.8rem">
+      {% if post.outlet %}<span class="badge badge-gold">{{ post.outlet }}</span>{% endif %}
+      <span class="badge badge-light">{{ post.category }}</span>
+      <span style="font-size:0.72rem;color:rgba(248,244,234,0.7)">{{ post.published_on|bn_date }} · {{ post.read_time|bn }} মিনিট পাঠ</span>
+    </div>
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.excerpt }}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <article>
+      <div class="card-media" style="aspect-ratio:16/9;border-radius:1.25rem;margin-bottom:1.6rem">
+        {% include "partials/smart_image.html" with image_key=post.image alt=post.title label=post.title lazy="eager" %}
+      </div>
+
+      <div class="prose">
+        {% for block in blocks %}
+          {% if block.type == 'html' %}
+            {{ block.html|safe }}
+          {% elif block.type == 'h2' %}
+            <h2>{{ block.text }}</h2>
+          {% elif block.type == 'h3' %}
+            <h3>{{ block.text }}</h3>
+          {% elif block.type == 'quote' %}
+            <blockquote>{{ block.text }}</blockquote>
+          {% elif block.type == 'list' %}
+            <ul>{% for item in block.items %}<li>{{ item }}</li>{% endfor %}</ul>
+          {% else %}
+            <p>{{ block.text }}</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if post.tags %}
+        <div class="pill-list" style="margin-top:1.6rem">
+          {% for tag in post.tags %}<a class="chip" href="/blog/?tag={{ tag|urlencode }}">#{{ tag }}</a>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="card" style="padding:1rem;margin-top:1.6rem;display:flex;gap:0.9rem;align-items:center;flex-wrap:wrap">
+        <span class="brand-mark">{{ post.author_name|slice:":1" }}</span>
+        <div style="flex:1;min-width:12rem">
+          <strong style="font-size:0.86rem">{{ post.author_name }}</strong>
+          <span style="display:block;font-size:0.72rem;color:var(--muted)">{{ post.author_role }}</span>
+        </div>
+        <a class="btn btn-ghost btn-sm" href="/feedback/">মতামত জানান</a>
+      </div>
+    </article>
+
+    <aside class="sticky-box">
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">একই ধরনের লেখা</strong>
+        {% for rel in related %}
+          <a class="kv" href="{{ rel.get_absolute_url }}" style="text-decoration:none">
+            <span style="max-width:70%">{{ rel.title|truncatechars:48 }}</span>
+            <span style="font-size:0.68rem;color:var(--muted)">{{ rel.published_on|bn_date_short }}</span>
+          </a>
+        {% empty %}
+          <p class="muted" style="font-size:0.78rem;margin-top:0.6rem">আরও লেখা শীঘ্রই আসছে।</p>
+        {% endfor %}
+        <a class="btn btn-primary btn-block" style="margin-top:1rem" href="{% if post.kind == 'news' %}/news/{% else %}/blog/{% endif %}">সব লেখা</a>
+      </div>
+      <div class="card" style="padding:1.1rem;margin-top:1rem">
+        <strong style="font-size:0.85rem">সরাসরি যোগাযোগ</strong>
+        <div class="kv"><span>মোবাইল</span><a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a></div>
+        <div class="kv"><span>ইমেইল</span><a href="mailto:{{ site.email }}">{{ site.email }}</a></div>
+        <a class="btn btn-gold btn-block" style="margin-top:0.9rem" href="/appointment/">সাক্ষাতের সময় নিন</a>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% load static campaign %}<!DOCTYPE html>
+<html lang="bn" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{% block title %}{{ site.name }} — {{ site.role }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ site.slogan }} · {{ site.union }}, {{ site.upazila }}, {{ site.district }} — {{ site.role }} {{ site.name }}।{% endblock %}" />
+  <meta name="theme-color" content="#0a3025" />
+  <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}" />
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}" />
+  <meta property="og:title" content="{% block og_title %}{{ site.name }} — {{ site.role }}{% endblock %}" />
+  <meta property="og:description" content="{% block og_desc %}{{ site.slogan }}{% endblock %}" />
+  <meta property="og:site_name" content="{{ site.name }}" />
+  <meta property="og:locale" content="bn_BD" />
+  {% block og_image %}{% endblock %}
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="alternate" type="application/rss+xml" title="{{ site.name }} — ব্লগ ও সংবাদ" href="/feed.xml" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml" />
+  <link rel="preload" href="{% static 'fonts/anek-bangla-bengali.woff2' %}" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="{% static 'css/site.css' %}" />
+  {% block head %}{% endblock %}
+  <script type="application/ld+json">
+    {{ site_ld|default_if_none:"" }}{% block jsonld %}
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "{{ site.name }}",
+      "alternateName": "{{ site.nameEn }}",
+      "jobTitle": "{{ site.role }}",
+      "telephone": "{{ site.phone }}",
+      "email": "{{ site.email }}",
+      "url": "{{ request.scheme }}://{{ request.get_host }}/",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{ site.office }}",
+        "addressLocality": "{{ site.upazila }}",
+        "addressRegion": "{{ site.district }}",
+        "addressCountry": "BD"
+      }
+    }
+    {% endblock %}
+  </script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="sr-only" href="#main-content">মূল কনটেন্টে যান</a>
+
+  {% if ticker.enabled and ticker.items %}
+    <div class="ticker" role="region" aria-label="সর্বশেষ খবর">
+      <div class="container ticker-inner">
+        <div class="ticker-label"><span class="dot"></span> সর্বশেষ</div>
+        <div class="ticker-track-wrap">
+          <div class="ticker-track">
+            {% for item in ticker.items %}
+              <a class="ticker-item" href="{{ item.href }}">{{ item.text }}</a>
+            {% endfor %}
+            {% for item in ticker.items %}
+              <a class="ticker-item" href="{{ item.href }}" tabindex="-1" aria-hidden="true">{{ item.text }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <header class="site-header">
+    <div class="navbar">
+      <div class="container navbar-inner">
+        <a class="brand" href="/" aria-label="{{ site.name }} — হোম">
+          <span class="brand-mark">তা</span>
+          <span class="brand-text">
+            <strong>{{ site.name }}</strong>
+            <span>{{ site.role }} · {{ site.union }}</span>
+          </span>
+        </a>
+
+        <nav class="nav-menu" aria-label="প্রধান মেনু">
+          {% for item in nav %}
+            <div class="nav-item {% if request.path == item.href %}active{% endif %}">
+              <a class="nav-link" href="{{ item.href }}">{{ item.label }}{% if item.children %}<i class="caret"></i>{% endif %}</a>
+              {% if item.children %}
+                <div class="nav-drop">
+                  {% for child in item.children %}
+                    <a href="{{ child.href }}"><strong>{{ child.label }}</strong><span>{{ child.desc }}</span></a>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </nav>
+
+        <a class="btn btn-primary btn-sm" href="/appointment/">সাক্ষাতের সময় নিন</a>
+        <a class="btn btn-gold btn-sm" href="tel:{{ site.phoneHref }}">{{ site.phone }}</a>
+
+        <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="মেনু">
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="container">
+        {% for item in nav %}
+          <a href="{{ item.href }}">{{ item.label }}</a>
+          {% if item.children %}
+            <div class="sub">
+              {% for child in item.children %}
+                <a href="{{ child.href }}">{{ child.label }}</a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+        <div class="row" style="margin-top:0.9rem">
+          <a class="btn btn-primary btn-sm" href="/appointment/">সাক্ষাতের সময় নিন</a>
+          <a class="btn btn-ghost btn-sm" href="/feedback/">সমস্যা জানান</a>
+          {% if is_staff_user %}<a class="btn btn-ghost btn-sm" href="/admin/">কমান্ড সেন্টার</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    {% if messages %}
+      <div class="container" style="padding-top:1rem">
+        <div class="messages">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "partials/footer.html" %}
+
+  <script src="{% static 'js/site.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

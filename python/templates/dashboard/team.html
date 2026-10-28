@@ -1,0 +1,51 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>মোট সদস্য</span><strong>{{ members|length|bn }}</strong></div>
+  {% for row in roles|slice:":3" %}
+    <div class="kpi"><span>{{ row.role }}</span><strong>{{ row.n|bn }}</strong></div>
+  {% endfor %}
+</div>
+
+<div class="cols-2">
+  <section class="adm-card">
+    <header><strong>দলের সদস্য</strong><span class="sub">ভূমিকা অনুযায়ী দায়িত্ব</span></header>
+    <div class="table-scroll">
+      <table class="adm-table">
+        <thead><tr><th>নাম</th><th>ভূমিকা</th><th>ওয়ার্ড</th><th>মোবাইল</th><th>অবস্থা</th><th></th></tr></thead>
+        <tbody>
+          {% for member in members %}
+            <tr>
+              <td>{{ member.name }}</td>
+              <td>{{ member.get_role_display }}</td>
+              <td class="num">{% if member.ward %}{{ member.ward.no|bn }}{% else %}—{% endif %}</td>
+              <td class="num">{% if member.phone %}<a href="tel:{{ member.phone }}">{{ member.phone }}</a>{% else %}—{% endif %}</td>
+              <td><span class="badge {% if member.status == 'active' %}green{% elif member.status == 'pending' %}gold{% else %}muted{% endif %}">{{ member.get_status_display }}</span></td>
+              <td>
+                <form method="post" data-confirm="সদস্যকে সরিয়ে দেবেন?">{% csrf_token %}
+                  <input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="{{ member.pk }}" />
+                  <button class="icon-btn danger">✕</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}<tr><td colspan="6">এখনো কোনো সদস্য যোগ করা হয়নি।</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="adm-card">
+    <header><strong>নতুন সদস্য</strong></header>
+    <div class="pad">
+      <form method="post" class="adm-form">
+        {% csrf_token %}
+        {% for field in form %}
+          <div><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>
+        {% endfor %}
+        <button class="btn btn-primary">যোগ করুন</button>
+      </form>
+    </div>
+  </section>
+</div>
+{% endblock %}

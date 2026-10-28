@@ -1,0 +1,73 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi red"><span>মোট ব্যয়</span><strong>{{ total|bdt }}</strong><small>সীমার {{ pct|bn }}%</small></div>
+  <div class="kpi"><span>আইনি সীমা</span><strong>{{ cap|bdt }}</strong></div>
+  <div class="kpi green"><span>বাকি</span><strong>{{ cap|bdt }}</strong><small>আরও ব্যয় করা যাবে</small></div>
+  <div class="kpi gold"><span>রেকর্ড</span><strong>{{ rows|length|bn }}</strong><small>খরচের এন্ট্রি</small></div>
+</div>
+
+{% if cheque_rule %}
+  <div class="alert alert-warning" style="margin:0">
+    ⚠ {{ cheque_rule|length|bn }}টি খরচ ২০,০০০ টাকার বেশি কিন্তু নগদে আছে — আইন অনুযায়ী চেক/ব্যাংক ট্রান্সফার হতে হবে।
+  </div>
+{% endif %}
+
+<div class="cols-2">
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>খরচের তালিকা</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/export/expenses.csv">CSV</a></header>
+      <div class="table-scroll">
+        <table class="adm-table">
+          <thead><tr><th>তারিখ</th><th>খাত</th><th>বিবরণ</th><th>টাকা</th><th>মাধ্যম</th><th>ভাউচার</th><th></th></tr></thead>
+          <tbody>
+            {% for row in rows %}
+              <tr>
+                <td class="num">{{ row.date|bn_date_short }}</td>
+                <td>{{ row.category }}</td>
+                <td>{{ row.description }}</td>
+                <td class="num">{{ row.amount|bdt }}</td>
+                <td><span class="badge {% if row.mode == 'cash' %}muted{% else %}green{% endif %}">{{ row.get_mode_display }}</span></td>
+                <td class="num">{{ row.voucher|default:"—" }}</td>
+                <td>
+                  <form method="post" data-confirm="খরচটি মুছে ফেলবেন?">{% csrf_token %}
+                    <input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="{{ row.pk }}" />
+                    <button class="icon-btn danger">✕</button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}<tr><td colspan="7">এখনো কোনো খরচ যোগ করা হয়নি।</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>খাতভিত্তিক ব্যয়</strong></header>
+      <div class="pad">
+        {% for row in by_cat %}
+          <div style="margin-bottom:0.55rem">
+            <div style="display:flex;justify-content:space-between;font-size:0.72rem"><span>{{ row.category }}</span><span class="num">{{ row.t|bdt }}</span></div>
+            <div class="progress gold" style="margin-top:0.25rem"><span style="width:{% widthratio row.t total 100 %}%"></span></div>
+          </div>
+        {% empty %}<p style="font-size:0.74rem;color:var(--muted);margin:0">কোনো খরচ নেই।</p>{% endfor %}
+      </div>
+    </section>
+  </div>
+
+  <section class="adm-card">
+    <header><strong>নতুন খরচ</strong><span class="sub">২০,০০০+ টাকা হলে চেক/ব্যাংক বেছে নিন</span></header>
+    <div class="pad">
+      <form method="post" class="adm-form">
+        {% csrf_token %}
+        {% for field in form %}
+          <div><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>
+        {% endfor %}
+        <button class="btn btn-primary">সংরক্ষণ করুন</button>
+      </form>
+      <p class="adm-help" style="margin-top:0.6rem">নির্বাচনী ব্যয়সীমা ১০,০০,০০০ টাকা; প্রতিটি ব্যয়ের ভাউচার সংরক্ষণ করুন।</p>
+    </div>
+  </section>
+</div>
+{% endblock %}

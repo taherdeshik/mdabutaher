@@ -1,0 +1,65 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>মোট পোস্ট</span><strong>{{ rows|length|bn }}</strong></div>
+  <div class="kpi green"><span>প্রকাশিত</span><strong>{{ rows|length|bn }}</strong></div>
+  <div class="kpi gold"><span>মিডিয়া</span><strong>{{ recent_uploads|length|bn }}</strong><small>সাম্প্রতিক আপলোড</small></div>
+  <div class="kpi"><span>ফিল্টার</span><strong>{% if kind %}{{ kind }}{% else %}সব{% endif %}</strong></div>
+</div>
+
+<section class="adm-card">
+  <header>
+    <strong>ব্লগ ও সংবাদ</strong>
+    <div class="spacer"></div>
+    <div class="tabs">
+      <a class="tab {% if not kind %}active{% endif %}" href="/admin/cms/">সব</a>
+      <a class="tab {% if kind == 'blog' %}active{% endif %}" href="/admin/cms/?kind=blog">ব্লগ</a>
+      <a class="tab {% if kind == 'news' %}active{% endif %}" href="/admin/cms/?kind=news">সংবাদ</a>
+    </div>
+    <a class="btn btn-primary btn-sm" href="/admin/cms/new/">+ নতুন পোস্ট</a>
+  </header>
+  <div class="table-scroll">
+    <table class="adm-table">
+      <thead><tr><th></th><th>শিরোনাম</th><th>ধরন</th><th>তারিখ</th><th>অবস্থা</th><th>পাঠ</th><th></th></tr></thead>
+      <tbody>
+        {% for post in rows %}
+          <tr>
+            <td><div class="thumb">{% with cover=post.image|image %}{% if cover %}<img src="{{ cover }}" alt="" />{% endif %}{% endwith %}</div></td>
+            <td>
+              <strong style="font-size:0.78rem">{{ post.title }}</strong><br>
+              <span style="font-size:0.64rem;color:var(--muted)">/{{ post.kind }}/{{ post.slug }}{% if post.rich %} · রিচ{% endif %}</span>
+            </td>
+            <td><span class="badge {% if post.kind == 'news' %}gold{% else %}muted{% endif %}">{{ post.get_kind_display }}</span></td>
+            <td class="num">{{ post.published_on|bn_date_short }}</td>
+            <td><span class="badge {% if post.status == 'published' %}green{% else %}muted{% endif %}">{{ post.get_status_display }}</span></td>
+            <td class="num">{{ post.views|bn }}</td>
+            <td style="white-space:nowrap">
+              <a class="icon-btn" href="/admin/cms/{{ post.pk }}/" title="সম্পাদনা">✎</a>
+              <a class="icon-btn" href="{{ post.get_absolute_url }}" target="_blank" title="দেখুন">↗</a>
+              <form method="post" action="/admin/cms/{{ post.pk }}/delete/" style="display:inline" data-confirm="পোস্টটি মুছে ফেলবেন?">{% csrf_token %}
+                <button class="icon-btn danger" title="মুছুন">✕</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7">কোনো পোস্ট নেই — “নতুন পোস্ট” দিয়ে শুরু করুন।</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="adm-card">
+  <header><strong>মিডিয়া লাইব্রেরি</strong><span class="sub">সর্বশেষ আপলোড</span><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/media/">সব ফাইল</a></header>
+  <div class="pad" style="display:flex;flex-wrap:wrap;gap:0.5rem">
+    {% for asset in recent_uploads %}
+      <a href="{{ asset.url }}" target="_blank" class="thumb" style="width:5rem;height:3.4rem" title="{{ asset.original_name }}">
+        {% if asset.is_image %}<img src="{{ asset.url }}" alt="" />{% endif %}
+      </a>
+    {% empty %}
+      <p style="font-size:0.74rem;color:var(--muted);margin:0">এখনো কোনো ফাইল আপলোড হয়নি।</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

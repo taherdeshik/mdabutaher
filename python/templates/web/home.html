@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% load campaign %}
+
+{% block title %}{{ site.name }} — {{ site.role }} · {{ site.union }}{% endblock %}
+
+{% block content %}
+{# ------------------------------------------------------------------ hero #}
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <span class="hero-badge"><span class="dot"></span> {{ site.role }} · নির্বাচন {{ site.electionYear }} · {{ site.union }}</span>
+      <h1 style="margin-top:1rem">{{ copies.hero.title|default:"মানুষের পাশে <span class='accent'>সবসময়</span>"|safe }}</h1>
+      <p class="hero-lead">{{ copies.hero.description|default:site.intro }}</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="/manifesto/">ম্যানিফেস্টো দেখুন</a>
+        <a class="btn btn-light" href="/appointment/">সাক্ষাতের সময় নিন</a>
+        <a class="btn btn-light" href="/feedback/">সমস্যা জানান</a>
+      </div>
+      <div class="hero-stats">
+        {% for stat in hero_stats %}
+          <div class="hero-stat">
+            <strong>{{ stat.value|bn }}{{ stat.suffix }}</strong>
+            <span>{{ stat.label }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="hero-portrait">
+      <div class="frame">
+        {% include "partials/smart_image.html" with image_key="hero" alt=site.name label=site.name extra="w-full h-full" style="height:100%" lazy="eager" %}
+      </div>
+      <div class="sig"><img src="{{ 'signature'|image }}" alt="স্বাক্ষর" /></div>
+      <div class="hero-float">
+        <strong>{{ site.tagline }}</strong>
+        <span>{{ site.slogan }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# --------------------------------------------------------- quick actions #}
+{% if copies|get_item:"quick-actions"|get_item:"visible" %}
+<section class="section-tight">
+  <div class="container">
+    <div class="quick-grid">
+      <a class="quick" href="/appointment/">
+        <span class="ico">◷</span>
+        <strong>অ্যাপয়েন্টমেন্ট</strong>
+        <span>সাক্ষাতের সময় অনলাইনে বুক করুন — ২ মিনিটে</span>
+      </a>
+      <a class="quick" href="/feedback/">
+        <span class="ico">✍</span>
+        <strong>সমস্যা ও পরামর্শ</strong>
+        <span>অভিযোগ, মতামত বা হুমকি — গোপনীয়ভাবে জানান</span>
+      </a>
+      <a class="quick" href="/polls/">
+        <span class="ico">▤</span>
+        <strong>জনমত জরিপ</strong>
+        <span>এলাকার অগ্রাধিকার ঠিক করতে ভোট দিন</span>
+      </a>
+      <a class="quick" href="/campaign/#volunteer">
+        <span class="ico">✦</span>
+        <strong>স্বেচ্ছাসেবক হোন</strong>
+        <span>৯টি ওয়ার্ডে টিমে যোগ দিন</span>
+      </a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ------------------------------------------------------------- about/intro #}
+<section class="section">
+  <div class="container split">
+    <div class="reveal">
+      <span class="eyebrow">{{ copies.about.eyebrow|default:"পরিচিতি" }}</span>
+      <h2>{{ copies.about.title|default:"মাটি, মানুষ আর মায়ের দোয়া — এই তিনটিই আমার শক্তি" }}</h2>
+      <p class="muted">{{ copies.about.description|default:site.intro }}</p>
+      <div class="grid-2" style="margin-top:1.5rem">
+        {% for value in values %}
+          <div>
+            <strong style="display:block;font-size:0.92rem">{{ value.title }}</strong>
+            <span style="font-size:0.78rem;color:var(--muted)">{{ value.desc }}</span>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="row" style="margin-top:1.6rem">
+        <a class="btn btn-primary" href="/about/">পুরো পরিচিতি</a>
+        <a class="btn btn-ghost" href="/activities/">কাজের তালিকা</a>
+      </div>
+    </div>
+    <div class="stack reveal">
+      <div class="card">
+        <div class="card-media" style="aspect-ratio:16/9">
+          {% include "partials/smart_image.html" with image_key="portrait" alt=site.name label="প্রার্থীর ছবি" %}
+        </div>
+        <div class="card-body">
+          <div class="between" style="gap:0.5rem">
+            <strong style="font-size:0.92rem">{{ site.name }}</strong>
+            <span class="badge badge-gold">{{ site.role }}</span>
+          </div>
+          <p style="margin:0.5rem 0 0">{{ site.heroQuote|truncatechars:150 }}</p>
+          <div class="row" style="margin-top:0.9rem">
+            <a class="card-link" href="/about/">জীবনী ও যোগ্যতা →</a>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">আসন্ন কর্মসূচি</strong>
+        {% if upcoming %}
+          {% for event in upcoming|slice:":3" %}
+            <div class="kv" style="align-items:flex-start">
+              <span>{{ event.date|bn_date_short }} · {{ event.start|bn }}</span>
+              <a href="{{ event.get_absolute_url }}" style="text-align:right;max-width:60%">{{ event.title }}</a>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="muted" style="font-size:0.78rem;margin:0.6rem 0 0">নতুন কর্মসূচি শীঘ্রই ঘোষণা করা হবে।</p>
+        {% endif %}
+        <a class="card-link" href="/events/" style="margin-top:0.8rem;display:inline-flex">সব ইভেন্ট →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- manifesto #}
+<section class="section on-dark" style="background:linear-gradient(160deg,var(--night),var(--forest))">
+  <div class="container">
+    <div class="between" style="margin-bottom:2rem">
+      <div>
+        <span class="eyebrow" style="color:var(--gold)">ম্যানিফেস্টো</span>
+        <h2 style="margin-top:0.4rem">৮টি স্তম্ভ, {{ totals.commitments|bn }}টি অঙ্গীকার</h2>
+        <p>প্রতিটি অঙ্গীকার মাঠের মানুষের কথা থেকে জন্ম নিয়েছে — সময়সীমা ও বাজেটসহ।</p>
+      </div>
+      <a class="btn btn-gold" href="/manifesto/">সম্পূর্ণ ম্যানিফেস্টো</a>
+    </div>
+    <div class="grid-4">
+      {% for pillar in pillars %}
+        <a class="stat-tile" href="/manifesto/?pillar={{ pillar.slug }}" style="text-decoration:none">
+          <span style="font-family:var(--font-latin);font-size:0.66rem;color:var(--gold)">{{ pillar.number }}</span>
+          <strong style="font-size:0.98rem;line-height:1.35">{{ pillar.title }}</strong>
+          <span style="margin-top:0.35rem">{{ pillar.summary|truncatechars:80 }}</span>
+          <div class="progress" style="margin-top:0.6rem"><span style="width:{{ pillar.progress }}%"></span></div>
+          <span style="margin-top:0.3rem">অগ্রগতি {{ pillar.progress|bn }}% · {{ pillar.commitment_count|bn }} অঙ্গীকার</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ---------------------------------------------------------------- events #}
+<section class="section">
+  <div class="container">
+    <div class="between" style="margin-bottom:1.6rem">
+      <div class="section-head" style="margin-bottom:0">
+        <span class="eyebrow">{{ copies.events.eyebrow|default:"কর্মসূচি" }}</span>
+        <h2>{{ copies.events.title|default:"আসন্ন ইভেন্ট ও উঠান বৈঠক" }}</h2>
+        <p>{{ copies.events.description|default:"আপনার পাড়ায় আমরা আসছি — সময় ও স্থান দেখে নিন, পরিবার নিয়ে আসুন।" }}</p>
+      </div>
+      <a class="btn btn-ghost" href="/events/">সব কর্মসূচি</a>
+    </div>
+    <div class="grid-3">
+      {% for event in upcoming %}
+        <article class="card">
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="badge badge-gold">{{ event.type }}</span>
+              <span>{{ event.date|bn_date_short }}</span><span class="sep"></span><span>{{ event.start|bn }} – {{ event.end|bn }}</span>
+            </div>
+            <h3 style="margin-top:0.6rem">{{ event.title }}</h3>
+            <p>{{ event.venue }}{% if event.ward %} · ওয়ার্ড {{ event.ward|bn }}{% endif %}</p>
+            <div class="between" style="gap:0.5rem">
+              <span style="font-size:0.7rem;color:var(--muted)">{{ event.registered|bn }}/{{ event.capacity|bn }} রেজিস্ট্রেশন</span>
+              <a class="card-link" href="{{ event.get_absolute_url }}">বিস্তারিত →</a>
+            </div>
+          </div>
+        </article>
+      {% empty %}
+        <p class="muted">শীঘ্রই নতুন কর্মসূচি ঘোষণা করা হবে।</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------------------ blog #}
+<section class="section" style="background:var(--cream-2)">
+  <div class="container">
+    <div class="between" style="margin-bottom:1.6rem">
+      <div class="section-head" style="margin-bottom:0">
+        <span class="eyebrow">{{ copies.blog.eyebrow|default:"ব্লগ" }}</span>
+        <h2>{{ copies.blog.title|default:"সমস্যার কথা নয়, সমাধানের কথা" }}</h2>
+        <p>{{ copies.blog.description|default:"প্রতিটি লেখায় একটি সমস্যা, একটি বিশ্লেষণ এবং একটি বাস্তবায়নযোগ্য পরিকল্পনা।" }}</p>
+      </div>
+      <a class="btn btn-ghost" href="/blog/">সব লেখা</a>
+    </div>
+    <div class="grid-3">
+      {% for post in posts %}
+        <article class="card">
+          <a class="card-media" href="{{ post.get_absolute_url }}">
+            {% include "partials/smart_image.html" with image_key=post.image alt=post.title label=post.title %}
+          </a>
+          <div class="card-body">
+            <div class="card-meta"><span class="badge badge-dark">{{ post.category }}</span><span>{{ post.published_on|bn_date_short }}</span><span class="sep"></span><span>{{ post.read_time|bn }} মিনিট</span></div>
+            <h3 style="margin-top:0.55rem"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+            <p>{{ post.excerpt|truncatechars:110 }}</p>
+            <a class="card-link" href="{{ post.get_absolute_url }}">পড়ুন →</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------------------ poll #}
+{% if active_polls %}
+{% with poll=active_polls.0 %}
+<section class="section-tight">
+  <div class="container">
+    <div class="poll-card reveal" style="display:grid;gap:1rem">
+      <div class="between">
+        <div>
+          <span class="eyebrow">জনমত জরিপ</span>
+          <h3 style="margin:0.35rem 0 0.2rem">{{ poll.question }}</h3>
+          <p class="muted" style="margin:0;font-size:0.8rem">{{ poll.description }}</p>
+        </div>
+        <a class="btn btn-primary btn-sm" href="/polls/">ভোট দিন</a>
+      </div>
+      <div class="grid-2" style="gap:0.5rem">
+        {% for option in poll.options.all|slice:":4" %}
+          <div class="poll-option" style="cursor:default">
+            <div class="bar" style="width:{% widthratio option.votes poll.total_votes 100 %}%"></div>
+            <div class="fill"><span>{{ option.label }}</span><span class="latin">{{ option.votes|bn }}</span></div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endwith %}
+{% endif %}
+
+{# ----------------------------------------------------------- testimonials #}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">মানুষের কথা</span>
+      <h2>এলাকার মানুষের অভিজ্ঞতা</h2>
+    </div>
+    <div class="grid-3">
+      {% for t in testimonials %}
+        <blockquote class="quote">
+          “{{ t.quote }}”
+          <footer><strong style="color:var(--forest)">{{ t.name }}</strong> · {{ t.role }}</footer>
+        </blockquote>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- cta band #}
+<section class="section on-dark" style="background:linear-gradient(120deg,var(--forest),var(--night))">
+  <div class="container between">
+    <div>
+      <span class="eyebrow" style="color:var(--gold)">যোগাযোগ</span>
+      <h2 style="margin-top:0.4rem">আপনার সমস্যা আমাদের পরিকল্পনা</h2>
+      <p style="margin-bottom:0">ঘরে বসেই সাক্ষাতের সময় নিন, সমস্যা জানান বা সরাসরি ফোন করুন।</p>
+    </div>
+    <div class="row">
+      <a class="btn btn-gold" href="/appointment/">অ্যাপয়েন্টমেন্ট</a>
+      <a class="btn btn-light" href="tel:{{ site.phoneHref }}">{{ site.phone }}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

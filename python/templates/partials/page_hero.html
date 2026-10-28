@@ -1,0 +1,12 @@
+{% load campaign %}
+<section class="hero-mini">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="ব্রেডক্রাম্ব">
+      <a href="/">হোম</a> <span>›</span> <span>{{ crumb|default:title }}</span>
+    </nav>
+    {% if eyebrow %}<span class="eyebrow" style="color:var(--gold)">{{ eyebrow }}</span>{% endif %}
+    <h1>{{ title }}</h1>
+    {% if subtitle %}<p>{{ subtitle }}</p>{% endif %}
+    {% block hero_extra %}{% endblock %}
+  </div>
+</section>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}কাজের তালিকা — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="কাজের তালিকা" eyebrow="মাঠের অভিজ্ঞতা" subtitle="শিক্ষা, নিরাপদ পানি, দুর্যোগ ব্যবস্থাপনা ও সামাজিক অবক্ষয় রোধে গত দুই দশকের কাজ।" crumb="কাজের তালিকা" %}
+<section class="section">
+  <div class="container">
+    <div class="tabs">
+      <a class="tab {% if not active %}active{% endif %}" href="/activities/">সব ({{ count|bn }})</a>
+      {% for category in categories %}
+        <a class="tab {% if active == category %}active{% endif %}" href="?category={{ category|urlencode }}">{{ category }}</a>
+      {% endfor %}
+    </div>
+    <div class="grid-2">
+      {% for activity in activities %}
+        <article class="card">
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="badge badge-gold">{{ activity.category }}</span>
+              <span>{{ activity.date|bn_date }}</span><span class="sep"></span><span>ওয়ার্ড {{ activity.ward|bn }}</span>
+            </div>
+            <h3 style="margin-top:0.6rem">{{ activity.title }}</h3>
+            <p>{{ activity.summary }}</p>
+            {% if activity.location %}<p style="font-size:0.72rem;margin:0">📍 {{ activity.location }}</p>{% endif %}
+          </div>
+        </article>
+      {% empty %}
+        <p class="muted">এই বিভাগে এখনো কোনো কাজ যোগ করা হয়নি।</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

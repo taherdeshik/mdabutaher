@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}অ্যাপয়েন্টমেন্ট — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="সাক্ষাতের সময় নিন" eyebrow="জনসেবা" subtitle="অফিসে এসে লাইনে দাঁড়ানো নয় — অনলাইনে সময় বুক করুন, টিম ফোনে নিশ্চিত করবে।" crumb="অ্যাপয়েন্টমেন্ট" %}
+
+<section class="section">
+  <div class="container split">
+    <div class="form-card">
+      <h2 style="font-size:1.25rem">সাক্ষাতের অনুরোধ</h2>
+      <p class="muted" style="font-size:0.8rem">হলুদ তারকা (*) চিহ্নিত ঘরগুলো পূরণ করা আবশ্যক। আপনার তথ্য শুধু সাক্ষাতের ব্যবস্থাপনার জন্য ব্যবহৃত হবে।</p>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="form-grid">
+          <div class="field">
+            <label for="{{ form.name.id_for_label }}">নাম *</label>
+            {{ form.name }}
+            {% if form.name.errors %}<div class="field-error">{{ form.name.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field">
+            <label for="{{ form.phone.id_for_label }}">মোবাইল নম্বর *</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}<div class="field-error">{{ form.phone.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field">
+            <label for="{{ form.ward.id_for_label }}">ওয়ার্ড</label>
+            {{ form.ward }}
+          </div>
+          <div class="field">
+            <label for="{{ form.topic.id_for_label }}">বিষয়</label>
+            {{ form.topic }}
+          </div>
+          <div class="field">
+            <label for="{{ form.preferred_date.id_for_label }}">পছন্দের তারিখ</label>
+            {{ form.preferred_date }}
+            {% if form.preferred_date.errors %}<div class="field-error">{{ form.preferred_date.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field">
+            <label for="{{ form.slot.id_for_label }}">সময়</label>
+            {{ form.slot }}
+          </div>
+        </div>
+        <div class="field">
+          <label for="{{ form.note.id_for_label }}">বিস্তারিত</label>
+          {{ form.note }}
+        </div>
+        <div class="field">
+          <label class="check-row">{{ form.consent }}<span>{{ form.consent.label }}</span></label>
+          {% if form.consent.errors %}<div class="field-error">{{ form.consent.errors.0 }}</div>{% endif %}
+        </div>
+        <button class="btn btn-primary" type="submit">অনুরোধ পাঠান</button>
+        <span style="font-size:0.7rem;color:var(--muted);margin-left:0.6rem">গড়ে ২৪ ঘণ্টায় উত্তর</span>
+      </form>
+    </div>
+
+    <aside class="stack">
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">অফিসের সময়</strong>
+        <p style="font-size:0.8rem;margin:0.5rem 0 0">{{ hours }}</p>
+        <p style="font-size:0.74rem;color:var(--muted);margin:0.3rem 0 0">{{ hours_note }}</p>
+        <div class="kv" style="margin-top:0.7rem"><span>কার্যালয়</span><span style="text-align:right">{{ site.office }}</span></div>
+        <a class="btn btn-ghost btn-block" style="margin-top:0.9rem" href="tel:{{ site.phoneHref }}">{{ site.phone }}</a>
+      </div>
+
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">যা যা বিষয়ে সাক্ষাৎ করতে পারেন</strong>
+        <div class="pill-list" style="margin-top:0.6rem">
+          {% for key, label in topics %}<span class="chip">{{ label }}</span>{% endfor %}
+        </div>
+      </div>
+
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">জরুরি হলে</strong>
+        <div class="kv"><span>জাতীয় জরুরি</span><strong style="font-weight:600">{{ site.quickLinks.emergency }}</strong></div>
+        <div class="kv"><span>স্বাস্থ্য</span><strong style="font-weight:600">{{ site.quickLinks.health }}</strong></div>
+        <div class="kv"><span>নারী হেল্পলাইন</span><strong style="font-weight:600">{{ site.quickLinks.womenHelpline }}</strong></div>
+      </div>
+
+      <div class="quote" style="font-size:0.8rem">
+        এখন পর্যন্ত {{ queue|bn }}টি অনুরোধ জমা পড়েছে। প্রতিটি অনুরোধের অবস্থা টিমের কমান্ড সেন্টারে ট্র্যাক করা হয়।
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

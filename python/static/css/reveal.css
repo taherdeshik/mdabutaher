@@ -1,0 +1,3 @@
+/* স্ক্রল-রিভিল (site.js IntersectionObserver-এর সাথে) */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+.reveal.revealed { opacity: 1; transform: none; }

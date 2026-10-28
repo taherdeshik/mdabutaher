@@ -1,0 +1,102 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>মোট পরিবার</span><strong>{{ total_households|bn_month }}</strong></div>
+  <div class="kpi green"><span>ভোটকেন্দ্র</span><strong>{{ booths|length|bn }}</strong></div>
+  <div class="kpi gold"><span>ওয়ার্ড</span><strong>{{ wards|length|bn }}</strong></div>
+  <div class="kpi"><span>দেখানো হচ্ছে</span><strong>{{ households|length|bn }}</strong><small>ফিল্টার করা সারি</small></div>
+</div>
+
+<div class="cols-2">
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>ওয়ার্ড কভারেজ</strong><span class="sub">ডোর-টু-ডোর অগ্রগতি</span></header>
+      <div class="table-scroll">
+        <table class="adm-table">
+          <thead><tr><th>ওয়ার্ড</th><th>নাম</th><th>পরিবার</th><th>কেন্দ্র</th><th>শক্তি</th><th>টার্নআউট ২০২১</th></tr></thead>
+          <tbody>
+            {% for ward in wards %}
+              <tr>
+                <td class="num">{{ ward.no|bn }}</td>
+                <td>{{ ward.name }}<br><span style="font-size:0.64rem;color:var(--muted)">{{ ward.villages|join:", " }}</span></td>
+                <td class="num">{{ ward.household_count|bn }}</td>
+                <td class="num">{{ ward.booth_count|bn }}</td>
+                <td><span class="badge {% if ward.strength == 'strong' %}green{% elif ward.strength == 'lean' %}gold{% elif ward.strength == 'hostile' %}red{% else %}muted{% endif %}">{{ ward.get_strength_display }}</span></td>
+                <td class="num">{{ ward.turnout_2021|bn }}%</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>ভোটকেন্দ্র</strong><span class="sub">{{ booths|length|bn }}টি কেন্দ্র</span></header>
+      <div class="table-scroll">
+        <table class="adm-table">
+          <thead><tr><th>কোড</th><th>কেন্দ্র</th><th>ওয়ার্ড</th><th>ভোটার</th><th>কভারেজ</th></tr></thead>
+          <tbody>
+            {% for booth in booths %}
+              <tr>
+                <td class="num">{{ booth.code }}</td>
+                <td>{{ booth.name }}<br><span style="font-size:0.64rem;color:var(--muted)">{{ booth.village }}</span></td>
+                <td class="num">{{ booth.ward.no|bn }}</td>
+                <td class="num">{{ booth.voters|bn_month }}</td>
+                <td style="min-width:6rem">
+                  <div class="progress"><span style="width:{{ booth.coverage }}%"></span></div>
+                  <span style="font-size:0.62rem">{{ booth.coverage|bn }}%</span>
+                </td>
+              </tr>
+            {% empty %}<tr><td colspan="5">কোনো কেন্দ্র যোগ করা হয়নি।</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>কভারেজ ম্যাপ</strong><span class="sub">৯ ওয়ার্ডের স্কিমেটিক চিত্র</span></header>
+      <div class="pad">
+        <svg class="map" viewBox="0 0 400 400" role="img" aria-label="ওয়ার্ড ম্যাপ">
+          <rect x="0" y="0" width="400" height="400" fill="#081d17" />
+          {% for row in polygons %}
+            <path class="{{ row.strength }}" d="{{ row.polygon }}" opacity="0.9" />
+          {% endfor %}
+        </svg>
+        <p style="font-size:0.66rem;color:var(--muted);margin:0.6rem 0 0">রঙ: সবুজ = শক্তিশালী, হালকা সবুজ = অনুকূল, সোনালি = দোদুল্যমান, লাল = প্রতিকূল।</p>
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>পরিবার তালিকা</strong><span class="spacer"></span>
+        <form method="get" style="display:flex;gap:0.35rem">
+          <input class="adm-input" name="q" value="{{ q }}" placeholder="নাম/গ্রাম/ফোন" style="width:9rem" />
+          <select class="adm-input" name="status" style="width:7rem">
+            <option value="">সব</option>
+            {% for key, label in statuses %}<option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+          </select>
+          <button class="btn btn-ghost btn-sm">খুঁজুন</button>
+        </form>
+      </header>
+      <div class="table-scroll">
+        <table class="adm-table">
+          <thead><tr><th>পরিবার প্রধান</th><th>গ্রাম</th><th>সদস্য</th><th>স্ট্যাটাস</th><th>সর্বশেষ পরিদর্শন</th></tr></thead>
+          <tbody>
+            {% for row in households %}
+              <tr>
+                <td>{{ row.head }}{% if row.phone %}<br><span style="font-size:0.64rem;color:var(--muted)">{{ row.phone }}</span>{% endif %}</td>
+                <td>{{ row.village }}</td>
+                <td class="num">{{ row.members|bn }}</td>
+                <td><span class="badge {% if row.status == 'committed' %}green{% elif row.status == 'visited' %}gold{% elif row.status == 'hostile' %}red{% else %}muted{% endif %}">{{ row.get_status_display }}</span></td>
+                <td>{{ row.last_visit|bn_date_short|default:"—" }}</td>
+              </tr>
+            {% empty %}<tr><td colspan="5">কোনো পরিবার পাওয়া যায়নি।</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

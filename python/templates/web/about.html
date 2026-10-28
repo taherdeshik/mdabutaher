@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}{{ site.name }} — পরিচিতি ও যোগ্যতা{% endblock %}
+{% block description %}মোঃ আবু তাহেরের জীবনী, শিক্ষা, অভিজ্ঞতা ও সামাজিক কাজ — মহাদান ইউনিয়ন, সরিষাবাড়ী, জামালপুর।{% endblock %}
+
+{% block content %}
+{% include "partials/page_hero.html" with title="পরিচিতি ও যোগ্যতা" eyebrow="কে আমি" subtitle=bio.intro|default:site.intro crumb="পরিচিতি" %}
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <div class="prose">
+        <h2>মাটি, মানুষ আর মায়ের দোয়া</h2>
+        <p>{{ site.intro }}</p>
+        <blockquote>{{ site.heroQuote }}</blockquote>
+      </div>
+
+      <div class="grid-4" style="margin-block:2rem">
+        {% for stat in stats %}
+          <div class="stat-tile"><strong>{{ stat.value|bn }}{{ stat.suffix }}</strong><span>{{ stat.label }}</span></div>
+        {% endfor %}
+      </div>
+
+      <h2 style="font-size:1.4rem">শিক্ষা</h2>
+      <div class="timeline">
+        {% for item in bio.education %}
+          <div class="timeline-item">
+            <span class="badge badge-gold">{{ item.year }}</span>
+            <strong style="display:block;margin-top:0.35rem">{{ item.title }}</strong>
+            <span style="font-size:0.8rem;color:var(--muted)">{{ item.org }}{% if item.detail %} · {{ item.detail }}{% endif %}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      <h2 style="font-size:1.4rem;margin-top:2rem">অভিজ্ঞতা</h2>
+      <div class="timeline">
+        {% for item in bio.experience %}
+          <div class="timeline-item">
+            <span class="badge badge-dark">{{ item.year }}</span>
+            <strong style="display:block;margin-top:0.35rem">{{ item.title }}</strong>
+            <span style="font-size:0.8rem;color:var(--muted)">{{ item.org }}{% if item.detail %} · {{ item.detail }}{% endif %}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <aside class="stack sticky-box">
+      <div class="card">
+        <div class="card-media" style="aspect-ratio:4/5">
+          {% include "partials/smart_image.html" with image_key="hero" alt=site.name label=site.name lazy="eager" %}
+        </div>
+        <div class="card-body">
+          <strong>{{ site.name }}</strong>
+          <p style="margin:0.3rem 0 0.8rem">{{ site.role }} · {{ site.ward }}</p>
+          <div class="kv"><span>মোবাইল</span><a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a></div>
+          <div class="kv"><span>ইমেইল</span><a href="mailto:{{ site.email }}">{{ site.email }}</a></div>
+          <div class="kv"><span>কার্যালয়</span><span style="text-align:right">{{ site.office }}</span></div>
+          <a class="btn btn-primary btn-block" style="margin-top:1rem" href="/appointment/">সাক্ষাতের সময় নিন</a>
+        </div>
+      </div>
+
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">দক্ষতা ও সক্ষমতা</strong>
+        <div class="pill-list" style="margin-top:0.7rem">
+          {% for skill in bio.skills %}<span class="chip">{{ skill }}</span>{% endfor %}
+        </div>
+        {% if bio.capacities %}
+          <div style="margin-top:0.9rem">
+            {% for cap in bio.capacities %}
+              <div class="kv"><span>{{ cap.label }}</span><strong style="font-weight:600">{{ cap.value }}</strong></div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">মূল্যবোধ</strong>
+        {% for value in values %}
+          <div style="margin-top:0.7rem">
+            <strong style="font-size:0.8rem;display:block">{{ value.title }}</strong>
+            <span style="font-size:0.72rem;color:var(--muted)">{{ value.desc }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="section" style="background:var(--cream-2)">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">সামাজিক কাজ</span>
+      <h2>যে কাজগুলো করেছি</h2>
+      <p>পদ-পদবির জন্য নয় — মানুষের প্রয়োজনে।</p>
+    </div>
+    <div class="grid-3">
+      {% for activity in activities|slice:":6" %}
+        <article class="card">
+          <div class="card-body">
+            <div class="card-meta"><span class="badge badge-dark">{{ activity.category }}</span><span>{{ activity.date|bn_date_short }}</span></div>
+            <h3 style="margin-top:0.55rem">{{ activity.title }}</h3>
+            <p>{{ activity.summary|truncatechars:120 }}</p>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+    <div class="row" style="margin-top:1.5rem"><a class="btn btn-primary" href="/activities/">সব কাজ দেখুন</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <span class="eyebrow">প্রশ্নোত্তর</span>
+      <h2>সাধারণ জিজ্ঞাসা</h2>
+      {% for faq in faqs %}
+        <details class="accordion"><summary>{{ faq.q }}</summary><div class="body">{{ faq.a }}</div></details>
+      {% endfor %}
+    </div>
+    <div>
+      <span class="eyebrow">জরুরি নম্বর</span>
+      <h2>প্রয়োজনে কল করুন</h2>
+      <div class="grid-2">
+        {% for c in emergency %}
+          <div class="stat-tile"><strong>{{ c.number }}</strong><span>{{ c.label }}</span></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

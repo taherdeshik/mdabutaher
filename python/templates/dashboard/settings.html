@@ -1,0 +1,130 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>পোস্ট</span><strong>{{ counts.posts|bn }}</strong></div>
+  <div class="kpi green"><span>ইভেন্ট</span><strong>{{ counts.events|bn }}</strong></div>
+  <div class="kpi gold"><span>অ্যাপয়েন্টমেন্ট</span><strong>{{ counts.appointments|bn }}</strong></div>
+  <div class="kpi"><span>ভিজিট রেকর্ড</span><strong>{{ counts.visits|bn_month }}</strong></div>
+</div>
+
+<div class="cols-2">
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>নির্বাচনী সেটিংস</strong><span class="sub">তারিখ ও সীমা</span></header>
+      <div class="pad">
+        <form method="post" class="adm-form">
+          {% csrf_token %}<input type="hidden" name="action" value="campaign" />
+          <div class="row">
+            <div><label>ভোটার তালিকা প্রকাশ</label><input class="adm-input" type="date" name="rollDate" value="{{ cfg.rollDate }}" /></div>
+            <div><label>মনোনয়ন</label><input class="adm-input" type="date" name="nominationDate" value="{{ cfg.nominationDate }}" /></div>
+            <div><label>যাচাই</label><input class="adm-input" type="date" name="scrutinyDate" value="{{ cfg.scrutinyDate }}" /></div>
+          </div>
+          <div class="row">
+            <div><label>প্রত্যাহার</label><input class="adm-input" type="date" name="withdrawalDate" value="{{ cfg.withdrawalDate }}" /></div>
+            <div><label>প্রতীক বরাদ্দ</label><input class="adm-input" type="date" name="symbolDate" value="{{ cfg.symbolDate }}" /></div>
+            <div><label>ভোটগ্রহণ</label><input class="adm-input" type="date" name="pollingDate" value="{{ cfg.pollingDate }}" /></div>
+          </div>
+          <div class="row">
+            <div><label>ফলাফল</label><input class="adm-input" type="date" name="resultDate" value="{{ cfg.resultDate }}" /></div>
+            <div><label>টার্নআউট (%)</label><input class="adm-input" type="number" name="turnoutAssumption" value="{{ cfg.turnoutAssumption }}" min="0" max="100" /></div>
+            <div><label>মোট ভোটার</label><input class="adm-input" type="number" name="unionVoters" value="{{ cfg.unionVoters }}" /></div>
+          </div>
+          <div><label>ব্যয়সীমা (৳)</label><input class="adm-input" type="number" name="spendCap" value="{{ cfg.spendCap }}" step="1000" /></div>
+          <button class="btn btn-primary">সেটিংস সংরক্ষণ</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>ব্যবহারকারী ও ভূমিকা</strong><span class="sub">ভূমিকা অনুযায়ী অ্যাক্সেস</span></header>
+      <div class="table-scroll">
+        <table class="adm-table">
+          <thead><tr><th>ইউজার</th><th>নাম</th><th>ভূমিকা</th><th>সক্রিয়</th><th></th></tr></thead>
+          <tbody>
+            {% for row in users %}
+              <tr>
+                <td class="num">{{ row.username }}</td>
+                <td>{{ row.first_name|default:"—" }}</td>
+                <td>
+                  <form method="post" style="display:flex;gap:0.25rem">
+                    {% csrf_token %}<input type="hidden" name="action" value="user_update" /><input type="hidden" name="id" value="{{ row.pk }}" />
+                    <select class="adm-input" name="role" style="width:7.4rem" onchange="this.form.submit()">
+                      {% for key, label in roles %}<option value="{{ key }}" {% if row.role == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                  </form>
+                </td>
+                <td>{% if row.is_active %}<span class="badge green">হ্যাঁ</span>{% else %}<span class="badge muted">না</span>{% endif %}</td>
+                <td>{% if row.is_superuser %}<span class="badge gold">সুপার</span>{% endif %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="pad" style="border-top:1px solid var(--line)">
+        <form method="post" class="adm-form">
+          {% csrf_token %}<input type="hidden" name="action" value="user_create" />
+          <div class="row">
+            {% for field in user_form %}
+              <div><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>
+            {% endfor %}
+          </div>
+          <button class="btn btn-primary btn-sm">নতুন সদস্য</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>রপ্তানি (CSV)</strong><span class="sub">Excel-এ খুলবে</span></header>
+      <div class="pad" style="display:flex;flex-wrap:wrap;gap:0.4rem">
+        <a class="btn btn-ghost btn-sm" href="/admin/export/appointments.csv">অ্যাপয়েন্টমেন্ট</a>
+        <a class="btn btn-ghost btn-sm" href="/admin/export/feedback.csv">সমস্যা ও পরামর্শ</a>
+        <a class="btn btn-ghost btn-sm" href="/admin/export/expenses.csv">ব্যয়</a>
+        <a class="btn btn-ghost btn-sm" href="/admin/export/visitors.csv">ভিজিটর</a>
+        <a class="btn btn-ghost btn-sm" href="/admin/export/contacts.csv">দল</a>
+      </div>
+    </section>
+  </div>
+
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>পাসওয়ার্ড পরিবর্তন</strong></header>
+      <div class="pad">
+        <form method="post" class="adm-form">
+          {% csrf_token %}<input type="hidden" name="action" value="password" />
+          {% for field in password_form %}
+            <div><label>{{ field.label }}</label><input class="adm-input" type="password" name="{{ field.html_name }}" />{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>
+          {% endfor %}
+          <button class="btn btn-primary btn-sm">পাসওয়ার্ড বদলান</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>অডিট লগ</strong><span class="sub">সর্বশেষ ৪০টি পরিবর্তন</span></header>
+      <div class="pad" style="max-height:24rem;overflow-y:auto">
+        {% for row in audit %}
+          <div class="list-row">
+            <span class="badge muted">{{ row.action }}</span>
+            <span style="flex:1">{{ row.detail|truncatechars:44 }}</span>
+            <span style="font-size:0.6rem;color:var(--muted)">{{ row.actor|default:"—" }} · {{ row.created_at|date:"d/m H:i" }}</span>
+          </div>
+        {% empty %}<p style="font-size:0.74rem;color:var(--muted);margin:0">লগ খালি।</p>{% endfor %}
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>ওয়ার্ড</strong></header>
+      <div class="pad">
+        {% for ward in wards %}
+          <div class="list-row">
+            <span class="badge">{{ ward.no|bn }}</span>
+            <span style="flex:1">{{ ward.name }}<br><span style="font-size:0.62rem;color:var(--muted)">{{ ward.villages|join:", " }}</span></span>
+            <span class="badge {% if ward.strength == 'strong' %}green{% else %}muted{% endif %}">{{ ward.get_strength_display }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

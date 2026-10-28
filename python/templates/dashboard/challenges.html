@@ -1,0 +1,73 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>মোট চ্যালেঞ্জ</span><strong>{{ rows|length|bn }}</strong></div>
+  <div class="kpi red"><span>খোলা</span><strong>{{ open_count|bn }}</strong></div>
+  <div class="kpi gold"><span>হুমকি রিপোর্ট</span><strong>{{ breach_count|bn }}</strong></div>
+  <div class="kpi green"><span>সহায়তা নিবন্ধ</span><strong>{{ help_articles|length|bn }}</strong></div>
+</div>
+
+<div class="cols-2">
+  <section class="adm-card">
+    <header><strong>চ্যালেঞ্জ তালিকা</strong><span class="sub">অবস্থা বদলাতে ড্রপডাউন ব্যবহার করুন</span></header>
+    <div class="table-scroll">
+      <table class="adm-table">
+        <thead><tr><th>শিরোনাম</th><th>ওয়ার্ড</th><th>গুরুত্ব</th><th>অবস্থা</th><th></th></tr></thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td>{{ row.title }}<br><span style="font-size:0.64rem;color:var(--muted)">{{ row.detail|truncatechars:70 }}</span></td>
+              <td class="num">{% if row.ward %}{{ row.ward.no|bn }}{% else %}—{% endif %}</td>
+              <td><span class="badge {% if row.severity == 'critical' or row.severity == 'high' %}red{% elif row.severity == 'medium' %}gold{% else %}muted{% endif %}">{{ row.get_severity_display }}</span></td>
+              <td>
+                <form method="post" style="display:flex;gap:0.3rem">
+                  {% csrf_token %}<input type="hidden" name="action" value="status" /><input type="hidden" name="id" value="{{ row.pk }}" />
+                  <select class="adm-input" name="status" style="width:6.5rem" onchange="this.form.submit()">
+                    <option value="open" {% if row.status == 'open' %}selected{% endif %}>খোলা</option>
+                    <option value="monitoring" {% if row.status == 'monitoring' %}selected{% endif %}>নজরদারিতে</option>
+                    <option value="resolved" {% if row.status == 'resolved' %}selected{% endif %}>সমাধান</option>
+                  </select>
+                </form>
+              </td>
+              <td>
+                <form method="post" data-confirm="মুছে ফেলবেন?">{% csrf_token %}
+                  <input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="{{ row.pk }}" />
+                  <button class="icon-btn danger">✕</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}<tr><td colspan="5">কোনো চ্যালেঞ্জ যোগ করা হয়নি।</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>নতুন চ্যালেঞ্জ</strong></header>
+      <div class="pad">
+        <form method="post" class="adm-form">
+          {% csrf_token %}
+          {% for field in form %}
+            <div><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>
+          {% endfor %}
+          <button class="btn btn-primary">যোগ করুন</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>আইন ও সহায়তা নির্দেশিকা</strong></header>
+      <div class="pad">
+        {% for article in help_articles %}
+          <details class="row-edit">
+            <summary><strong style="font-size:0.76rem">{{ article.title }}</strong><span class="badge muted" style="margin-left:auto">{{ article.category }}</span></summary>
+            <div class="detail-body" style="font-size:0.74rem;color:var(--muted)">{{ article.body }}</div>
+          </details>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="cols-2">
+  <section class="adm-card">
+    <header><strong>{% if post %}সম্পাদনা{% else %}নতুন পোস্ট{% endif %}</strong><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="/admin/cms/">← ফিরুন</a></header>
+    <div class="pad">
+      <form method="post" enctype="multipart/form-data" class="adm-form">
+        {% csrf_token %}
+        <div class="row">
+          <div><label for="{{ form.kind.id_for_label }}">ধরন</label>{{ form.kind }}</div>
+          <div><label for="{{ form.status.id_for_label }}">অবস্থা</label>{{ form.status }}</div>
+          <div><label for="{{ form.published_on.id_for_label }}">তারিখ</label>{{ form.published_on }}</div>
+          <div><label for="{{ form.read_time.id_for_label }}">পাঠের সময়</label>{{ form.read_time }}</div>
+        </div>
+        <div><label for="{{ form.title.id_for_label }}">শিরোনাম</label>{{ form.title }}{% if form.title.errors %}<div class="adm-error">{{ form.title.errors.0 }}</div>{% endif %}</div>
+        <div class="row">
+          <div><label for="{{ form.slug.id_for_label }}">স্লাগ</label>{{ form.slug }}{% if form.slug.errors %}<div class="adm-error">{{ form.slug.errors.0 }}</div>{% endif %}</div>
+          <div><label for="{{ form.category.id_for_label }}">বিভাগ</label>{{ form.category }}</div>
+          <div><label for="{{ form.outlet.id_for_label }}">সংবাদমাধ্যম</label>{{ form.outlet }}</div>
+        </div>
+        <div><label for="{{ form.excerpt.id_for_label }}">সারসংক্ষেপ</label>{{ form.excerpt }}</div>
+        <div><label for="{{ form.tags_text.id_for_label }}">ট্যাগ</label>{{ form.tags_text }}</div>
+
+        <div style="border-top:1px solid var(--line);padding-top:0.7rem">
+          <label for="{{ form.rich.id_for_label }}">মূল লেখা (রিচ)</label>
+          {{ form.rich }}
+          <p class="adm-help">
+            ## শিরোনাম · ### উপশিরোনাম · **বোল্ড** · *ইটালিক* · `কোড` · [লিংক](https://…)
+            · - তালিকা · 1. সংখ্যা · &gt; উদ্ধৃতি · --- রেখা · ![নাম](/media/uploads/…ছবি)
+          </p>
+          <button type="button" class="btn btn-ghost btn-sm" data-preview="#rich-preview" data-source="#{{ form.rich.id_for_label }}">প্রিভিউ দেখান</button>
+          <div id="rich-preview" hidden class="adm-card" style="margin-top:0.5rem"><div class="pad prose" style="font-size:0.82rem"></div></div>
+        </div>
+
+        <div style="border-top:1px solid var(--line);padding-top:0.7rem">
+          <label for="{{ form.image.id_for_label }}">কভার ছবি (কী বা পাথ)</label>
+          {{ form.image }}
+          <div style="display:flex;gap:0.6rem;align-items:center;margin-top:0.5rem">
+            <div class="thumb" style="width:8rem;height:5rem">
+              {% with cover=form.image.value|image %}{% if cover %}<img src="{{ cover }}" alt="কভার" />{% endif %}{% endwith %}
+            </div>
+            <div style="flex:1">
+              <label for="cover-upload">নতুন কভার আপলোড (সর্বোচ্চ ৬ MB)</label>
+              <input class="adm-input adm-file" type="file" name="cover" id="cover-upload" accept="image/*" />
+            </div>
+          </div>
+          <p class="adm-help">তালিকা কার্ডে এভাবেই দেখাবে। লাইব্রেরি থেকে পাথ নিতে নিচের তালিকা দেখুন।</p>
+        </div>
+
+        <div class="row">
+          <label class="check-row">{{ form.featured }} ফিচার্ড</label>
+        </div>
+
+        <button class="btn btn-primary" type="submit">সংরক্ষণ করুন</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>মিডিয়া থেকে বাছুন</strong><span class="sub">ক্লিক করলে পাথ কপি হবে</span></header>
+      <div class="pad" style="display:flex;flex-wrap:wrap;gap:0.45rem">
+        {% for asset in uploads %}
+          <button type="button" class="thumb" style="width:4.6rem;height:3.2rem;padding:0" data-copy-url="{{ asset.url }}" data-target="#{{ form.image.id_for_label }}" title="{{ asset.original_name }}">
+            <img src="{{ asset.url }}" alt="" />
+          </button>
+        {% empty %}
+          <p style="font-size:0.74rem;color:var(--muted);margin:0">লাইব্রেরি খালি — <a href="/admin/media/" style="color:var(--emerald)">ফাইল আপলোড করুন</a>।</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>টিপস</strong></header>
+      <div class="pad" style="font-size:0.74rem;color:var(--muted)">
+        <p>• রিচ লেখা থাকলে সেটাই সাইটে দেখাবে; নাহলে পুরোনো কোডের প্যারাগ্রাফ।</p>
+        <p>• ছবি আপলোড করলে পাথ স্বয়ংক্রিয়ভাবে কভার ফিল্ডে বসবে।</p>
+        <p>• স্লাগ ইংরেজিতে লিখুন — লিংক পরিষ্কার থাকে।</p>
+        {% if post %}<p>• পাবলিক লিংক: <a href="{{ post.get_absolute_url }}" target="_blank" style="color:var(--emerald)">{{ post.get_absolute_url }}</a></p>{% endif %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

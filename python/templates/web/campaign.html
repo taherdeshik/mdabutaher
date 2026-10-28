@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}প্রচারণা পরিকল্পনা — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title=overview.title eyebrow="প্রচারণা" subtitle=overview.subtitle crumb="প্রচারণা" %}
+
+<section class="section-tight">
+  <div class="container">
+    <div class="grid-4">
+      {% for kpi in kpis %}
+        <div class="stat-tile"><strong>{{ kpi.value|bn }}{{ kpi.suffix }}</strong><span>{{ kpi.label }}</span></div>
+      {% endfor %}
+    </div>
+    <p class="muted" style="margin-top:1rem;font-size:0.82rem">
+      {{ overview.startDate|bn_date }} – {{ overview.endDate|bn_date }} · {{ overview.goal }}
+    </p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="section-head"><span class="eyebrow">ধাপ</span><h2>চার ধাপের প্রচারণা</h2></div>
+    <div class="grid-2">
+      {% for phase in phases %}
+        <article class="card">
+          <div class="card-body">
+            <div class="between">
+              <strong style="font-size:0.95rem">{{ phase.name }}</strong>
+              <span class="badge {% if phase.status == 'completed' %}badge-green{% elif phase.status == 'active' %}badge-gold{% else %}badge-dark{% endif %}">
+                {% if phase.status == 'completed' %}সম্পন্ন{% elif phase.status == 'active' %}চলমান{% else %}আসন্ন{% endif %}
+              </span>
+            </div>
+            <p style="font-size:0.72rem;color:var(--muted);margin:0.3rem 0 0.5rem">{{ phase.window }}</p>
+            <p style="font-size:0.8rem">{{ phase.objective }}</p>
+            <div class="progress"><span style="width:{{ phase.progress }}%"></span></div>
+            <ul style="font-size:0.76rem;color:var(--muted);margin:0.7rem 0 0">
+              {% for act in phase.activities %}<li>{{ act }}</li>{% endfor %}
+            </ul>
+            {% if phase.kpi %}
+              <div class="pill-list" style="margin-top:0.6rem">
+                {% for k in phase.kpi %}<span class="chip">{{ k.label }} <strong>{{ k.value }}</strong></span>{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--cream-2)">
+  <div class="container">
+    <div class="section-head"><span class="eyebrow">এলাকা</span><h2>৯টি ওয়ার্ডের কভারেজ</h2></div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>ওয়ার্ড</th><th>এলাকা</th><th>পরিবার</th><th>কেন্দ্র</th><th>কভারেজ</th><th>ক্যাপ্টেন</th></tr></thead>
+        <tbody>
+          {% for zone in zones %}
+            <tr>
+              <td>{{ zone.ward|bn }}</td>
+              <td>{{ zone.name }}</td>
+              <td class="latin">{{ zone.households|bn }}</td>
+              <td class="latin">{{ zone.booths|bn }}</td>
+              <td style="min-width:8rem">
+                <div class="progress"><span style="width:{{ zone.coverage }}%"></span></div>
+                <span style="font-size:0.68rem">{{ zone.coverage|bn }}%</span>
+              </td>
+              <td>{{ zone.leader }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <span class="eyebrow">সাপ্তাহিক রুটিন</span>
+      <h2>সপ্তাহের ছন্দ</h2>
+      <div class="timeline">
+        {% for item in weekly %}
+          <div class="timeline-item">
+            <strong style="font-size:0.86rem">{{ item.day }} · {{ item.time }}</strong>
+            <span style="display:block;font-size:0.8rem;color:var(--muted)">{{ item.title }} — {{ item.place }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <aside id="volunteer">
+      <span class="eyebrow">স্বেচ্ছাসেবক</span>
+      <h2>আপনি কীভাবে সাহায্য করতে পারেন</h2>
+      <div class="pill-list">
+        {% for role in roles %}<span class="chip chip-gold">{{ role }}</span>{% endfor %}
+      </div>
+      <div class="card" style="padding:1.1rem;margin-top:1rem">
+        <strong style="font-size:0.85rem">সহায়ক রিসোর্স</strong>
+        {% for resource in resources %}
+          <div class="kv"><a href="{{ resource.href }}">{{ resource.title }}</a><span style="font-size:0.7rem;color:var(--muted)">→</span></div>
+        {% endfor %}
+        <a class="btn btn-primary btn-block" style="margin-top:0.9rem" href="/feedback/?kind=support">স্বেচ্ছাসেবক হিসেবে যোগ দিন</a>
+      </div>
+
+      <div class="card" style="padding:1.1rem;margin-top:1rem">
+        <strong style="font-size:0.85rem">আসন্ন কর্মসূচি</strong>
+        {% for event in events %}
+          <div class="kv"><span>{{ event.date|bn_date_short }} · {{ event.start|bn }}</span><a href="{{ event.get_absolute_url }}" style="text-align:right">{{ event.title|truncatechars:34 }}</a></div>
+        {% endfor %}
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

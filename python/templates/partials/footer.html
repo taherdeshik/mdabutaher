@@ -1,0 +1,74 @@
+{% load campaign %}
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom:0.8rem">
+          <span class="brand-mark">তা</span>
+          <span class="brand-text" style="color:var(--cream)">
+            <strong style="color:var(--cream)">{{ site.name }}</strong>
+            <span style="color:rgba(248,244,234,0.55)">{{ site.role }} · {{ site.union }}</span>
+          </span>
+        </div>
+        <p style="font-size:0.8rem;color:rgba(248,244,234,0.6);max-width:22rem">{{ site.tagline }} — {{ site.slogan }}</p>
+        <div class="social-row">
+          {% for social in site.socials %}
+            <a href="{{ social.href }}" rel="noopener" target="_blank" title="{{ social.label }}">{{ forloop.counter }}</a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <h4>দ্রুত লিংক</h4>
+        <div class="links">
+          <a href="/manifesto/">ম্যানিফেস্টো</a>
+          <a href="/campaign/">প্রচারণা পরিকল্পনা</a>
+          <a href="/events/">আসন্ন ইভেন্ট</a>
+          <a href="/news/">সংবাদ</a>
+          <a href="/blog/">ব্লগ</a>
+          <a href="/gallery/photos/">গ্যালারি</a>
+        </div>
+      </div>
+
+      <div>
+        <h4>জনসেবা</h4>
+        <div class="links">
+          <a href="/appointment/">অ্যাপয়েন্টমেন্ট</a>
+          <a href="/feedback/">সমস্যা জানান</a>
+          <a href="/polls/">জনমত জরিপ</a>
+          <a href="/chat/">লাইভ চ্যাট</a>
+          <a href="/media-kit/">মিডিয়া কিট</a>
+          <a href="/privacy/">গোপনীয়তা নীতি</a>
+        </div>
+      </div>
+
+      <div>
+        <h4>যোগাযোগ</h4>
+        <div class="links">
+          <a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a>
+          <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+          <span style="color:rgba(248,244,234,0.55)">{{ site.office }}</span>
+          <span style="color:rgba(248,244,234,0.45);font-size:0.72rem">{{ site.officeHours }}</span>
+        </div>
+      </div>
+
+      <div>
+        <h4>জরুরি নম্বর</h4>
+        <div class="links">
+          <span>জাতীয় হেল্পলাইন — {{ site.quickLinks.emergency }}</span>
+          <span>স্বাস্থ্য সেবা — {{ site.quickLinks.health }}</span>
+          <span>নারী হেল্পলাইন — {{ site.quickLinks.womenHelpline }}</span>
+          <span>শিশু হেল্পলাইন — {{ site.quickLinks.childHelpline }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© {{ year|bn }} {{ site.name }} · প্রত্যাবর্তন সংরক্ষিত</span>
+      <span>
+        নির্বাচন {{ site.electionYear }} · {{ site.union }}, {{ site.upazila }}, {{ site.district }}
+        {% if is_staff_user %} · <a href="/admin/">কমান্ড সেন্টার</a>{% endif %}
+      </span>
+    </div>
+  </div>
+</footer>

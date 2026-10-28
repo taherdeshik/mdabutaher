@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}{{ event.title }} — {{ site.name }}{% endblock %}
+{% block description %}{{ event.description|truncatechars:150 }}{% endblock %}
+{% block content %}
+<section class="hero-mini">
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">হোম</a><span>›</span><a href="/events/">ইভেন্ট</a><span>›</span><span>{{ event.type }}</span></nav>
+    <div class="row" style="gap:0.5rem;margin-bottom:0.8rem">
+      <span class="badge badge-gold">{{ event.type }}</span>
+      {% if event.status == 'upcoming' %}<span class="badge badge-green">আসন্ন</span>{% elif event.status == 'live' %}<span class="badge badge-light">চলমান</span>{% else %}<span class="badge badge-light">সম্পন্ন</span>{% endif %}
+    </div>
+    <h1>{{ event.title }}</h1>
+    <p>{{ event.date|bn_date }} · {{ event.start|bn }} – {{ event.end|bn }} · {{ event.venue }}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <div class="prose"><p>{{ event.description }}</p></div>
+      {% if event.highlights %}
+        <h3 style="font-size:1rem;margin-top:1.5rem">বিশেষত্ব</h3>
+        <div class="pill-list">{% for h in event.highlights %}<span class="chip">{{ h }}</span>{% endfor %}</div>
+      {% endif %}
+
+      {% if event.speaker %}
+        <div class="card" style="padding:1rem;margin-top:1.5rem">
+          <div class="row">
+            <span class="brand-mark" style="width:2.2rem;height:2.2rem;font-size:0.9rem">{{ event.speaker|slice:":1" }}</span>
+            <div><strong style="font-size:0.85rem">{{ event.speaker }}</strong><span style="display:block;font-size:0.7rem;color:var(--muted)">প্রধান বক্তা</span></div>
+          </div>
+        </div>
+      {% endif %}
+
+      <h3 style="font-size:1rem;margin-top:2rem">অন্য কর্মসূচি</h3>
+      <div class="grid-2">
+        {% for other in others %}
+          <a class="card" href="{{ other.get_absolute_url }}" style="text-decoration:none">
+            <div class="card-body">
+              <div class="card-meta"><span class="badge badge-dark">{{ other.type }}</span><span>{{ other.date|bn_date_short }}</span></div>
+              <strong style="display:block;margin-top:0.4rem;font-size:0.88rem">{{ other.title }}</strong>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <aside class="sticky-box">
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">কর্মসূচির তথ্য</strong>
+        <div class="kv"><span>তারিখ</span><strong style="font-weight:600">{{ event.date|bn_date }}</strong></div>
+        <div class="kv"><span>সময়</span><strong style="font-weight:600">{{ event.start|bn }} – {{ event.end|bn }}</strong></div>
+        <div class="kv"><span>স্থান</span><span style="text-align:right">{{ event.venue }}</span></div>
+        {% if event.ward %}<div class="kv"><span>ওয়ার্ড</span><strong style="font-weight:600">{{ event.ward|bn }}</strong></div>{% endif %}
+        <div class="kv"><span>রেজিস্ট্রেশন</span><strong style="font-weight:600">{{ event.registered|bn }} / {{ event.capacity|bn }}</strong></div>
+        <div class="progress" style="margin-top:0.6rem"><span style="width:{% widthratio event.registered event.capacity 100 %}%"></span></div>
+        <a class="btn btn-primary btn-block" style="margin-top:1rem" href="/appointment/?topic=personal">অংশ নিতে আগ্রহী</a>
+        <a class="btn btn-ghost btn-block" style="margin-top:0.5rem" href="tel:{{ site.phoneHref }}">ফোনে জিজ্ঞাসা</a>
+      </div>
+
+      <div class="card" style="padding:1.1rem;margin-top:1rem">
+        <strong style="font-size:0.85rem">নির্বাচনী টাইমলাইন</strong>
+        <div class="kv"><span>ভোটার তালিকা</span><span>২০২৬-১১-০৫</span></div>
+        <div class="kv"><span>মনোনয়ন</span><span>২০২৬-১২-১০</span></div>
+        <div class="kv"><span>ভোটগ্রহণ</span><span>২০২৭-০১-১৫</span></div>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

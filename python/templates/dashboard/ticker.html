@@ -1,0 +1,81 @@
+{% extends "dashboard/base.html" %}
+{% load campaign %}
+{% block content %}
+<div class="adm-grid g4">
+  <div class="kpi"><span>মোট লাইন</span><strong>{{ rows|length|bn }}</strong></div>
+  <div class="kpi green"><span>সক্রিয়</span><strong>{{ preview.items|length|bn }}</strong><small>সাইটে দেখাচ্ছে</small></div>
+  <div class="kpi gold"><span>মোড</span><strong>{{ settings_row.get_mode_display }}</strong></div>
+  <div class="kpi {% if settings_row.enabled %}green{% else %}red{% endif %}"><span>টিকার</span><strong>{% if settings_row.enabled %}চালু{% else %}বন্ধ{% endif %}</strong></div>
+</div>
+
+<section class="adm-card">
+  <header><strong>লাইভ প্রিভিউ</strong><span class="sub">হেডারে যেভাবে দেখাবে</span></header>
+  <div class="pad">
+    {% if preview.enabled and preview.items %}
+      <div style="display:flex;border-radius:0.6rem;overflow:hidden">
+        <div style="background:var(--gold);color:var(--night);padding:0.4rem 0.7rem;font-size:0.66rem;font-weight:800">সর্বশেষ</div>
+        <div style="background:var(--forest);color:var(--cream);padding:0.4rem 0.8rem;font-size:0.72rem;flex:1;overflow:hidden;white-space:nowrap">
+          {% for item in preview.items %}<span style="margin-right:1.4rem">• {{ item.text }}</span>{% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <p style="font-size:0.74rem;color:var(--muted);margin:0">টিকার বন্ধ অথবা কোনো সক্রিয় লাইন নেই — সাইটে দেখাবে না।</p>
+    {% endif %}
+  </div>
+</section>
+
+<div class="cols-2">
+  <div class="adm-grid">
+    <section class="adm-card">
+      <header><strong>নিজের লাইন</strong><span class="sub">উপরেরটি আগে দেখাবে</span></header>
+      <div class="pad">
+        {% for row in rows %}
+          <div class="list-row">
+            <span class="badge {% if row.active %}green{% else %}muted{% endif %}">{{ forloop.counter|bn }}</span>
+            <span style="flex:1;{% if not row.active %}opacity:0.55{% endif %}">{{ row.text }}<br><span style="font-size:0.62rem;color:var(--muted)">{{ row.href }}</span></span>
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="move" /><input type="hidden" name="id" value="{{ row.pk }}" /><input type="hidden" name="direction" value="up" /><button class="icon-btn" {% if forloop.first %}disabled{% endif %}>↑</button></form>
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="move" /><input type="hidden" name="id" value="{{ row.pk }}" /><input type="hidden" name="direction" value="down" /><button class="icon-btn" {% if forloop.last %}disabled{% endif %}>↓</button></form>
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="toggle" /><input type="hidden" name="id" value="{{ row.pk }}" /><button class="icon-btn" title="লুকান/দেখান">{% if row.active %}◉{% else %}◌{% endif %}</button></form>
+            <form method="post" data-confirm="লাইনটি মুছে ফেলবেন?">{% csrf_token %}<input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="{{ row.pk }}" /><button class="icon-btn danger">✕</button></form>
+          </div>
+        {% empty %}
+          <p style="font-size:0.74rem;color:var(--muted);margin:0">নিজের কোনো লাইন নেই — অটো মোডে সংবাদ ও ইভেন্ট থেকে টিকার তৈরি হচ্ছে।</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <header><strong>নতুন লাইন</strong></header>
+      <div class="pad">
+        <form method="post" class="adm-form">
+          {% csrf_token %}<input type="hidden" name="action" value="create" />
+          {% for field in item_form %}<div><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="adm-error">{{ field.errors.0 }}</div>{% endif %}</div>{% endfor %}
+          <button class="btn btn-primary">যোগ করুন</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <section class="adm-card">
+    <header><strong>সেটিংস</strong></header>
+    <div class="pad">
+      <form method="post" class="adm-form">
+        {% csrf_token %}<input type="hidden" name="action" value="settings" />
+        <label class="check-row">{{ settings_form.enabled }} টিকার দেখান</label>
+        <div><label>{{ settings_form.mode.label }}</label>{{ settings_form.mode }}</div>
+        <button class="btn btn-primary">সেভ করুন</button>
+      </form>
+      <div style="border-top:1px solid var(--line);margin-top:0.8rem;padding-top:0.7rem">
+        <form method="post" data-confirm="সব লাইন মুছে ডিফল্টে ফিরে যাবে — নিশ্চিত?">
+          {% csrf_token %}<input type="hidden" name="action" value="reset" />
+          <button class="btn btn-ghost btn-sm">সব ডিফল্টে ফেরান</button>
+        </form>
+      </div>
+      <p class="adm-help" style="margin-top:0.7rem">
+        <strong>অটো:</strong> প্রকাশিত সংবাদ/ইভেন্ট + কোডের ডিফল্ট (সর্বোচ্চ ৮)।<br>
+        <strong>নিজের তালিকা:</strong> শুধু উপরের সক্রিয় লাইন।
+      </p>
+    </div>
+  </section>
+</div>
+{% endblock %}

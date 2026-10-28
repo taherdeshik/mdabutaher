@@ -1,0 +1,66 @@
+{% load static campaign %}<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ page_title }} — কমান্ড সেন্টার</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml" />
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}" />
+</head>
+<body>
+<div class="adm-shell">
+  <aside class="adm-side">
+    <div class="adm-brand">
+      <span class="mark">তা</span>
+      <div>
+        <strong>কমান্ড সেন্টার</strong>
+        <span>{{ site.name }} · {{ site.union }}</span>
+      </div>
+    </div>
+
+    <nav class="adm-nav">
+      {% for key, label, icon in nav_sections %}
+        <a href="/admin/{% if key != 'situation' %}{{ key }}/{% endif %}" class="{% if section_id == key %}active{% endif %}">
+          <span class="ico">{{ icon }}</span> {{ label }}
+          {% if key == 'crm' and unread_messages %}<span class="count">{{ unread_messages|bn }}</span>
+          {% elif key == 'crm' and pending_appointments %}<span class="count">{{ pending_appointments|bn }}</span>
+          {% elif key == 'challenges' and new_feedback %}<span class="count">{{ new_feedback|bn }}</span>{% endif %}
+        </a>
+      {% endfor %}
+    </nav>
+
+    <div class="side-foot">
+      <div style="margin-bottom:0.5rem">ভোটগ্রহণ: {{ campaign.pollingDate }}</div>
+      <div style="margin-bottom:0.6rem">বাকি {{ days_to_poll|bn }} দিন</div>
+      <a href="/" style="color:var(--gold)">← পাবলিক সাইট</a>
+      <form method="post" action="/admin/logout/" style="margin-top:0.5rem">{% csrf_token %}
+        <button class="btn btn-ghost btn-sm" style="width:100%">লগআউট ({{ user.get_full_name|default:user.username }})</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="adm-main">
+    <header class="adm-top">
+      <div>
+        <h1>{{ page_title }}</h1>
+        <p>{{ page_sub }}</p>
+      </div>
+      <div class="spacer"></div>
+      <a class="btn btn-ghost btn-sm" href="/admin/analytics/">অ্যানালিটিক্স</a>
+      <a class="btn btn-primary btn-sm" href="/admin/cms/new/">নতুন পোস্ট</a>
+    </header>
+
+    <div class="adm-body">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}" style="margin:0">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/admin.js' %}" defer></script>
+</body>
+</html>

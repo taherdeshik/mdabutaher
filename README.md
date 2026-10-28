@@ -17,6 +17,26 @@ npm run typecheck
 `MYSQL_HOST` / `MYSQL_DATABASE` দিলে হুবহু একই `read()` / `mutate()` কনট্র্যাক্ট নিয়ে
 **MySQL/MariaDB** ব্যবহার হয় — আলাদা কোড বদলাতে হয় না। বিস্তারিত: [`docs/08-DEPLOY-CPANEL.md`](docs/08-DEPLOY-CPANEL.md)।
 
+### Python + PostgreSQL সংস্করণ (নতুন)
+
+পুরো সাইটের একটি **সম্পূর্ণ Python সংস্করণ** আছে — Django 5.2 + PostgreSQL, ঠিক একই
+ডিজাইন, বাংলা UI, সব পেজ ও পুরো কমান্ড সেন্টার:
+
+```bash
+cd python
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env          # DATABASE_URL বসান
+python manage.py migrate
+python manage.py seed_content  # কনটেন্ট সিড + অ্যাডমিন অ্যাকাউন্ট
+python manage.py runserver 0.0.0.0:8000   # http://localhost:8000 · /admin/
+```
+
+- `DATABASE_URL` থাকলে **PostgreSQL**, না থাকলে লোকালে SQLite (ডেমো/টেস্ট)।
+- আগের ডেটা আনতে: `python manage.py import_legacy` (dry-run সহ)।
+- টেস্ট: `python manage.py test web` (২৪টি)।
+- বিস্তারিত: [`docs/09-PYTHON-POSTGRES.md`](docs/09-PYTHON-POSTGRES.md)।
+
 ### অ্যাডমিন লগইন
 - কমান্ড সেন্টার + CRM: `/admin` → ইউজারনেম `admin`, পাসওয়ার্ড `mahadan-2027`
   (প্রথম অ্যাকাউন্ট তৈরি হয় `ADMIN_USERNAME` / `ADMIN_PASSWORD` env থেকে; এরপর সেটিংস →
@@ -38,7 +58,21 @@ npm run typecheck
   ব্লগ/সংবাদ তালিকার কার্ডে কভার ছবির থাম্বনেইল প্রিভিউও এখন এডিটরে দেখা যায়।
   বিস্তারিত: `docs/05-CONTENT-GUIDE.md`।
 
-## টেক স্ট্যাক
+## টেক স্ট্যাক (দুই সংস্করণ)
+
+### Python অ্যাপ (`python/`)
+
+| স্তর | প্রযুক্তি |
+|---|---|
+| ফ্রেমওয়ার্ক | Django 5.2 |
+| ডেটাবেস | PostgreSQL 16 (psycopg 3) · লোকালে SQLite |
+| স্ট্যাটিক | হাতে লেখা CSS + whitenoise — কোনো JS বিল্ড স্টেপ নেই |
+| সার্ভার | gunicorn / Passenger (cPanel) |
+| টেস্ট | Django TestCase (২৪) |
+
+### Node অ্যাপ (রুট)
+
+
 
 | স্তর | প্রযুক্তি |
 |---|---|

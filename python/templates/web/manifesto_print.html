@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}ম্যানিফেস্টো — প্রিন্ট সংস্করণ{% endblock %}
+{% block body_class %}print-doc{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <div class="between no-print">
+      <a class="btn btn-ghost" href="/manifesto/">← ম্যানিফেস্টোতে ফিরুন</a>
+      <button class="btn btn-primary" onclick="window.print()">প্রিন্ট / PDF</button>
+    </div>
+    <header style="margin-block:2rem;text-align:center">
+      <p class="eyebrow" style="justify-content:center">{{ site.name }} · {{ site.role }}</p>
+      <h1 style="font-size:2rem;margin-top:0.5rem">{{ intro.title }}</h1>
+      <p class="muted">{{ intro.subtitle }}</p>
+      <p style="font-size:0.75rem">প্রকাশ: {{ intro.published }} · {{ totals.pillars|bn }}টি স্তম্ভ · {{ totals.commitments|bn }}টি অঙ্গীকার</p>
+    </header>
+
+    {% for pillar in pillars %}
+      <article style="margin-bottom:2rem;{% if not forloop.last %}break-after:page{% endif %}">
+        <div class="between" style="align-items:baseline">
+          <h2 style="font-size:1.3rem;margin:0">{{ pillar.number }} · {{ pillar.title }}</h2>
+          <span style="font-size:0.72rem">অগ্রগতি {{ pillar.progress|bn }}%</span>
+        </div>
+        <p style="font-size:0.86rem;margin-top:0.5rem">{{ pillar.summary }}</p>
+        <div class="grid-2" style="gap:1rem;font-size:0.78rem">
+          <div><strong>সমস্যা</strong><p>{{ pillar.problem }}</p></div>
+          <div><strong>লক্ষ্য</strong><p>{{ pillar.target }}</p></div>
+        </div>
+        <table class="data" style="width:100%;margin-top:0.8rem">
+          <thead><tr><th style="width:3rem">#</th><th>অঙ্গীকার</th><th style="width:30%">বিবরণ</th><th style="width:7rem">সময়সীমা</th></tr></thead>
+          <tbody>
+            {% for c in pillar.commitments %}
+              <tr><td>{{ forloop.counter|bn }}</td><td>{{ c.title }}</td><td>{{ c.detail }}</td><td>{{ c.timeline }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </article>
+    {% endfor %}
+
+    <footer style="margin-top:2rem;border-top:1px solid var(--line);padding-top:1rem;font-size:0.7rem;color:var(--muted)">
+      {{ site.name }} · {{ site.role }} · {{ site.union }}, {{ site.upazila }}, {{ site.district }} ·
+      {{ site.phone }} · {{ site.email }} · তৈরি: {{ generated|date:"Y-m-d H:i" }}
+    </footer>
+  </div>
+</section>
+{% endblock %}

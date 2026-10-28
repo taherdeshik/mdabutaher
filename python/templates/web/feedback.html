@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}সমস্যা ও পরামর্শ — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="সমস্যা, পরামর্শ ও হুমকি জানান" eyebrow="গোপনীয়" subtitle="আপনার এলাকার সমস্যা বা পরামর্শ সরাসরি আমাদের কাছে পৌঁছাবে। হুমকির তথ্য সম্পূর্ণ গোপন রাখা হয়।" crumb="সমস্যা জানান" %}
+
+<section class="section">
+  <div class="container split">
+    <div class="form-card">
+      <h2 style="font-size:1.25rem">আপনার বার্তা</h2>
+      <p class="muted" style="font-size:0.8rem">নাম ও ফোন নম্বর না দিয়েও পাঠাতে পারেন — তবে যোগাযোগের জন্য নম্বর দিলে দ্রুত ব্যবস্থা নেওয়া সহজ হয়।</p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="form-grid">
+          <div class="field">
+            <label for="{{ form.kind.id_for_label }}">ধরন *</label>
+            {{ form.kind }}
+          </div>
+          <div class="field">
+            <label for="{{ form.ward.id_for_label }}">ওয়ার্ড</label>
+            {{ form.ward }}
+          </div>
+          <div class="field">
+            <label for="{{ form.name.id_for_label }}">নাম</label>
+            {{ form.name }}
+          </div>
+          <div class="field">
+            <label for="{{ form.phone.id_for_label }}">মোবাইল</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}<div class="field-error">{{ form.phone.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="field">
+            <label for="{{ form.village.id_for_label }}">গ্রাম/পাড়া</label>
+            {{ form.village }}
+          </div>
+        </div>
+        <div class="field">
+          <label for="{{ form.message.id_for_label }}">বার্তা *</label>
+          {{ form.message }}
+          {% if form.message.errors %}<div class="field-error">{{ form.message.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="field">
+          <label class="check-row">{{ form.consent }}<span>{{ form.consent.label }}</span></label>
+          {% if form.consent.errors %}<div class="field-error">{{ form.consent.errors.0 }}</div>{% endif %}
+        </div>
+        <button class="btn btn-primary" type="submit">বার্তা পাঠান</button>
+      </form>
+    </div>
+
+    <aside class="stack">
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">কীভাবে কাজ করে</strong>
+        <ol style="font-size:0.78rem;color:var(--muted);padding-left:1.1rem;margin:0.6rem 0 0">
+          <li>আপনার বার্তা কমান্ড সেন্টারে যায়</li>
+          <li>টিম শ্রেণি ও গুরুত্ব নির্ধারণ করে</li>
+          <li>সমাধান হলে স্ট্যাটাস আপডেট হয়</li>
+        </ol>
+      </div>
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">ধরন</strong>
+        <div class="pill-list" style="margin-top:0.6rem">
+          {% for key, label in kinds %}<span class="chip">{{ label }}</span>{% endfor %}
+        </div>
+      </div>
+      <div class="card" style="padding:1.1rem">
+        <strong style="font-size:0.85rem">জরুরি নম্বর</strong>
+        {% for c in emergency %}<div class="kv"><span>{{ c.label }}</span><strong style="font-weight:600">{{ c.number }}</strong></div>{% endfor %}
+      </div>
+      {% if recent %}
+        <div class="card" style="padding:1.1rem">
+          <strong style="font-size:0.85rem">সমাধান হয়েছে</strong>
+          {% for row in recent %}
+            <div class="kv"><span>{{ row.get_kind_display }}</span><span style="font-size:0.7rem;color:var(--muted)">{{ row.ward }}</span></div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </aside>
+  </div>
+</section>
+{% endblock %}

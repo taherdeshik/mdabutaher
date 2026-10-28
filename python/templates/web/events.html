@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load campaign %}
+{% block title %}কর্মসূচি ও ইভেন্ট — {{ site.name }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" with title="কর্মসূচি ও ইভেন্ট" eyebrow="আসুন, কথা বলি" subtitle="জনসভা, উঠান বৈঠক, পদযাত্রা ও সেবা কর্মসূচি — আপনার পাড়ায় আমরা আসছি।" crumb="ইভেন্ট" %}
+
+<section class="section">
+  <div class="container">
+    <div class="between" style="margin-bottom:1.4rem">
+      <h2 style="margin:0">আসন্ন কর্মসূচি ({{ upcoming|length|bn }})</h2>
+      <a class="btn btn-ghost btn-sm" href="/campaign/">প্রচারণা পরিকল্পনা</a>
+    </div>
+    <div class="grid-2">
+      {% for event in upcoming %}
+        <article class="card">
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="badge badge-gold">{{ event.type }}</span>
+              <span>{{ event.date|bn_date }}</span><span class="sep"></span><span>{{ event.start|bn }} – {{ event.end|bn }}</span>
+            </div>
+            <h3 style="margin-top:0.6rem"><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h3>
+            <p style="margin-bottom:0.5rem">📍 {{ event.venue }}{% if event.ward %} · ওয়ার্ড {{ event.ward|bn }}{% endif %}</p>
+            <p>{{ event.description|truncatechars:140 }}</p>
+            <div class="between">
+              <span style="font-size:0.7rem;color:var(--muted)">{{ event.registered|bn }}/{{ event.capacity|bn }} রেজিস্ট্রেশন</span>
+              <a class="card-link" href="{{ event.get_absolute_url }}">বিস্তারিত ও দিকনির্দেশ →</a>
+            </div>
+          </div>
+        </article>
+      {% empty %}
+        <p class="muted">এই মুহূর্তে কোনো আসন্ন কর্মসূচি নেই — শীঘ্রই ঘোষণা আসবে।</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if past %}
+<section class="section" style="background:var(--cream-2);padding-top:2.5rem">
+  <div class="container">
+    <div class="section-head"><span class="eyebrow">সম্পন্ন</span><h2>যা হয়ে গেল</h2></div>
+    <div class="grid-3">
+      {% for event in past %}
+        <article class="card">
+          <div class="card-body">
+            <div class="card-meta"><span class="badge badge-dark">{{ event.type }}</span><span>{{ event.date|bn_date_short }}</span></div>
+            <h3 style="font-size:0.95rem;margin-top:0.5rem">{{ event.title }}</h3>
+            <p style="font-size:0.74rem;color:var(--muted)">{{ event.venue }}</p>
+            <a class="card-link" href="{{ event.get_absolute_url }}">দেখুন →</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
