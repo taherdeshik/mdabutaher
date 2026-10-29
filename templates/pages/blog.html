@@ -5,7 +5,7 @@
 {% cms_str "blog.001" "ব্লগ" as cms_blog_001 %}{% cms_str "blog.002" "ভাবনা, বিশ্লেষণ ও আপডেট" as cms_blog_002 %}{% include "partials/page_hero.html" with eyebrow=cms_blog_001 title=cms_blog_002 description=meta.description crumbs=meta.crumbs %}
 <section class="container-x py-12">
   <form method="get" class="mb-6 flex flex-col gap-3 sm:flex-row">
-    <input type="search" name="q" value="{{ query }}" placeholder="লেখা খুঁজুন…" class="flex-1 rounded-full border border-forest/15 bg-white px-5 py-3" aria-label="লেখা খুঁজুন">
+    <input type="search" name="q" value="{{ query }}" placeholder="{% cms_str "blog.015" "লেখা খুঁজুন…" %}" class="flex-1 rounded-full border border-forest/15 bg-white px-5 py-3" aria-label="{% cms_str "blog.016" "লেখা খুঁজুন" %}">
     <input type="hidden" name="cat" value="{{ active_cat }}">
     <select name="sort" class="rounded-full border border-forest/15 bg-white px-5 py-3" aria-label="{% cms_str "blog.003" "সাজানো" %}">
       <option value="new" {% if sort == 'new' %}selected{% endif %}>{% cms "blog.004" %}নতুন আগে{% endcms %}</option>

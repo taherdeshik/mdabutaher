@@ -248,9 +248,13 @@ def _scan_templates() -> tuple[tuple[str, str, str], ...]:
 
 def discovered_texts() -> list[dict[str, str]]:
     """Every editable text key found in the public templates (the source of truth)."""
+    from .js_copy import JS_COPY, JS_PAGE
+
     out: dict[str, dict[str, str]] = {}
     for key, page, default in _scan_templates():
         out.setdefault(key, {"key": key, "page": page, "default": default})
+    for key, default in JS_COPY:
+        out.setdefault(key, {"key": key, "page": JS_PAGE, "default": default})
     return list(out.values())
 
 

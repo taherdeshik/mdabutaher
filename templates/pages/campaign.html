@@ -3,6 +3,7 @@
 {% load civic_tags %}
 {% block content %}
 {% cms_str "campaign.001" "প্রচারণা পরিকল্পনা" as cms_campaign_001 %}{% include "partials/page_hero.html" with eyebrow=cms_campaign_001 title=overview.title description=overview.subtitle crumbs=meta.crumbs %}
+{% media_embed page_media.campaign css_class="container-x pt-10" %}
 <section class="container-x -mt-8 relative z-10">
   <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
     {% for k in kpis %}

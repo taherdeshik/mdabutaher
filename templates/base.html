@@ -35,6 +35,7 @@
 
   {% include "partials/chat_widget.html" %}
 
+  {{ site_copy|json_script:"site-copy" }}
   <script src="{% static 'js/site.js' %}" defer></script>
   <script src="{% static 'js/track.js' %}" defer></script>
   {% block scripts %}{% endblock %}

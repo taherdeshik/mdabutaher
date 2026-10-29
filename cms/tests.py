@@ -285,3 +285,123 @@ class ContentApiAccessTests(TestCase):
         other = Client()
         other.force_login(self.captain)
         self.assertEqual(other.get("/admin/content").status_code, 302)
+
+
+class ContentUpgradeTests(TestCase):
+    def _drop_key(self, name, key):
+        from .models import ContentDocument
+
+        row = ContentDocument.objects.get(pk=name)
+        data = json.loads(row.body)
+        data.pop(key)
+        row.body = store._dump(data)
+        row.save()
+
+    def test_existing_row_gains_new_top_level_key_once(self):
+        from . import seed
+
+        self._drop_key("site", "pageMedia")
+        before = _version("site")
+        self.assertEqual(seed.upgrade_documents(), 1)
+        stored = store.get_document("site")
+        self.assertIn("pageMedia", stored["data"])
+        self.assertEqual(stored["version"], before + 1)
+        self.assertEqual(seed.upgrade_documents(), 0)
+
+    def test_upgrade_keeps_admin_values(self):
+        from . import seed
+
+        current = store.get_document("site")["data"]
+        current["site"]["name"] = "আমার নতুন নাম"
+        store.save_document("site", current, "owner1", expected_version=_version("site"))
+        self._drop_key("site", "pageMedia")
+        seed.upgrade_documents()
+        self.assertEqual(store.get_document("site")["data"]["site"]["name"], "আমার নতুন নাম")
+
+
+class PageMediaTests(TestCase):
+    def _set_media(self, page, **fields):
+        data = store._file_doc("site")
+        data["pageMedia"][page].update(fields)
+        store.save_document("site", data, "owner1", expected_version=_version("site"))
+
+    def test_video_slot_renders_on_its_page(self):
+        self.assertNotContains(Client().get("/about"), "youtube-nocookie.com/embed/abcDEF12345")
+        self._set_media("about", title="পরিচিতি ভিডিও", video="https://www.youtube.com/watch?v=abcDEF12345")
+        resp = Client().get("/about")
+        self.assertContains(resp, "youtube-nocookie.com/embed/abcDEF12345")
+        self.assertContains(resp, "পরিচিতি ভিডিও")
+
+    def test_audio_from_library_renders_on_home(self):
+        asset = media.add_link("audio", "https://example.com/talk.mp3", "বক্তব্য", "", "owner1")
+        self._set_media("home", audio=f"asset:{asset.pk}")
+        resp = Client().get("/")
+        self.assertContains(resp, "<audio")
+        self.assertContains(resp, "https://example.com/talk.mp3")
+
+    def test_empty_slot_adds_no_player(self):
+        resp = Client().get("/campaign")
+        self.assertNotContains(resp, "<audio")
+        self.assertNotContains(resp, "<video")
+
+
+class SiteCopyTests(TestCase):
+    def _site_copy(self, html):
+        import re
+
+        match = re.search(r'id="site-copy"[^>]*>(.*?)</script>', html, re.S)
+        self.assertIsNotNone(match)
+        return json.loads(match.group(1))
+
+    def test_js_keys_are_discoverable_and_saveable(self):
+        from .js_copy import JS_KEYS
+
+        keys = {t["key"] for t in store.discovered_texts()}
+        for key in JS_KEYS:
+            self.assertIn(key, keys)
+            self.assertRegex(key, r"^[a-z0-9_.]+$")
+            store.save_text(key, "পরীক্ষা", "owner1")
+            store.save_text(key, "", "owner1")
+
+    def test_override_reaches_the_browser_copy(self):
+        store.save_text("js.status.none", "এই নম্বরে কিছু নেই", "owner1")
+        copy = self._site_copy(Client().get("/contact").content.decode("utf-8"))
+        self.assertEqual(copy["js.status.none"], "এই নম্বরে কিছু নেই")
+        self.assertEqual(copy["js.lightbox.close"], "বন্ধ করুন")
+
+    def test_residual_template_strings_are_editable(self):
+        keys = {t["key"] for t in store.discovered_texts()}
+        for key in ["blog.015", "blog.016", "contact.013", "home.044", "media_kit.010",
+                    "partials.chat_widget.002", "partials.header.012", "partials.section_head.001"]:
+            self.assertIn(key, keys)
+
+    def test_site_js_has_no_hardcoded_bengali_words(self):
+        from pathlib import Path
+
+        from django.conf import settings
+
+        text = (Path(settings.BASE_DIR) / "static" / "js" / "site.js").read_text(encoding="utf-8")
+        letters = {c for c in text if "\u0980" <= c <= "\u09FF"}
+        # only the Bengali digit table (০–৯) may remain in the script
+        self.assertTrue(letters <= set("০১২৩৪৫৬৭৮৯"), sorted(letters))
+
+    def test_public_templates_have_no_bare_bengali_text(self):
+        import re
+        from pathlib import Path
+
+        from django.conf import settings
+
+        root = Path(settings.BASE_DIR) / "templates"
+        offenders = []
+        for path in root.rglob("*.html"):
+            if "dashboard" in path.parts:
+                continue
+            body = path.read_text(encoding="utf-8")
+            body = re.sub(r"\{%\s*cms\s+\"[^\"]+\"\s*%\}.*?\{%\s*endcms\s*%\}", "", body, flags=re.S)
+            body = re.sub(r"\{#.*?#\}", "", body, flags=re.S)
+            body = re.sub(r"\{%.*?%\}", "", body, flags=re.S)
+            if re.search(r">[^<]*[\u0980-\u09FF][^<]*<", body) or re.search(
+                r'(?:placeholder|aria-label|title|alt)="[^"]*[\u0980-\u09FF]', body
+            ):
+                offenders.append(path.relative_to(root).as_posix())
+        self.assertEqual(offenders, [])

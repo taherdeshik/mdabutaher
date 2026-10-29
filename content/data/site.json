@@ -324,5 +324,32 @@
       "title": "অন্তর্ভুক্তি",
       "desc": "নারী, যুবক, কৃষক, প্রতিবন্ধী ও সংখ্যালঘু — সবাই সেবার অধিকারভুক্ত।"
     }
-  ]
+  ],
+  "pageMedia": {
+    "home": {
+      "title": "",
+      "video": "",
+      "audio": ""
+    },
+    "about": {
+      "title": "",
+      "video": "",
+      "audio": ""
+    },
+    "campaign": {
+      "title": "",
+      "video": "",
+      "audio": ""
+    },
+    "manifesto": {
+      "title": "",
+      "video": "",
+      "audio": ""
+    },
+    "mediaKit": {
+      "title": "",
+      "video": "",
+      "audio": ""
+    }
+  }
 }

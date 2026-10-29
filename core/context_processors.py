@@ -11,4 +11,5 @@ def site(request):
         "site_url": settings.SITE_URL,
         "current_year": timezone.localdate().year,
         "photo_credit": content.load("media")["photoCredit"],
+        "page_media": content.load("site").get("pageMedia") or {},
     }

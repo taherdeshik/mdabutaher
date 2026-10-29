@@ -37,6 +37,7 @@
     </div>
   </div>
 </section>
+{% media_embed page_media.home css_class="container-x py-10" %}
 
 <!-- Quick actions -->
 <section class="container-x -mt-10 relative z-10">
@@ -105,7 +106,7 @@
       <p class="text-xs font-semibold uppercase tracking-wider text-gold-deep">{{ ph.window }}</p>
       <p class="mt-2 font-bold text-forest">{{ ph.name }}</p>
       <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-forest/10"><div class="h-full rounded-full bg-emerald" style="width: {{ ph.progress }}%"></div></div>
-      <p class="mt-2 text-xs text-muted">{{ ph.progress|bn }}% সম্পন্ন</p>
+      <p class="mt-2 text-xs text-muted">{{ ph.progress|bn }}% {% cms_str "home.044" "সম্পন্ন" %}</p>
     </div>
     {% endfor %}
   </div>

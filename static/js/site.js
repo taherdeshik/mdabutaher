@@ -11,6 +11,15 @@
     return String(value).replace(/[0-9]/g, function (d) { return BN[+d]; });
   }
 
+  /* Messages come from the server (cms.context_processors.site_copy) so editors can change them. */
+  var COPY = {};
+  var copyEl = document.getElementById("site-copy");
+  if (copyEl) { try { COPY = JSON.parse(copyEl.textContent); } catch (e) { COPY = {}; } }
+  function t(key) { return Object.prototype.hasOwnProperty.call(COPY, key) ? COPY[key] : key; }
+  function tf(key, vars) {
+    return t(key).replace(/\{(\w+)\}/g, function (m, name) { return vars[name] !== undefined ? vars[name] : m; });
+  }
+
   function api(url, options) {
     options = options || {};
     var init = {
@@ -23,7 +32,7 @@
       init.body = JSON.stringify(options.body);
     }
     return fetch(url, init).then(function (res) {
-      return res.json().catch(function () { return { ok: false, error: "সার্ভার থেকে উত্তর পাওয়া যায়নি" }; })
+      return res.json().catch(function () { return { ok: false, error: t("js.api.no_reply") }; })
         .then(function (json) { json.status = res.status; return json; });
     });
   }
@@ -33,7 +42,7 @@
       var first = Object.keys(json.errors).map(function (k) { return json.errors[k]; })[0];
       if (first) return first;
     }
-    return json.error || "কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+    return json.error || t("js.api.generic");
   }
 
   function setMsg(el, text, kind) {
@@ -95,13 +104,13 @@
       var body = formData(form);
       api(form.getAttribute("data-api-form"), { method: "POST", body: body }).then(function (json) {
         if (json.ok) {
-          setMsg(target, (json.data && json.data.message) || "সফলভাবে জমা হয়েছে।", "ok");
+          setMsg(target, (json.data && json.data.message) || t("js.form.success"), "ok");
           form.reset();
         } else {
           setMsg(target, errorText(json), "error");
         }
       }).catch(function () {
-        setMsg(target, "নেটওয়ার্ক সমস্যা। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।", "error");
+        setMsg(target, t("js.net.error"), "error");
       }).finally(function () { if (button) button.disabled = false; });
     });
   });
@@ -122,7 +131,7 @@
           var input = apptForm.querySelector('[data-slot][value="' + s.slot + '"]');
           if (!input) return;
           input.disabled = !s.available;
-          input.parentElement.title = s.available ? "" : "এই সময়টি পূর্ণ";
+          input.parentElement.title = s.available ? "" : t("js.appt.slot_full");
           if (!s.available && input.checked) input.checked = false;
         });
       });
@@ -145,7 +154,6 @@
   /* ---------- appointment status lookup ---------- */
   var statusForm = document.querySelector("[data-status-form]");
   if (statusForm) {
-    var STATUS = { pending: "অপেক্ষমাণ", confirmed: "নিশ্চিত", completed: "সম্পন্ন", cancelled: "বাতিল" };
     statusForm.addEventListener("submit", function (event) {
       event.preventDefault();
       var msg = document.querySelector("[data-status-msg]");
@@ -154,15 +162,15 @@
       api("/api/appointments/?phone=" + encodeURIComponent(statusForm.phone.value.trim())).then(function (json) {
         if (!json.ok) { setMsg(msg, errorText(json), "error"); return; }
         var items = json.data.appointments;
-        setMsg(msg, items.length ? bn(items.length) + " টি অ্যাপয়েন্টমেন্ট পাওয়া গেছে" : "এই নম্বরে কোনো অ্যাপয়েন্টমেন্ট নেই", "ok");
+        setMsg(msg, items.length ? tf("js.status.found", { n: bn(items.length) }) : t("js.status.none"), "ok");
         items.forEach(function (a) {
           var li = document.createElement("li");
           li.className = "card-surface rounded-2xl p-5";
           li.innerHTML = '<p class="font-mono text-xs text-muted"></p><p class="mt-1 font-semibold text-forest"></p><p class="mt-1 text-sm text-muted"></p><p class="mt-2 text-xs font-semibold"></p>';
-          li.children[0].textContent = "রেফারেন্স: " + a.reference;
+          li.children[0].textContent = t("js.status.ref") + ": " + a.reference;
           li.children[1].textContent = a.date + " · " + a.slot + " · " + a.topic;
-          li.children[2].textContent = a.type + " · ওয়ার্ড " + a.ward;
-          li.children[3].textContent = "স্ট্যাটাস: " + (STATUS[a.status] || a.status);
+          li.children[2].textContent = a.type + " · " + t("js.board.ward") + " " + a.ward;
+          li.children[3].textContent = t("js.status.label") + ": " + t("js.appt." + a.status);
           list.appendChild(li);
         });
       });
@@ -186,7 +194,7 @@
       var file = photo.files && photo.files[0];
       photoData = "";
       if (!file) return;
-      if (file.size > 1500000) { setMsg(document.getElementById("fb-msg"), "ছবির আকার সর্বোচ্চ ১.৫ MB", "error"); photo.value = ""; return; }
+      if (file.size > 1500000) { setMsg(document.getElementById("fb-msg"), t("js.photo.too_big"), "error"); photo.value = ""; return; }
       var reader = new FileReader();
       reader.onload = function () { photoData = reader.result; };
       reader.readAsDataURL(file);
@@ -211,7 +219,7 @@
         api("/api/feedback/?phone=" + encodeURIComponent(myForm.phone.value.trim())).then(function (json) {
           list.innerHTML = "";
           if (!json.ok) { list.innerHTML = '<li class="text-rose-700"></li>'; list.firstChild.textContent = errorText(json); return; }
-          if (!json.data.items.length) { list.innerHTML = '<li class="text-muted">কোনো রিপোর্ট নেই</li>'; return; }
+          if (!json.data.items.length) { list.innerHTML = '<li class="text-muted"></li>'; list.firstChild.textContent = t("js.my.none"); return; }
           json.data.items.forEach(function (f) {
             var li = document.createElement("li");
             li.className = "rounded-xl bg-cream-2/60 p-3";
@@ -226,26 +234,24 @@
   /* ---------- feedback board ---------- */
   var board = document.querySelector("[data-board-list]");
   if (board) {
-    var KIND = { problem: "সমস্যা", advice: "পরামর্শ", threat: "হুমকি" };
-    var STATUS_BN = { "new": "নতুন", reviewing: "পর্যালোচনায়", "in-progress": "কাজ চলছে", resolved: "সমাধান" };
     var stats = document.querySelector("[data-board-stats]");
     var load = function (ward) {
       api("/api/feedback/" + (ward && ward !== "all" ? "?ward=" + encodeURIComponent(ward) : "")).then(function (json) {
         if (!json.ok) { board.innerHTML = '<li class="text-rose-700"></li>'; board.firstChild.textContent = errorText(json); return; }
         var s = json.data.stats;
-        stats.innerHTML = [["মোট", s.total], ["সমাধান", s.resolved], ["চলমান", s.inProgress], ["হুমকি", s.threats], ["গড় সমর্থন", s.avgSupport]]
+        stats.innerHTML = [[t("js.stat.total"), s.total], [t("js.stat.resolved"), s.resolved], [t("js.stat.in_progress"), s.inProgress], [t("js.stat.threats"), s.threats], [t("js.stat.avg_support"), s.avgSupport]]
           .map(function (p) { return '<div class="card-surface rounded-2xl p-4"><p class="text-xs text-muted">' + p[0] + '</p><p class="mt-1 font-display text-2xl font-bold text-forest">' + bn(p[1]) + "</p></div>"; })
           .join("");
         board.innerHTML = "";
-        if (!json.data.items.length) { board.innerHTML = '<li class="text-muted">এখনো কোনো রিপোর্ট নেই।</li>'; return; }
+        if (!json.data.items.length) { board.innerHTML = '<li class="text-muted"></li>'; board.firstChild.textContent = t("js.board.none"); return; }
         json.data.items.forEach(function (f) {
           var li = document.createElement("li");
           li.className = "card-surface rounded-3xl p-6";
           li.innerHTML = '<p class="text-xs font-semibold uppercase tracking-wider text-gold-deep"></p><h3 class="mt-2 font-bold text-forest"></h3><p class="mt-2 text-sm text-muted"></p><p class="mt-4 text-xs text-muted"></p>';
-          li.children[0].textContent = (KIND[f.kind] || f.kind) + " · ওয়ার্ড " + bn(f.ward) + " · " + f.trackingId;
+          li.children[0].textContent = t("js.board.kind." + f.kind) + " · " + t("js.board.ward") + " " + bn(f.ward) + " · " + f.trackingId;
           li.children[1].textContent = f.title;
           li.children[2].textContent = f.details.length > 160 ? f.details.slice(0, 160) + "…" : f.details;
-          li.children[3].textContent = "অবস্থা: " + (STATUS_BN[f.status] || f.status) + " · " + f.name + " · সমর্থন " + bn(f.supports);
+          li.children[3].textContent = t("js.board.status_label") + ": " + t("js.board.state." + f.status.replace(/-/g, "_")) + " · " + f.name + " · " + t("js.board.support") + " " + bn(f.supports);
           board.appendChild(li);
         });
       });
@@ -311,7 +317,7 @@
       chatLog.appendChild(li);
       chatLog.scrollTop = chatLog.scrollHeight;
     };
-    add("agent", "আসসালামু আলাইকুম! আপনাকে কীভাবে সাহায্য করতে পারি?");
+    add("agent", t("js.chat.greeting"));
     var chatForm = document.querySelector("[data-chat-form]");
     var send = function (text) {
       text = (text || "").trim();
@@ -363,7 +369,7 @@
     box.className = "fixed inset-0 z-[90] hidden items-center justify-center bg-night/90 p-6";
     box.setAttribute("role", "dialog");
     box.setAttribute("aria-modal", "true");
-    box.innerHTML = '<figure class="max-h-full max-w-5xl"><img alt="" class="max-h-[80vh] rounded-2xl object-contain"><figcaption class="mt-3 text-center text-sm text-cream"></figcaption></figure><button type="button" class="absolute right-5 top-5 rounded-full bg-white/10 px-4 py-2 text-cream" aria-label="বন্ধ করুন">✕</button>';
+    box.innerHTML = '<figure class="max-h-full max-w-5xl"><img alt="" class="max-h-[80vh] rounded-2xl object-contain"><figcaption class="mt-3 text-center text-sm text-cream"></figcaption></figure><button type="button" class="absolute right-5 top-5 rounded-full bg-white/10 px-4 py-2 text-cream" aria-label="' + t("js.lightbox.close") + '">✕</button>';
     document.body.appendChild(box);
     var boxImg = box.querySelector("img");
     var boxCap = box.querySelector("figcaption");

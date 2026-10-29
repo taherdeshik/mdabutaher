@@ -3,12 +3,13 @@
 {% load civic_tags %}
 {% block content %}
 {% cms_str "media_kit.001" "প্রেস কিট" as cms_media_kit_001 %}{% cms_str "media_kit.002" "মিডিয়া কিট" as cms_media_kit_002 %}{% include "partials/page_hero.html" with eyebrow=cms_media_kit_001 title=cms_media_kit_002 description=meta.description crumbs=meta.crumbs %}
+{% media_embed page_media.mediaKit css_class="container-x pt-10" %}
 <section class="container-x grid gap-10 py-14 lg:grid-cols-[1fr_1.2fr]">
   <div class="space-y-6">
     {% if portrait %}<img src="{{ portrait }}" alt="{{ site.name }}" class="w-full rounded-3xl object-cover shadow-lift">{% endif %}
     <div class="flex flex-wrap gap-3">
       {% if portrait %}<a href="{{ portrait }}" download class="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">{% cms "media_kit.003" %}ছবি ডাউনলোড{% endcms %}</a>{% endif %}
-      {% if signature %}<img src="{{ signature }}" alt="স্বাক্ষর" class="h-14 opacity-80">{% endif %}
+      {% if signature %}<img src="{{ signature }}" alt="{% cms_str "media_kit.010" "স্বাক্ষর" %}" class="h-14 opacity-80">{% endif %}
     </div>
   </div>
   <div class="space-y-6 leading-relaxed text-forest/85">

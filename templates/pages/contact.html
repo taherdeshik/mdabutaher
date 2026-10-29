@@ -12,7 +12,7 @@
       <p><span class="text-xs font-semibold uppercase tracking-wider text-muted">{% cms "contact.006" %}সময়{% endcms %}</span><br><span class="text-forest">{{ site_contact.officeHours }}</span><br><span class="text-sm text-muted">{{ site_contact.officeHoursNote }}</span></p>
     </div>
     <div class="overflow-hidden rounded-3xl border border-forest/10 bg-white shadow-soft">
-      <iframe src="{{ map_url }}" title="কার্যালয়ের ম্যাপ" class="h-56 w-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <iframe src="{{ map_url }}" title="{% cms_str "contact.013" "কার্যালয়ের ম্যাপ" %}" class="h-56 w-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
   </div>
   <form class="card-surface space-y-4 rounded-3xl p-6" data-api-form="/api/contact/" data-success-target="contact-msg" novalidate>

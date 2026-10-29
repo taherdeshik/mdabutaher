@@ -3,6 +3,7 @@
 {% load civic_tags %}
 {% block content %}
 {% cms_str "manifesto.001" "ম্যানিফেস্টো" as cms_manifesto_001 %}{% include "partials/page_hero.html" with eyebrow=cms_manifesto_001 title=intro.title description=intro.subtitle crumbs=meta.crumbs %}
+{% media_embed page_media.manifesto css_class="container-x pt-10" %}
 <section class="container-x py-12">
   <blockquote class="mx-auto max-w-3xl rounded-3xl border-l-4 border-gold bg-white p-8 text-lg leading-relaxed text-forest shadow-soft">“{{ intro.quote }}”</blockquote>
   <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm">

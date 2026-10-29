@@ -25,6 +25,8 @@
     content: "বিষয়বস্তু", question: "প্রশ্ন", answer: "উত্তর", cite: "উদ্ধৃতি সূত্র",
     author: "লেখক", readTime: "পড়ার সময় (মিনিট)", featured: "বিশেষ (ফিচার্ড)",
     slug: "URL নাম (slug)", id: "আইডি", image: "ছবি", video: "ভিডিও", audio: "অডিও",
+    pageMedia: "পাতার ভিডিও ও অডিও", home: "হোম পাতা", about: "পরিচিতি পাতা",
+    campaign: "প্রচারণা পাতা", manifesto: "ইশতেহার পাতা", mediaKit: "মিডিয়া কিট পাতা",
     poster: "পোস্টার", photo: "ছবি", portrait: "প্রোফাইল ছবি", hero: "হিরো ছবি",
     signature: "স্বাক্ষর ছবি", cover: "কভার ছবি", key: "ছবির কী"
   };
@@ -253,6 +255,8 @@
   }
   function mediaPicker(kind, current, onchange) {
     var assets = assetsOf(kind);
+    // Values are either an asset reference, a URL / site path, or an internal image key (imageMap).
+    var isLink = typeof current === "string" && /^(https?:|data:|\/)/.test(current);
     var box = el("div", { class: "space-y-2" });
     var preview = el("div");
     function paint(value) {
@@ -261,12 +265,16 @@
       if (typeof value === "string" && value.indexOf("asset:") === 0) {
         asset = state.assets.filter(function (a) { return a.ref === value; })[0] || null;
       }
-      var url = asset ? asset.url : (typeof value === "string" && value && value.indexOf("asset:") !== 0 ? value : "");
-      if (!url) { preview.appendChild(el("p", { class: "text-xs text-muted", text: "কোনো ফাইল বাছাই করা নেই" })); return; }
+      var isLinkValue = typeof value === "string" && /^(https?:|data:|\/)/.test(value);
+      var url = asset ? asset.url : (isLinkValue ? value : "");
+      if (!url) {
+        preview.appendChild(el("p", { class: "text-xs text-muted", text: value ? "ছবির কী: " + value + " (সাইটের মূল ছবি)" : "কোনো ফাইল বাছাই করা নেই" }));
+        return;
+      }
       if (kind === "image") preview.appendChild(el("img", { src: url, alt: "", class: "h-24 w-auto rounded-xl object-cover" }));
       else if (kind === "video") preview.appendChild(el("video", { src: url, controls: "controls", preload: "metadata", class: "h-32 rounded-xl bg-night" }));
       else preview.appendChild(el("audio", { src: url, controls: "controls", preload: "none", class: "w-full" }));
-      if (!asset) preview.appendChild(el("p", { class: "mt-1 break-all text-xs text-muted", text: "সরাসরি লিংক: " + url }));
+      if (!asset && isLinkValue) preview.appendChild(el("p", { class: "mt-1 break-all text-xs text-muted", text: "সরাসরি লিংক: " + url }));
     }
     var s = el("select", { class: "w-full rounded-xl border border-forest/20 px-3 py-2 text-sm", onchange: function (e) {
       onchange(e.target.value); paint(e.target.value);
@@ -277,7 +285,7 @@
       if (a.ref === current) known = true;
       s.appendChild(el("option", { value: a.ref, text: a.title || (kind + " #" + a.id), selected: a.ref === current ? "selected" : null }));
     });
-    if (current && !known) s.appendChild(el("option", { value: current, text: "সরাসরি লিংক: " + current, selected: "selected" }));
+    if (current && !known) s.appendChild(el("option", { value: current, text: (isLink ? "সরাসরি লিংক: " : "ছবির কী: ") + current, selected: "selected" }));
     box.appendChild(s);
     box.appendChild(preview);
     box.appendChild(el("button", { type: "button", class: "text-xs font-semibold text-forest underline", text: "মিডিয়া লাইব্রেরিতে নতুন ফাইল যোগ করুন", onclick: function () {
