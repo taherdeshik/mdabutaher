@@ -1,0 +1,9 @@
+{% load cms %}
+<div class="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+  <div>
+    {% if eyebrow %}<p class="eyebrow">{{ eyebrow }}</p>{% endif %}
+    <h2 class="mt-2 text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold leading-tight text-forest">{{ title }}</h2>
+    {% if description %}<p class="mt-2 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">{{ description }}</p>{% endif %}
+  </div>
+  {% if link_href %}<a href="{{ link_href }}" class="text-sm font-semibold text-forest underline-offset-4 hover:underline">{% cms_str "partials.section_head.001" "সব দেখুন" as default_label %}{{ link_label|default:default_label }} →</a>{% endif %}
+</div>

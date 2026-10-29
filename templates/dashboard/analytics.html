@@ -1,0 +1,40 @@
+{% extends "dashboard/base.html" %}
+{% load civic_tags %}
+{% block title %}ভিজিটর{% endblock %}
+{% block content %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-xl font-bold text-forest">বেনামি ভিজিটর পরিসংখ্যান</h1>
+  <div class="flex gap-2 text-sm">{% for r in ranges %}<a href="?days={{ r }}" class="rounded-full border px-4 py-1.5 font-semibold {% if a.range == r %}border-forest bg-forest text-cream{% else %}border-forest/20 text-forest{% endif %}">{{ r|bn }} দিন</a>{% endfor %}</div>
+</div>
+<section class="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+  <div class="rounded-2xl bg-white p-4 shadow-soft"><p class="text-xs text-muted">এখন সক্রিয়</p><p class="mt-1 font-display text-2xl font-bold text-forest">{{ a.totals.activeNow|bn_num }}</p></div>
+  <div class="rounded-2xl bg-white p-4 shadow-soft"><p class="text-xs text-muted">আজকের ভিউ</p><p class="mt-1 font-display text-2xl font-bold text-forest">{{ a.totals.todayViews|bn_num }}</p></div>
+  <div class="rounded-2xl bg-white p-4 shadow-soft"><p class="text-xs text-muted">রেঞ্জে ভিজিটর</p><p class="mt-1 font-display text-2xl font-bold text-forest">{{ a.totals.rangeVisitors|bn_num }}</p></div>
+  <div class="rounded-2xl bg-white p-4 shadow-soft"><p class="text-xs text-muted">বাউন্স রেট</p><p class="mt-1 font-display text-2xl font-bold text-forest">{{ a.totals.bounceRate|bn }}%</p></div>
+</section>
+
+<section class="mb-8 rounded-2xl bg-white p-5 shadow-soft">
+  <h2 class="mb-4 font-bold text-forest">দৈনিক ভিউ</h2>
+  <div class="flex h-40 items-end gap-1" role="img" aria-label="দৈনিক ভিউয়ের চার্ট">
+    {% for p in a.series %}
+    <div class="flex-1 rounded-t bg-emerald/70" style="height: {% if a.totals.rangeViews %}{% widthratio p.views a.totals.rangeViews 100 %}{% else %}2{% endif %}%" title="{{ p.date }}: {{ p.views }} ভিউ"></div>
+    {% endfor %}
+  </div>
+</section>
+
+<div class="grid gap-6 lg:grid-cols-2">
+  <div class="rounded-2xl bg-white p-5 shadow-soft"><h2 class="mb-3 font-bold text-forest">জনপ্রিয় পাতা</h2>
+    <table class="w-full text-sm"><tbody class="divide-y divide-forest/10">{% for r in a.pages %}<tr><td class="py-2 font-mono text-xs">{{ r.label }}</td><td class="py-2 text-right">{{ r.views|bn_num }} ভিউ</td><td class="py-2 text-right text-muted">{{ r.visitors|bn_num }} জন</td></tr>{% empty %}<tr><td class="py-2 text-muted">তথ্য নেই</td></tr>{% endfor %}</tbody></table></div>
+  <div class="rounded-2xl bg-white p-5 shadow-soft"><h2 class="mb-3 font-bold text-forest">দেশ</h2>
+    <table class="w-full text-sm"><tbody class="divide-y divide-forest/10">{% for r in a.countries %}<tr><td class="py-2">{{ r.label }}</td><td class="py-2 text-right">{{ r.views|bn_num }}</td></tr>{% empty %}<tr><td class="py-2 text-muted">তথ্য নেই</td></tr>{% endfor %}</tbody></table></div>
+  <div class="rounded-2xl bg-white p-5 shadow-soft"><h2 class="mb-3 font-bold text-forest">ডিভাইস</h2>
+    <table class="w-full text-sm"><tbody class="divide-y divide-forest/10">{% for r in a.devices %}<tr><td class="py-2">{{ r.label }}</td><td class="py-2 text-right">{{ r.views|bn_num }}</td></tr>{% empty %}<tr><td class="py-2 text-muted">তথ্য নেই</td></tr>{% endfor %}</tbody></table></div>
+  <div class="rounded-2xl bg-white p-5 shadow-soft"><h2 class="mb-3 font-bold text-forest">ব্রাউজার</h2>
+    <table class="w-full text-sm"><tbody class="divide-y divide-forest/10">{% for r in a.browsers %}<tr><td class="py-2">{{ r.label }}</td><td class="py-2 text-right">{{ r.views|bn_num }}</td></tr>{% empty %}<tr><td class="py-2 text-muted">তথ্য নেই</td></tr>{% endfor %}</tbody></table></div>
+  <div class="rounded-2xl bg-white p-5 shadow-soft"><h2 class="mb-3 font-bold text-forest">রেফারার</h2>
+    <table class="w-full text-sm"><tbody class="divide-y divide-forest/10">{% for r in a.sources %}<tr><td class="py-2">{{ r.label }}</td><td class="py-2 text-right">{{ r.views|bn_num }}</td></tr>{% empty %}<tr><td class="py-2 text-muted">তথ্য নেই</td></tr>{% endfor %}</tbody></table></div>
+  <div class="rounded-2xl bg-white p-5 shadow-soft"><h2 class="mb-3 font-bold text-forest">শহর</h2>
+    <table class="w-full text-sm"><tbody class="divide-y divide-forest/10">{% for r in a.cities %}<tr><td class="py-2">{{ r.label }}</td><td class="py-2 text-right">{{ r.views|bn_num }}</td></tr>{% empty %}<tr><td class="py-2 text-muted">তথ্য নেই</td></tr>{% endfor %}</tbody></table></div>
+</div>
+<p class="mt-8 text-xs text-muted">সর্বশেষ হালনাগাদ: {{ a.generatedAt|slice:":16" }}। কোনো আইপি বা ব্যক্তিগত তথ্য সংরক্ষণ করা হয় না।</p>
+{% endblock %}

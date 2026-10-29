@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load cms %}
+{% block content %}
+<section class="container-x flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
+  <p class="font-display text-7xl font-bold text-gold">{% cms "not_found.001" %}৪০৪{% endcms %}</p>
+  <h1 class="mt-4 text-2xl font-bold text-forest">{% cms "not_found.002" %}পাতাটি পাওয়া যায়নি{% endcms %}</h1>
+  <p class="mt-2 max-w-md text-muted">{% cms "not_found.003" %}আপনি যে ঠিকানায় এসেছেন সেটি সরানো হয়েছে অথবা ভুল লেখা হয়েছে।{% endcms %}</p>
+  <div class="mt-8 flex gap-3">
+    <a href="{% url 'core:home' %}" class="rounded-full bg-forest px-6 py-3 font-semibold text-cream">{% cms "not_found.004" %}হোমে ফিরুন{% endcms %}</a>
+    <a href="{% url 'core:contact' %}" class="rounded-full border border-forest/20 px-6 py-3 font-semibold text-forest">{% cms "not_found.005" %}যোগাযোগ করুন{% endcms %}</a>
+  </div>
+</section>
+{% endblock %}

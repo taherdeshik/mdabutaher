@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load cms %}
+{% load civic_tags %}
+{% block content %}
+{% cms_str "feedback.001" "জনসেবা" as cms_feedback_001 %}{% cms_str "feedback.002" "সমস্যা ও পরামর্শ" as cms_feedback_002 %}{% include "partials/page_hero.html" with eyebrow=cms_feedback_001 title=cms_feedback_002 description=meta.description crumbs=meta.crumbs %}
+<section class="container-x grid gap-10 py-14 lg:grid-cols-[1.3fr_1fr]">
+  <form class="card-surface space-y-6 rounded-3xl p-6 sm:p-8" data-feedback-form data-api-form="/api/feedback/" data-success-target="fb-msg" novalidate>
+    <fieldset class="grid gap-3 sm:grid-cols-3">
+      <legend class="mb-3 text-lg font-bold text-forest">{% cms "feedback.003" %}ধরন *{% endcms %}</legend>
+      {% for k in kinds %}
+      <label class="flex cursor-pointer flex-col gap-1 rounded-2xl border border-forest/15 bg-white p-4 has-[:checked]:border-forest has-[:checked]:ring-2 has-[:checked]:ring-forest/20"><input type="radio" name="kind" value="{{ k.id }}" class="sr-only" required {% if forloop.first %}checked{% endif %}><span class="font-semibold text-forest">{{ k.label }}</span><span class="text-xs text-muted">{{ k.desc }}</span></label>
+      {% endfor %}
+    </fieldset>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="block"><span class="text-sm font-semibold text-forest">{% cms "feedback.004" %}বিভাগ *{% endcms %}</span><select name="category" required class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field><option value="">{% cms "feedback.005" %}বেছে নিন{% endcms %}</option>{% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select></label>
+      <label class="block"><span class="text-sm font-semibold text-forest">{% cms "feedback.006" %}ওয়ার্ড *{% endcms %}</span><select name="ward" required class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field><option value="">{% cms "feedback.007" %}বেছে নিন{% endcms %}</option>{% for w in wards %}<option value="{{ w }}">{{ w }}</option>{% endfor %}</select></label>
+      <label class="block sm:col-span-2"><span class="text-sm font-semibold text-forest">{% cms "feedback.008" %}শিরোনাম *{% endcms %}</span><input name="title" required minlength="5" maxlength="140" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></label>
+      <label class="block sm:col-span-2"><span class="text-sm font-semibold text-forest">{% cms "feedback.009" %}বিস্তারিত *{% endcms %}</span><textarea name="details" required minlength="20" maxlength="3000" rows="5" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></textarea></label>
+      <label class="block"><span class="text-sm font-semibold text-forest">{% cms "feedback.010" %}স্থান{% endcms %}</span><input name="location" maxlength="160" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3"></label>
+      <label class="block"><span class="text-sm font-semibold text-forest">{% cms "feedback.011" %}গুরুত্ব{% endcms %}</span><select name="severity" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3">{% for s in severities %}<option value="{{ s.id }}" {% if s.id == 'medium' %}selected{% endif %}>{{ s.label }}</option>{% endfor %}</select></label>
+      <label class="block"><span class="text-sm font-semibold text-forest">{% cms "feedback.012" %}নাম{% endcms %}</span><input name="name" maxlength="80" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-anon-dependent></label>
+      <label class="block"><span class="text-sm font-semibold text-forest">{% cms "feedback.013" %}মোবাইল{% endcms %}</span><input name="phone" inputmode="tel" placeholder="01711203997" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-anon-dependent></label>
+      <label class="flex items-center gap-2 sm:col-span-2"><input type="checkbox" name="anonymous" class="accent-forest" data-anon-toggle> <span class="text-sm text-forest">{% cms "feedback.014" %}নাম গোপন রাখুন (বোর্ডে নাম দেখানো হবে না){% endcms %}</span></label>
+      <label class="block sm:col-span-2"><span class="text-sm font-semibold text-forest">{% cms "feedback.015" %}ছবি (ঐচ্ছিক, সর্বোচ্চ ১.৫ MB){% endcms %}</span><input type="file" accept="image/*" class="mt-1.5 text-sm" data-photo-input></label>
+    </div>
+    <button type="submit" class="rounded-full bg-forest px-8 py-3.5 font-semibold text-cream">{% cms "feedback.016" %}রিপোর্ট জমা দিন{% endcms %}</button>
+    <p id="fb-msg" class="text-sm" role="status" aria-live="polite"></p>
+  </form>
+
+  <aside class="space-y-6">
+    <div class="card-surface rounded-3xl p-6">
+      <h2 class="font-bold text-forest">{% cms "feedback.017" %}কীভাবে কাজ করে{% endcms %}</h2>
+      <ol class="mt-4 list-decimal space-y-2 pl-5 text-sm text-muted"><li>{% cms "feedback.018" %}রিপোর্ট জমা হলে ট্র্যাকিং আইডি পাবেন।{% endcms %}</li><li>{% cms "feedback.019" %}ওয়ার্ড সমন্বয়কের কাছে পাঠানো হয়।{% endcms %}</li><li>{% cms "feedback.020" %}৭ কার্যদিবসে প্রাথমিক পদক্ষেপ, অবস্থা বোর্ডে আপডেট।{% endcms %}</li></ol>
+      <a href="{% url 'core:feedback-board' %}" class="mt-5 inline-block text-sm font-semibold text-forest underline-offset-4 hover:underline">{% cms "feedback.021" %}জনসমস্যা বোর্ড দেখুন →{% endcms %}</a>
+    </div>
+    {% for h in help %}
+    <div class="card-surface rounded-3xl p-6"><p class="text-xs font-semibold uppercase tracking-wider text-gold-deep">{{ h.category }}</p><p class="mt-2 font-bold text-forest">{{ h.title }}</p><p class="mt-2 text-sm text-muted">{{ h.body }}</p></div>
+    {% endfor %}
+    <div class="card-surface rounded-3xl p-6">
+      <h2 class="font-bold text-forest">{% cms "feedback.022" %}আমার রিপোর্ট দেখুন{% endcms %}</h2>
+      <form class="mt-4 flex gap-2" data-my-reports novalidate><input name="phone" inputmode="tel" placeholder="{% cms_str "feedback.023" "মোবাইল নম্বর" %}" class="flex-1 rounded-full border border-forest/15 bg-white px-4 py-2.5 text-sm"><button class="rounded-full bg-forest px-4 py-2.5 text-sm font-semibold text-cream">{% cms "feedback.024" %}দেখুন{% endcms %}</button></form>
+      <ul class="mt-4 space-y-2 text-sm" data-my-list></ul>
+    </div>
+  </aside>
+</section>
+{% endblock %}

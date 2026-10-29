@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load cms %}
+{% load civic_tags %}
+{% block content %}
+<article class="container-x max-w-3xl py-10 print:py-0">
+  <div class="mb-8 flex items-center justify-between print:hidden">
+    <a href="{% url 'core:manifesto' %}" class="text-sm font-semibold text-forest">{% cms "manifesto_print.001" %}← ম্যানিফেস্টো{% endcms %}</a>
+    <button type="button" onclick="window.print()" class="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">{% cms "manifesto_print.002" %}প্রিন্ট / PDF{% endcms %}</button>
+  </div>
+  <header class="border-b border-forest/20 pb-6">
+    <p class="text-xs font-bold uppercase tracking-[0.2em] text-gold-deep">{% cms "manifesto_print.003" %}ম্যানিফেস্টো{% endcms %}</p>
+    <h1 class="mt-2 text-3xl font-bold text-forest">{{ intro.title }}</h1>
+    <p class="mt-2 text-sm text-muted">{{ intro.subtitle }}</p>
+  </header>
+  {% for p in pillars %}
+  <section class="break-inside-avoid border-b border-forest/10 py-6">
+    <h2 class="text-xl font-bold text-forest">{{ p.number|bn }}. {{ p.title }}</h2>
+    <p class="mt-2 text-sm leading-relaxed">{{ p.summary }}</p>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-sm">{% for c in p.commitments %}<li>{{ c }}</li>{% endfor %}</ul>
+  </section>
+  {% endfor %}
+</article>
+{% endblock %}

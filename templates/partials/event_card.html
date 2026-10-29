@@ -1,0 +1,14 @@
+{% load cms %}
+{% load civic_tags %}
+<article class="card-surface group flex h-full flex-col rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-lift">
+  <div class="flex items-center justify-between gap-2">
+    <span class="rounded-full bg-forest/5 px-3 py-1 text-[0.7rem] font-semibold text-forest">{{ event.type }}</span>
+    <span class="text-[0.7rem] font-semibold uppercase tracking-wider {% if event.status == 'live' %}text-emerald{% elif event.status == 'past' %}text-muted{% else %}text-gold-deep{% endif %}">
+      {% if event.status == 'live' %}{% cms "partials.event_card.001" %}লাইভ{% endcms %}{% elif event.status == 'past' %}{% cms "partials.event_card.002" %}সম্পন্ন{% endcms %}{% else %}{% cms "partials.event_card.003" %}আসন্ন{% endcms %}{% endif %}
+    </span>
+  </div>
+  <h3 class="mt-4 text-lg font-bold leading-snug text-forest"><a href="{% url 'core:event-detail' event.id %}" class="after:absolute after:inset-0">{{ event.title }}</a></h3>
+  <p class="mt-3 text-sm text-muted">{{ event.date|bn_date }} · {{ event.start|bn }}–{{ event.end|bn }}</p>
+  <p class="mt-1 text-sm text-muted">{{ event.venue }}</p>
+  <p class="mt-auto pt-5 text-xs text-muted">{% cms "partials.event_card.004" %}ওয়ার্ড{% endcms %} {{ event.ward|bn }}</p>
+</article>

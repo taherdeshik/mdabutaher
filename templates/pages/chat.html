@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load cms %}
+{% load civic_tags %}
+{% block content %}
+{% cms_str "chat.001" "২৪/৭ সহায়তা" as cms_chat_001 %}{% cms_str "chat.002" "লাইভ চ্যাট ও বার্তা" as cms_chat_002 %}{% include "partials/page_hero.html" with eyebrow=cms_chat_001 title=cms_chat_002 description=meta.description crumbs=meta.crumbs %}
+<section class="container-x grid gap-8 py-12 lg:grid-cols-[1fr_320px]">
+  <div class="card-surface flex min-h-[460px] flex-col rounded-3xl">
+    <ul class="flex-1 space-y-3 overflow-y-auto p-6" data-chat-log aria-live="polite"></ul>
+    <form class="flex gap-2 border-t border-forest/10 p-4" data-chat-form novalidate>
+      <label class="sr-only" for="chat-input">{% cms "chat.003" %}বার্তা{% endcms %}</label>
+      <input id="chat-input" name="message" maxlength="1000" required placeholder="{% cms_str "chat.004" "আপনার প্রশ্ন লিখুন…" %}" class="flex-1 rounded-full border border-forest/15 bg-white px-5 py-3">
+      <button class="rounded-full bg-forest px-6 py-3 font-semibold text-cream">{% cms "chat.005" %}পাঠান{% endcms %}</button>
+    </form>
+  </div>
+  <aside class="space-y-4">
+    <p class="text-sm font-semibold text-forest">{% cms "chat.006" %}প্রস্তাবিত প্রশ্ন{% endcms %}</p>
+    <div class="flex flex-col gap-2">
+      {% for s in suggestions %}<button type="button" class="card-surface rounded-2xl px-4 py-3 text-left text-sm text-forest hover:border-forest/30" data-suggest="{{ s }}">{{ s }}</button>{% endfor %}
+    </div>
+    <p class="text-xs text-muted">{% cms "chat.007" %}জরুরি হলে ৯৯৯ কল করুন। সরাসরি যোগাযোগ:{% endcms %} {{ site.phone }}</p>
+  </aside>
+</section>
+{{ chat_rules|json_script:"chat-rules" }}
+{% endblock %}

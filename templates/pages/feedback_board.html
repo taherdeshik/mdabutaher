@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load cms %}
+{% load civic_tags %}
+{% block content %}
+{% cms_str "feedback_board.001" "জনসমস্যা বোর্ড" as cms_feedback_board_001 %}{% cms_str "feedback_board.002" "প্রকাশ্য অগ্রগতি" as cms_feedback_board_002 %}{% include "partials/page_hero.html" with eyebrow=cms_feedback_board_001 title=cms_feedback_board_002 description=meta.description crumbs=meta.crumbs %}
+<section class="container-x py-12">
+  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-5" data-board-stats></div>
+  <div class="mb-6 flex flex-wrap gap-2" role="group" aria-label="{% cms_str "feedback_board.003" "ওয়ার্ড ফিল্টার" %}">
+    {% for w in wards %}<button type="button" class="rounded-full border border-forest/15 px-3 py-1.5 text-sm font-semibold text-forest" data-ward-filter="{% if forloop.first %}all{% else %}{{ w }}{% endif %}">{% if forloop.first %}{% cms "feedback_board.004" %}সব ওয়ার্ড{% endcms %}{% else %}{% cms "feedback_board.005" %}ওয়ার্ড{% endcms %} {{ w }}{% endif %}</button>{% endfor %}
+  </div>
+  <ul class="grid gap-4 md:grid-cols-2" data-board-list aria-live="polite">
+    <li class="text-muted">{% cms "feedback_board.006" %}লোড হচ্ছে…{% endcms %}</li>
+  </ul>
+</section>
+{% endblock %}

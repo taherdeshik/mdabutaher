@@ -1,0 +1,14 @@
+{% extends "dashboard/base.html" %}
+{% block title %}লগইন{% endblock %}
+{% block content %}
+<div class="mx-auto mt-10 max-w-sm rounded-3xl bg-white p-8 shadow-soft">
+  <h1 class="text-xl font-bold text-forest">কমান্ড সেন্টার লগইন</h1>
+  <p class="mt-1 text-sm text-muted">শুধু অনুমোদিত ব্যবহারকারীরা প্রবেশ করতে পারবেন।</p>
+  <form method="post" class="mt-6 space-y-4">
+    {% csrf_token %}
+    <label class="block"><span class="text-sm font-semibold text-forest">ইউজারনেম</span><input name="username" required autocomplete="username" class="mt-1.5 w-full rounded-xl border border-forest/15 px-4 py-3"></label>
+    <label class="block"><span class="text-sm font-semibold text-forest">পাসওয়ার্ড</span><input name="password" type="password" required autocomplete="current-password" class="mt-1.5 w-full rounded-xl border border-forest/15 px-4 py-3"></label>
+    <button class="w-full rounded-full bg-forest px-6 py-3 font-semibold text-cream">প্রবেশ করুন</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load cms %}
+{% load civic_tags %}
+{% block content %}
+{% cms_str "contact.001" "যোগাযোগ" as cms_contact_001 %}{% cms_str "contact.002" "আপনার কথা শুনতে প্রস্তুত" as cms_contact_002 %}{% include "partials/page_hero.html" with eyebrow=cms_contact_001 title=cms_contact_002 description=meta.description crumbs=meta.crumbs %}
+<section class="container-x grid gap-10 py-14 lg:grid-cols-[1fr_1.1fr]">
+  <div class="space-y-6">
+    <div class="card-surface space-y-4 rounded-3xl p-6">
+      <p><span class="text-xs font-semibold uppercase tracking-wider text-muted">{% cms "contact.003" %}ফোন{% endcms %}</span><br><a href="tel:{{ site_contact.phoneHref }}" class="text-lg font-bold text-forest">{{ site_contact.phone }}</a></p>
+      <p><span class="text-xs font-semibold uppercase tracking-wider text-muted">{% cms "contact.004" %}ইমেইল{% endcms %}</span><br><a href="mailto:{{ site_contact.email }}" class="font-semibold text-forest">{{ site_contact.email }}</a></p>
+      <p><span class="text-xs font-semibold uppercase tracking-wider text-muted">{% cms "contact.005" %}কার্যালয়{% endcms %}</span><br><span class="text-forest">{{ site_contact.office }}</span></p>
+      <p><span class="text-xs font-semibold uppercase tracking-wider text-muted">{% cms "contact.006" %}সময়{% endcms %}</span><br><span class="text-forest">{{ site_contact.officeHours }}</span><br><span class="text-sm text-muted">{{ site_contact.officeHoursNote }}</span></p>
+    </div>
+    <div class="overflow-hidden rounded-3xl border border-forest/10 bg-white shadow-soft">
+      <iframe src="{{ map_url }}" title="{% cms_str "contact.013" "কার্যালয়ের ম্যাপ" %}" class="h-56 w-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+  <form class="card-surface space-y-4 rounded-3xl p-6" data-api-form="/api/contact/" data-success-target="contact-msg" novalidate>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="block"><span class="text-sm font-semibold text-forest">{% cms "contact.007" %}নাম *{% endcms %}</span><input name="name" required minlength="3" maxlength="80" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></label>
+      <label class="block"><span class="text-sm font-semibold text-forest">{% cms "contact.008" %}মোবাইল{% endcms %}</span><input name="phone" inputmode="tel" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></label>
+      <label class="block sm:col-span-2"><span class="text-sm font-semibold text-forest">{% cms "contact.009" %}ইমেইল{% endcms %}</span><input name="email" type="email" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></label>
+      <label class="block sm:col-span-2"><span class="text-sm font-semibold text-forest">{% cms "contact.010" %}বিষয় *{% endcms %}</span><input name="subject" required minlength="3" maxlength="140" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></label>
+      <label class="block sm:col-span-2"><span class="text-sm font-semibold text-forest">{% cms "contact.011" %}বার্তা *{% endcms %}</span><textarea name="message" required minlength="10" maxlength="2000" rows="5" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></textarea></label>
+    </div>
+    <button type="submit" class="rounded-full bg-forest px-8 py-3.5 font-semibold text-cream">{% cms "contact.012" %}বার্তা পাঠান{% endcms %}</button>
+    <p id="contact-msg" class="text-sm" role="status" aria-live="polite"></p>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}কনটেন্ট ম্যানেজমেন্ট{% endblock %}
+{% block content %}
+<section id="cms-root" class="space-y-6" data-role="{{ actor.role }}">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-forest">ওয়েবসাইটের কনটেন্ট</h1>
+      <p class="mt-1 text-sm text-muted">লেখা, ছবি, ভিডিও ও অডিও এখান থেকে বদলানো যায়। পরিবর্তন সরাসরি ওয়েবসাইটে যায়।</p>
+    </div>
+    <a href="/" target="_blank" rel="noopener" class="text-sm font-semibold text-forest underline underline-offset-4">ওয়েবসাইট দেখুন →</a>
+  </div>
+
+  <nav class="flex flex-wrap gap-2" role="tablist" aria-label="কনটেন্টের ধরন">
+    <button type="button" role="tab" data-tab="docs" class="cms-tab rounded-full border border-forest/20 px-4 py-2 text-sm font-semibold text-forest aria-selected:bg-forest">তথ্য ও তালিকা</button>
+    <button type="button" role="tab" data-tab="texts" class="cms-tab rounded-full border border-forest/20 px-4 py-2 text-sm font-semibold text-forest">পাতার লেখা</button>
+    <button type="button" role="tab" data-tab="media" class="cms-tab rounded-full border border-forest/20 px-4 py-2 text-sm font-semibold text-forest">মিডিয়া লাইব্রেরি</button>
+  </nav>
+
+  <p id="cms-status" role="status" class="hidden rounded-xl px-4 py-3 text-sm"></p>
+
+  <!-- Documents -->
+  <div data-panel="docs" class="grid gap-6 lg:grid-cols-[240px_1fr]">
+    <aside id="cms-doc-list" class="space-y-1 rounded-2xl bg-white p-3 shadow-soft"></aside>
+    <div id="cms-doc-editor" class="min-w-0 rounded-2xl bg-white p-6 shadow-soft">
+      <p class="text-sm text-muted">বাঁদিক থেকে একটি তালিকা বেছে নিন।</p>
+    </div>
+  </div>
+
+  <!-- Page copy -->
+  <div data-panel="texts" class="hidden space-y-4">
+    <div class="flex flex-wrap items-center gap-3">
+      <input id="cms-text-filter" type="search" placeholder="পাতা বা লেখা খুঁজুন…" class="min-w-[16rem] flex-1 rounded-xl border border-forest/20 bg-white px-4 py-2 text-sm">
+      <label class="flex items-center gap-2 text-sm text-muted"><input id="cms-text-changed" type="checkbox"> শুধু বদলানো লেখা</label>
+    </div>
+    <div id="cms-texts" class="space-y-6"></div>
+  </div>
+
+  <!-- Media -->
+  <div data-panel="media" class="hidden space-y-6">
+    <div class="grid gap-4 lg:grid-cols-2">
+      <form id="cms-upload" class="space-y-3 rounded-2xl bg-white p-5 shadow-soft" enctype="multipart/form-data">
+        <h2 class="font-bold text-forest">নতুন ফাইল আপলোড</h2>
+        <p class="text-xs text-muted">ছবি: JPG, PNG, WebP, GIF (১৫ MB পর্যন্ত) · ভিডিও: MP4, WebM · অডিও: MP3, M4A, OGG, WAV, FLAC (৬০ MB পর্যন্ত)</p>
+        <input name="file" type="file" required accept="image/*,video/mp4,video/webm,audio/*" class="block w-full text-sm">
+        <div class="grid gap-3 sm:grid-cols-2">
+          <select name="kind" class="rounded-xl border border-forest/20 px-3 py-2 text-sm">
+            <option value="image">ছবি</option><option value="video">ভিডিও</option><option value="audio">অডিও</option>
+          </select>
+          <input name="title" type="text" maxlength="200" placeholder="শিরোনাম (ঐচ্ছিক)" class="rounded-xl border border-forest/20 px-3 py-2 text-sm">
+        </div>
+        <input name="alt" type="text" maxlength="300" placeholder="বিকল্প বর্ণনা (ছবির জন্য)" class="w-full rounded-xl border border-forest/20 px-3 py-2 text-sm">
+        <button type="submit" class="rounded-full bg-forest px-5 py-2 text-sm font-semibold text-cream">আপলোড করুন</button>
+      </form>
+      <form id="cms-link" class="space-y-3 rounded-2xl bg-white p-5 shadow-soft">
+        <h2 class="font-bold text-forest">লিংক যোগ করুন</h2>
+        <p class="text-xs text-muted">YouTube বা Vimeo ভিডিওর লিংক, অথবা সরাসরি .mp4 / .mp3 / .jpg ফাইলের https:// লিংক।</p>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <select name="kind" class="rounded-xl border border-forest/20 px-3 py-2 text-sm">
+            <option value="video">ভিডিও</option><option value="audio">অডিও</option><option value="image">ছবি</option>
+          </select>
+          <input name="title" type="text" maxlength="200" placeholder="শিরোনাম" class="rounded-xl border border-forest/20 px-3 py-2 text-sm">
+        </div>
+        <input name="url" type="url" required placeholder="https://…" class="w-full rounded-xl border border-forest/20 px-3 py-2 text-sm">
+        <button type="submit" class="rounded-full bg-forest px-5 py-2 text-sm font-semibold text-cream">লিংক যোগ করুন</button>
+      </form>
+    </div>
+    <div class="flex flex-wrap gap-2" id="cms-media-filter">
+      <button type="button" data-kind="" class="rounded-full border border-forest/20 px-3 py-1.5 text-sm">সব</button>
+      <button type="button" data-kind="image" class="rounded-full border border-forest/20 px-3 py-1.5 text-sm">ছবি</button>
+      <button type="button" data-kind="video" class="rounded-full border border-forest/20 px-3 py-1.5 text-sm">ভিডিও</button>
+      <button type="button" data-kind="audio" class="rounded-full border border-forest/20 px-3 py-1.5 text-sm">অডিও</button>
+    </div>
+    <div id="cms-media-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/cms-editor.js' %}" defer></script>
+{% endblock %}

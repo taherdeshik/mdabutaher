@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load cms %}
+{% load civic_tags %}
+{% block content %}
+{% cms_str "appointment_status.001" "স্ট্যাটাস" as cms_appointment_status_001 %}{% cms_str "appointment_status.002" "আপনার অ্যাপয়েন্টমেন্ট" as cms_appointment_status_002 %}{% include "partials/page_hero.html" with eyebrow=cms_appointment_status_001 title=cms_appointment_status_002 description=meta.description crumbs=meta.crumbs %}
+<section class="container-x max-w-3xl py-14">
+  <form class="card-surface flex flex-col gap-3 rounded-3xl p-6 sm:flex-row" data-status-form novalidate>
+    <label class="flex-1"><span class="sr-only">{% cms "appointment_status.003" %}মোবাইল নম্বর{% endcms %}</span><input name="phone" required inputmode="tel" placeholder="{% cms_str "appointment_status.004" "মোবাইল নম্বর, যেমন 01711203997" %}" class="w-full rounded-full border border-forest/15 bg-white px-5 py-3"></label>
+    <button class="rounded-full bg-forest px-6 py-3 font-semibold text-cream">{% cms "appointment_status.005" %}খুঁজুন{% endcms %}</button>
+  </form>
+  <p class="mt-4 min-h-[1.5rem] text-sm" role="status" data-status-msg></p>
+  <ul class="mt-6 space-y-3" data-status-list></ul>
+</section>
+{% endblock %}

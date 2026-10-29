@@ -1,0 +1,35 @@
+{% load static %}<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}কমান্ড সেন্টার{% endblock %} · মহাদান</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="min-h-screen bg-cream-2/50 font-sans text-ink antialiased">
+  <header class="bg-night text-cream">
+    <div class="container-x flex flex-wrap items-center justify-between gap-4 py-4">
+      <a href="{% url 'dashboard:home' %}" class="font-display text-lg font-bold text-gold">মহাদান · কমান্ড সেন্টার</a>
+      {% if user.is_authenticated %}
+      <nav class="flex flex-wrap items-center gap-4 text-sm">
+        <a href="{% url 'dashboard:home' %}" class="hover:text-gold">CRM</a>
+        <a href="{% url 'dashboard:analytics' %}" class="hover:text-gold">ভিজিটর</a>
+        <a href="{% url 'dashboard:users' %}" class="hover:text-gold">ব্যবহারকারী</a>
+        <a href="{% url 'cms:content' %}" class="hover:text-gold">কনটেন্ট</a>
+        <a href="/django-admin/" class="hover:text-gold">Django admin</a>
+        <form method="post" action="{% url 'dashboard:logout' %}" class="inline">{% csrf_token %}<button class="rounded-full border border-white/20 px-3 py-1.5 hover:border-gold">লগআউট</button></form>
+      </nav>
+      {% endif %}
+    </div>
+  </header>
+  <main class="container-x py-8">
+    {% if messages %}
+    <ul class="mb-6 space-y-2">{% for m in messages %}<li class="rounded-xl px-4 py-3 text-sm {% if m.tags == 'error' %}bg-rose-50 text-rose-700{% else %}bg-emerald/10 text-forest{% endif %}">{{ m }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <script src="{% static 'js/dashboard.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

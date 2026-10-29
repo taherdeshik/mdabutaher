@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load cms %}
+{% load civic_tags %}
+{% block content %}
+{% cms_str "events.001" "ইভেন্ট" as cms_events_001 %}{% cms_str "events.002" "আসন্ন ইভেন্ট ও জনসভা" as cms_events_002 %}{% include "partials/page_hero.html" with eyebrow=cms_events_001 title=cms_events_002 description=meta.description crumbs=meta.crumbs %}
+<section class="container-x py-12">
+  <nav class="mb-8 flex flex-wrap gap-2" aria-label="{% cms_str "events.003" "ইভেন্টের ধরন" %}">
+    {% for t in types %}
+    <a href="?type={{ t|urlencode }}" class="rounded-full border px-4 py-2 text-sm font-semibold {% if t == active_type %}border-forest bg-forest text-cream{% else %}border-forest/15 text-forest hover:border-forest/40{% endif %}">{{ t }}</a>
+    {% endfor %}
+  </nav>
+  <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+    {% for event in events %}{% include "partials/event_card.html" %}{% empty %}<p class="text-muted">{% cms "events.004" %}এই ধরনের কোনো ইভেন্ট নেই।{% endcms %}</p>{% endfor %}
+  </div>
+  <p class="mt-10 text-sm text-muted">{% cms "events.005" %}ক্যালেন্ডারে যোগ করতে:{% endcms %} <a class="font-semibold text-forest underline" href="/api/calendar/ics/">{% cms "events.006" %}ICS ক্যালেন্ডার ডাউনলোড{% endcms %}</a></p>
+</section>
+{% endblock %}

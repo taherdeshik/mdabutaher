@@ -1,0 +1,3 @@
+-r requirements.txt
+# MySQL / MariaDB (cPanel). PyMySQL is pure Python, so no C toolchain is needed.
+PyMySQL>=1.1
