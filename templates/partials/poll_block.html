@@ -1,3 +1,4 @@
+{% load cms %}
 {% load civic_tags %}
 <div class="card-surface rounded-3xl p-6" data-poll data-poll-id="{{ poll.id }}" data-poll-status="{{ poll.status }}">
   <p class="text-xs font-semibold uppercase tracking-wider text-gold-deep">{{ poll.category }}</p>
@@ -7,12 +8,12 @@
     {% for opt in poll.options %}
     <li>
       <button type="button" data-option-id="{{ opt.id }}" class="group w-full text-left" {% if poll.status == 'closed' %}disabled{% endif %}>
-        <span class="flex items-center justify-between text-sm font-medium text-forest"><span>{{ opt.label }}</span><span class="tabular-nums" data-option-pct>{% if poll.totalVotes %}{{ opt.votes|bn }}{% else %}০{% endif %}</span></span>
+        <span class="flex items-center justify-between text-sm font-medium text-forest"><span>{{ opt.label }}</span><span class="tabular-nums" data-option-pct>{% if poll.totalVotes %}{{ opt.votes|bn }}{% else %}{% cms "partials.poll_block.001" %}০{% endcms %}{% endif %}</span></span>
         <span class="mt-1.5 block h-2 overflow-hidden rounded-full bg-forest/10"><span class="block h-full rounded-full bg-emerald transition-all duration-700" style="width: {% if poll.totalVotes %}{% widthratio opt.votes poll.totalVotes 100 %}{% else %}0{% endif %}%" data-option-bar></span></span>
       </button>
     </li>
     {% endfor %}
   </ul>
-  <p class="mt-4 text-xs text-muted"><span data-total>{{ poll.totalVotes|bn_num }}</span> জন ভোট দিয়েছেন</p>
+  <p class="mt-4 text-xs text-muted"><span data-total>{{ poll.totalVotes|bn_num }}</span> {% cms "partials.poll_block.002" %}জন ভোট দিয়েছেন{% endcms %}</p>
   <p class="mt-2 min-h-[1.25rem] text-xs font-semibold text-emerald" data-poll-msg role="status"></p>
 </div>

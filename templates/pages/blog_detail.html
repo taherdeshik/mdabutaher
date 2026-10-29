@@ -1,10 +1,12 @@
 {% extends "base.html" %}
+{% load cms %}
 {% load civic_tags %}
 {% block content %}
 {% include "partials/page_hero.html" with eyebrow=post.category title=post.title description=post.excerpt crumbs=meta.crumbs %}
 <article class="container-x grid gap-12 py-14 lg:grid-cols-[1fr_300px]">
   <div class="max-w-3xl">
-    <p class="text-sm text-muted">{{ post.author.name }} · {{ post.author.role }} · {{ post.date|bn_date }} · {{ post.readTime|bn }} মিনিট</p>
+    <p class="text-sm text-muted">{{ post.author.name }} · {{ post.author.role }} · {{ post.date|bn_date }} · {{ post.readTime|bn }} {% cms "blog_detail.001" %}মিনিট{% endcms %}</p>
+    {% media_embed post %}
     <div class="mt-8 space-y-5 leading-relaxed text-forest/85">
       {% for b in post.content %}
         {% if b.type == "p" %}<p>{{ b.text }}</p>
@@ -26,11 +28,11 @@
   <aside class="space-y-6">
     {% if related %}
     <div class="card-surface rounded-3xl p-6">
-      <h2 class="font-bold text-forest">সংশ্লিষ্ট লেখা</h2>
-      <ul class="mt-4 space-y-4">{% for r in related %}<li><a href="{% url 'core:blog-detail' r.slug %}" class="font-semibold leading-snug text-forest hover:underline">{{ r.title }}</a><p class="text-xs text-muted">{{ r.readTime|bn }} মিনিট</p></li>{% endfor %}</ul>
+      <h2 class="font-bold text-forest">{% cms "blog_detail.002" %}সংশ্লিষ্ট লেখা{% endcms %}</h2>
+      <ul class="mt-4 space-y-4">{% for r in related %}<li><a href="{% url 'core:blog-detail' r.slug %}" class="font-semibold leading-snug text-forest hover:underline">{{ r.title }}</a><p class="text-xs text-muted">{{ r.readTime|bn }} {% cms "blog_detail.003" %}মিনিট{% endcms %}</p></li>{% endfor %}</ul>
     </div>
     {% endif %}
-    <a href="{% url 'core:blog' %}" class="block text-sm font-semibold text-forest">← সব লেখা</a>
+    <a href="{% url 'core:blog' %}" class="block text-sm font-semibold text-forest">{% cms "blog_detail.004" %}← সব লেখা{% endcms %}</a>
   </aside>
 </article>
 {% endblock %}

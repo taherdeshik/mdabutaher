@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "core",
     "civic",
     "dashboard",
+    "cms",
 ]
 
 MIDDLEWARE = [
@@ -197,6 +198,16 @@ USE_TZ = True
 
 # --- static files -------------------------------------------------------------------
 STATIC_URL = "/static/"
+
+# --- uploads (dashboard media library) ----------------------------------------
+MEDIA_ROOT = Path(env("MEDIA_ROOT", str(BASE_DIR / "uploads")))
+MEDIA_URL = "/uploads/"
+# Video/audio limit in MB; images are capped separately at IMAGE_UPLOAD_MAX_MB.
+UPLOAD_MAX_MB = int(env("UPLOAD_MAX_MB", "60"))
+IMAGE_UPLOAD_MAX_MB = int(env("IMAGE_UPLOAD_MAX_MB", "15"))
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+# How long a process caches content/texts before re-reading the database.
+CMS_CACHE_SECONDS = int(env("CMS_CACHE_SECONDS", "10"))
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STORAGES = {

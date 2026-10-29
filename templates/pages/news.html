@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% load cms %}
 {% load civic_tags %}
 {% block content %}
-{% include "partials/page_hero.html" with eyebrow="সংবাদ" title="গণমাধ্যমে আমরা" description=meta.description crumbs=meta.crumbs %}
+{% cms_str "news.001" "সংবাদ" as cms_news_001 %}{% cms_str "news.002" "গণমাধ্যমে আমরা" as cms_news_002 %}{% include "partials/page_hero.html" with eyebrow=cms_news_001 title=cms_news_002 description=meta.description crumbs=meta.crumbs %}
 <section class="container-x py-14">
   <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     {% for n in items %}

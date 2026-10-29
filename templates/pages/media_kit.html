@@ -1,29 +1,30 @@
 {% extends "base.html" %}
+{% load cms %}
 {% load civic_tags %}
 {% block content %}
-{% include "partials/page_hero.html" with eyebrow="প্রেস কিট" title="মিডিয়া কিট" description=meta.description crumbs=meta.crumbs %}
+{% cms_str "media_kit.001" "প্রেস কিট" as cms_media_kit_001 %}{% cms_str "media_kit.002" "মিডিয়া কিট" as cms_media_kit_002 %}{% include "partials/page_hero.html" with eyebrow=cms_media_kit_001 title=cms_media_kit_002 description=meta.description crumbs=meta.crumbs %}
 <section class="container-x grid gap-10 py-14 lg:grid-cols-[1fr_1.2fr]">
   <div class="space-y-6">
     {% if portrait %}<img src="{{ portrait }}" alt="{{ site.name }}" class="w-full rounded-3xl object-cover shadow-lift">{% endif %}
     <div class="flex flex-wrap gap-3">
-      {% if portrait %}<a href="{{ portrait }}" download class="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">ছবি ডাউনলোড</a>{% endif %}
+      {% if portrait %}<a href="{{ portrait }}" download class="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-cream">{% cms "media_kit.003" %}ছবি ডাউনলোড{% endcms %}</a>{% endif %}
       {% if signature %}<img src="{{ signature }}" alt="স্বাক্ষর" class="h-14 opacity-80">{% endif %}
     </div>
   </div>
   <div class="space-y-6 leading-relaxed text-forest/85">
     <div class="card-surface rounded-3xl p-6">
-      <h2 class="font-bold text-forest">সংক্ষিপ্ত পরিচিতি</h2>
+      <h2 class="font-bold text-forest">{% cms "media_kit.004" %}সংক্ষিপ্ত পরিচিতি{% endcms %}</h2>
       <p class="mt-3">{{ bio.short }}</p>
     </div>
     <div class="card-surface rounded-3xl p-6">
-      <h2 class="font-bold text-forest">বিস্তারিত জীবনী</h2>
+      <h2 class="font-bold text-forest">{% cms "media_kit.005" %}বিস্তারিত জীবনী{% endcms %}</h2>
       <p class="mt-3">{{ bio.long }}</p>
     </div>
     <dl class="card-surface grid gap-4 rounded-3xl p-6 sm:grid-cols-2">
-      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">নাম</dt><dd class="font-semibold text-forest">{{ site.name }} ({{ site.nameEn }})</dd></div>
-      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">পদ</dt><dd class="font-semibold text-forest">{{ site.role }}</dd></div>
-      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">ইউনিয়ন</dt><dd class="font-semibold text-forest">{{ site.union }}, {{ site.upazila }}, {{ site.district }}</dd></div>
-      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">প্রেস যোগাযোগ</dt><dd class="font-semibold text-forest">{{ site.email }}</dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">{% cms "media_kit.006" %}নাম{% endcms %}</dt><dd class="font-semibold text-forest">{{ site.name }} ({{ site.nameEn }})</dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">{% cms "media_kit.007" %}পদ{% endcms %}</dt><dd class="font-semibold text-forest">{{ site.role }}</dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">{% cms "media_kit.008" %}ইউনিয়ন{% endcms %}</dt><dd class="font-semibold text-forest">{{ site.union }}, {{ site.upazila }}, {{ site.district }}</dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-muted">{% cms "media_kit.009" %}প্রেস যোগাযোগ{% endcms %}</dt><dd class="font-semibold text-forest">{{ site.email }}</dd></div>
     </dl>
   </div>
 </section>

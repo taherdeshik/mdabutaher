@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load cms %}
 {% load static civic_tags %}
 {% block content %}
 <!-- Hero -->
@@ -8,27 +9,27 @@
   <div class="container-x relative grid items-center gap-10 pb-20 pt-12 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8 lg:pb-28 lg:pt-20">
     <div class="relative z-10">
       <div class="inline-flex flex-wrap items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] py-1.5 pl-2 pr-4">
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-gold px-2.5 py-1 text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-night">নির্বাচন {{ site.electionYear|bn }}</span>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-gold px-2.5 py-1 text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-night">{% cms "home.001" %}নির্বাচন{% endcms %} {{ site.electionYear|bn }}</span>
         <span class="text-[0.72rem] font-medium text-cream/65">{{ site.ward }}</span>
       </div>
       <h1 class="mt-6 text-balance-tight text-[clamp(2.3rem,6.2vw,4.5rem)] font-bold leading-[1.08]">
-        মানুষের পাশে <br>
-        <span class="bg-gradient-to-r from-gold via-[#f5d79b] to-gold bg-clip-text text-transparent">সবসময়</span>
-        <span class="block text-[0.52em] font-semibold text-cream/80">— একটি পরিকল্পিত মহাদানের প্রতিশ্রুতি</span>
+        {% cms "home.002" %}মানুষের পাশে{% endcms %} <br>
+        <span class="bg-gradient-to-r from-gold via-[#f5d79b] to-gold bg-clip-text text-transparent">{% cms "home.003" %}সবসময়{% endcms %}</span>
+        <span class="block text-[0.52em] font-semibold text-cream/80">{% cms "home.004" %}— একটি পরিকল্পিত মহাদানের প্রতিশ্রুতি{% endcms %}</span>
       </h1>
       <p class="mt-6 max-w-xl text-[0.95rem] leading-relaxed text-cream/60 sm:text-base">{{ site.heroQuote }}</p>
       <div class="mt-8 flex flex-wrap items-center gap-3">
-        <a href="{% url 'core:manifesto' %}" class="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-bold text-night transition hover:-translate-y-0.5">ম্যানিফেস্টো পড়ুন →</a>
-        <a href="{% url 'core:appointment' %}" class="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-cream transition hover:border-gold hover:text-gold">সাক্ষাতের সময় নিন</a>
+        <a href="{% url 'core:manifesto' %}" class="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-bold text-night transition hover:-translate-y-0.5">{% cms "home.005" %}ম্যানিফেস্টো পড়ুন →{% endcms %}</a>
+        <a href="{% url 'core:appointment' %}" class="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-cream transition hover:border-gold hover:text-gold">{% cms "home.006" %}সাক্ষাতের সময় নিন{% endcms %}</a>
       </div>
-      <p class="mt-8 text-[0.72rem] text-cream/55">১২,৫০০+ পরিবারের আস্থা · ৯টি ওয়ার্ড · ২৪ বছরের সেবা · স্বচ্ছ হিসাব</p>
+      <p class="mt-8 text-[0.72rem] text-cream/55">{% cms "home.007" %}১২,৫০০+ পরিবারের আস্থা · ৯টি ওয়ার্ড · ২৪ বছরের সেবা · স্বচ্ছ হিসাব{% endcms %}</p>
     </div>
     <div class="relative mx-auto w-full max-w-[24rem] lg:max-w-none">
       <div class="absolute -inset-3 rounded-[2.4rem] border border-gold/25"></div>
       <div class="relative overflow-hidden rounded-[2rem] border border-white/10 bg-forest-2 shadow-[0_40px_80px_-30px_rgba(0,0,0,.7)]">
         <img src="{% image 'hero' %}" alt="{{ site.name }} — {{ site.role }}" class="aspect-[4/5] w-full object-cover" fetchpriority="high">
         <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-night/95 via-night/10 to-transparent p-5">
-          <p class="inline-flex items-center gap-1.5 rounded-full bg-gold/90 px-2.5 py-1 text-[0.6rem] font-extrabold uppercase tracking-[0.14em] text-night">প্রত্যয়িত প্রার্থী</p>
+          <p class="inline-flex items-center gap-1.5 rounded-full bg-gold/90 px-2.5 py-1 text-[0.6rem] font-extrabold uppercase tracking-[0.14em] text-night">{% cms "home.008" %}প্রত্যয়িত প্রার্থী{% endcms %}</p>
           <h2 class="mt-2.5 font-display text-2xl font-bold leading-tight">{{ site.name }}</h2>
           <p class="mt-0.5 text-[0.75rem] text-cream/60">{{ site.role }} · {{ site.ward }}</p>
         </div>
@@ -40,10 +41,10 @@
 <!-- Quick actions -->
 <section class="container-x -mt-10 relative z-10">
   <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-    <a href="{% url 'core:appointment' %}" class="card-surface rounded-3xl p-5 hover:-translate-y-1 transition"><p class="font-bold text-forest">অ্যাপয়েন্টমেন্ট</p><p class="mt-1 text-sm text-muted">২ মিনিটে সাক্ষাতের সময় বুক করুন</p></a>
-    <a href="{% url 'core:feedback' %}" class="card-surface rounded-3xl p-5 hover:-translate-y-1 transition"><p class="font-bold text-forest">সমস্যা জানান</p><p class="mt-1 text-sm text-muted">ছবিসহ রিপোর্ট, ট্র্যাকিং আইডি পাবেন</p></a>
-    <a href="{% url 'core:polls' %}" class="card-surface rounded-3xl p-5 hover:-translate-y-1 transition"><p class="font-bold text-forest">জনমত জরিপ</p><p class="mt-1 text-sm text-muted">ভোট দিন, লাইভ ফলাফল দেখুন</p></a>
-    <a href="{% url 'core:campaign' %}" class="card-surface rounded-3xl p-5 hover:-translate-y-1 transition"><p class="font-bold text-forest">স্বেচ্ছাসেবক হোন</p><p class="mt-1 text-sm text-muted">আপনার ওয়ার্ডে যোগ দিন</p></a>
+    <a href="{% url 'core:appointment' %}" class="card-surface rounded-3xl p-5 hover:-translate-y-1 transition"><p class="font-bold text-forest">{% cms "home.009" %}অ্যাপয়েন্টমেন্ট{% endcms %}</p><p class="mt-1 text-sm text-muted">{% cms "home.010" %}২ মিনিটে সাক্ষাতের সময় বুক করুন{% endcms %}</p></a>
+    <a href="{% url 'core:feedback' %}" class="card-surface rounded-3xl p-5 hover:-translate-y-1 transition"><p class="font-bold text-forest">{% cms "home.011" %}সমস্যা জানান{% endcms %}</p><p class="mt-1 text-sm text-muted">{% cms "home.012" %}ছবিসহ রিপোর্ট, ট্র্যাকিং আইডি পাবেন{% endcms %}</p></a>
+    <a href="{% url 'core:polls' %}" class="card-surface rounded-3xl p-5 hover:-translate-y-1 transition"><p class="font-bold text-forest">{% cms "home.013" %}জনমত জরিপ{% endcms %}</p><p class="mt-1 text-sm text-muted">{% cms "home.014" %}ভোট দিন, লাইভ ফলাফল দেখুন{% endcms %}</p></a>
+    <a href="{% url 'core:campaign' %}" class="card-surface rounded-3xl p-5 hover:-translate-y-1 transition"><p class="font-bold text-forest">{% cms "home.015" %}স্বেচ্ছাসেবক হোন{% endcms %}</p><p class="mt-1 text-sm text-muted">{% cms "home.016" %}আপনার ওয়ার্ডে যোগ দিন{% endcms %}</p></a>
   </div>
 </section>
 
@@ -64,10 +65,10 @@
 <section class="container-x pb-20">
   <div class="grid items-center gap-10 lg:grid-cols-2">
     <div>
-      <p class="eyebrow">পরিচিতি</p>
-      <h2 class="mt-3 text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold leading-tight text-forest">মহাদান, মাটি আর মানুষ</h2>
+      <p class="eyebrow">{% cms "home.017" %}পরিচিতি{% endcms %}</p>
+      <h2 class="mt-3 text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold leading-tight text-forest">{% cms "home.018" %}মহাদান, মাটি আর মানুষ{% endcms %}</h2>
       <p class="mt-4 leading-relaxed text-muted">{{ site.intro }}</p>
-      <a href="{% url 'core:about' %}" class="mt-6 inline-block text-sm font-semibold text-forest underline-offset-4 hover:underline">বিস্তারিত পরিচিতি →</a>
+      <a href="{% url 'core:about' %}" class="mt-6 inline-block text-sm font-semibold text-forest underline-offset-4 hover:underline">{% cms "home.019" %}বিস্তারিত পরিচিতি →{% endcms %}</a>
     </div>
     <ul class="grid gap-3">
       {% for v in values %}
@@ -80,8 +81,8 @@
 <!-- Manifesto preview -->
 <section class="bg-forest py-20 text-cream">
   <div class="container-x">
-    <p class="eyebrow !text-gold">ম্যানিফেস্টো</p>
-    <h2 class="mt-3 text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold">৮ স্তম্ভ, ৩২ অঙ্গীকার</h2>
+    <p class="eyebrow !text-gold">{% cms "home.020" %}ম্যানিফেস্টো{% endcms %}</p>
+    <h2 class="mt-3 text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold">{% cms "home.021" %}৮ স্তম্ভ, ৩২ অঙ্গীকার{% endcms %}</h2>
     <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {% for p in pillars %}
       <a href="{% url 'core:manifesto' %}#{{ p.id }}" class="rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-gold/50">
@@ -96,8 +97,8 @@
 
 <!-- Campaign preview -->
 <section class="container-x py-20">
-  <p class="eyebrow">প্রচারণা</p>
-  <h2 class="mt-3 text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold text-forest">ধাপে ধাপে প্রচারণা</h2>
+  <p class="eyebrow">{% cms "home.022" %}প্রচারণা{% endcms %}</p>
+  <h2 class="mt-3 text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold text-forest">{% cms "home.023" %}ধাপে ধাপে প্রচারণা{% endcms %}</h2>
   <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
     {% for ph in phases %}
     <div class="card-surface rounded-3xl p-6">
@@ -112,7 +113,7 @@
 
 <!-- Events -->
 <section class="container-x pb-20">
-  {% include "partials/section_head.html" with eyebrow="ইভেন্ট" title="আসন্ন ইভেন্ট ও জনসভা" link_href="/events" %}
+  {% cms_str "home.024" "ইভেন্ট" as cms_home_024 %}{% cms_str "home.025" "আসন্ন ইভেন্ট ও জনসভা" as cms_home_025 %}{% cms_str "home.026" "/events" as cms_home_026 %}{% include "partials/section_head.html" with eyebrow=cms_home_024 title=cms_home_025 link_href=cms_home_026 %}
   <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
     {% for event in upcoming_events %}{% include "partials/event_card.html" %}{% endfor %}
   </div>
@@ -120,7 +121,7 @@
 
 <!-- Activities -->
 <section class="container-x pb-20">
-  {% include "partials/section_head.html" with eyebrow="কার্যক্রম" title="বাস্তব কাজের স্বাক্ষর" link_href="/activities" %}
+  {% cms_str "home.027" "কার্যক্রম" as cms_home_027 %}{% cms_str "home.028" "বাস্তব কাজের স্বাক্ষর" as cms_home_028 %}{% cms_str "home.029" "/activities" as cms_home_029 %}{% include "partials/section_head.html" with eyebrow=cms_home_027 title=cms_home_028 link_href=cms_home_029 %}
   <div class="grid gap-5 md:grid-cols-3">
     {% for a in activities %}
     <a href="{% url 'core:activity-detail' a.id %}" class="card-surface group overflow-hidden rounded-3xl transition hover:-translate-y-1">
@@ -139,10 +140,10 @@
 <section class="container-x pb-20">
   <div class="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-center">
     <div>
-      <p class="eyebrow">জনমত</p>
-      <h2 class="mt-3 text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold text-forest">আপনার মতামত জানতে চাই</h2>
-      <p class="mt-3 text-muted">প্রতি ডিভাইস থেকে একবার ভোট দেওয়া যায়। ফলাফল এই পাতায় লাইভ আপডেট হয়।</p>
-      <a href="{% url 'core:polls' %}" class="mt-6 inline-block text-sm font-semibold text-forest underline-offset-4 hover:underline">সব জরিপ দেখুন →</a>
+      <p class="eyebrow">{% cms "home.030" %}জনমত{% endcms %}</p>
+      <h2 class="mt-3 text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold text-forest">{% cms "home.031" %}আপনার মতামত জানতে চাই{% endcms %}</h2>
+      <p class="mt-3 text-muted">{% cms "home.032" %}প্রতি ডিভাইস থেকে একবার ভোট দেওয়া যায়। ফলাফল এই পাতায় লাইভ আপডেট হয়।{% endcms %}</p>
+      <a href="{% url 'core:polls' %}" class="mt-6 inline-block text-sm font-semibold text-forest underline-offset-4 hover:underline">{% cms "home.033" %}সব জরিপ দেখুন →{% endcms %}</a>
     </div>
     {% if poll %}{% include "partials/poll_block.html" with poll=poll %}{% endif %}
   </div>
@@ -150,11 +151,11 @@
 
 <!-- Blog -->
 <section class="container-x pb-20">
-  {% include "partials/section_head.html" with eyebrow="ব্লগ" title="ভাবনা, বিশ্লেষণ ও আপডেট" link_href="/blog" %}
+  {% cms_str "home.034" "ব্লগ" as cms_home_034 %}{% cms_str "home.035" "ভাবনা, বিশ্লেষণ ও আপডেট" as cms_home_035 %}{% cms_str "home.036" "/blog" as cms_home_036 %}{% include "partials/section_head.html" with eyebrow=cms_home_034 title=cms_home_035 link_href=cms_home_036 %}
   <div class="grid gap-5 md:grid-cols-3">
     {% for p in posts %}
     <a href="{% url 'core:blog-detail' p.slug %}" class="card-surface rounded-3xl p-6 transition hover:-translate-y-1">
-      <p class="text-xs font-semibold uppercase tracking-wider text-gold-deep">{{ p.category }} · {{ p.readTime|bn }} মিনিট</p>
+      <p class="text-xs font-semibold uppercase tracking-wider text-gold-deep">{{ p.category }} · {{ p.readTime|bn }} {% cms "home.037" %}মিনিট{% endcms %}</p>
       <h3 class="mt-3 font-bold leading-snug text-forest">{{ p.title }}</h3>
       <p class="mt-3 text-sm text-muted">{{ p.excerpt }}</p>
     </a>
@@ -165,7 +166,7 @@
 <!-- Testimonials -->
 <section class="bg-cream-2/60 py-20">
   <div class="container-x">
-    {% include "partials/section_head.html" with eyebrow="মতামত" title="মানুষের কথা" %}
+    {% cms_str "home.038" "মতামত" as cms_home_038 %}{% cms_str "home.039" "মানুষের কথা" as cms_home_039 %}{% include "partials/section_head.html" with eyebrow=cms_home_038 title=cms_home_039 %}
     <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
       {% for t in testimonials %}
       <figure class="card-surface rounded-3xl p-6">
@@ -180,11 +181,11 @@
 <!-- CTA band -->
 <section class="container-x pb-24">
   <div class="mesh-dark rounded-[2.5rem] p-10 text-cream sm:p-14">
-    <h2 class="text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold">আপনার এলাকার কথা শুনতে চাই</h2>
-    <p class="mt-3 max-w-2xl text-cream/70">সমস্যা, পরামর্শ বা সাক্ষাৎ — যেকোনো বিষয়ে যোগাযোগ করুন। {{ site.officeHours }}।</p>
+    <h2 class="text-[clamp(1.6rem,3.6vw,2.4rem)] font-bold">{% cms "home.040" %}আপনার এলাকার কথা শুনতে চাই{% endcms %}</h2>
+    <p class="mt-3 max-w-2xl text-cream/70">{% cms "home.041" %}সমস্যা, পরামর্শ বা সাক্ষাৎ — যেকোনো বিষয়ে যোগাযোগ করুন।{% endcms %} {{ site.officeHours }}।</p>
     <div class="mt-8 flex flex-wrap gap-3">
-      <a href="{% url 'core:appointment' %}" class="rounded-full bg-gold px-6 py-3 text-sm font-bold text-night">সাক্ষাতের সময় নিন</a>
-      <a href="{% url 'core:feedback' %}" class="rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-cream hover:border-gold">সমস্যা জানান</a>
+      <a href="{% url 'core:appointment' %}" class="rounded-full bg-gold px-6 py-3 text-sm font-bold text-night">{% cms "home.042" %}সাক্ষাতের সময় নিন{% endcms %}</a>
+      <a href="{% url 'core:feedback' %}" class="rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-cream hover:border-gold">{% cms "home.043" %}সমস্যা জানান{% endcms %}</a>
     </div>
   </div>
 </section>

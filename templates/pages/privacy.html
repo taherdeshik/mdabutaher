@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% load cms %}
 {% load civic_tags %}
 {% block content %}
-{% include "partials/page_hero.html" with eyebrow="গোপনীয়তা" title="আপনার তথ্য, আপনার নিয়ন্ত্রণে" description=meta.description crumbs=meta.crumbs %}
+{% cms_str "privacy.001" "গোপনীয়তা" as cms_privacy_001 %}{% cms_str "privacy.002" "আপনার তথ্য, আপনার নিয়ন্ত্রণে" as cms_privacy_002 %}{% include "partials/page_hero.html" with eyebrow=cms_privacy_001 title=cms_privacy_002 description=meta.description crumbs=meta.crumbs %}
 <section class="container-x max-w-3xl py-14">
   <div class="space-y-3">
     {% for s in sections %}
@@ -12,10 +13,10 @@
     {% endfor %}
   </div>
   <div class="mt-6 rounded-xl border border-forest/10 bg-white px-4 py-3">
-    <p class="text-sm font-semibold text-forest">চাইলে বন্ধ করতে পারেন</p>
-    <p class="mt-1 text-xs leading-relaxed text-muted">ব্রাউজারে Do Not Track চালু থাকলে আমরা কোনো ভিজিট রেকর্ড করি না। চাইলে এই ডিভাইসে আলাদাভাবে বন্ধও রাখতে পারেন।</p>
-    <label class="mt-3 flex items-center gap-2 text-sm text-forest"><input type="checkbox" class="accent-forest" data-analytics-optout> ভিজিটর পরিসংখ্যানে অংশ নেব না</label>
+    <p class="text-sm font-semibold text-forest">{% cms "privacy.003" %}চাইলে বন্ধ করতে পারেন{% endcms %}</p>
+    <p class="mt-1 text-xs leading-relaxed text-muted">{% cms "privacy.004" %}ব্রাউজারে Do Not Track চালু থাকলে আমরা কোনো ভিজিট রেকর্ড করি না। চাইলে এই ডিভাইসে আলাদাভাবে বন্ধও রাখতে পারেন।{% endcms %}</p>
+    <label class="mt-3 flex items-center gap-2 text-sm text-forest"><input type="checkbox" class="accent-forest" data-analytics-optout> {% cms "privacy.005" %}ভিজিটর পরিসংখ্যানে অংশ নেব না{% endcms %}</label>
   </div>
-  <p class="mt-5 rounded-xl bg-cream-2/60 px-4 py-3 text-xs text-muted">সর্বশেষ হালনাগাদ: {{ last_updated }} · এই নীতিতে পরিবর্তন হলে ওয়েবসাইটে নোটিশ দেওয়া হবে।</p>
+  <p class="mt-5 rounded-xl bg-cream-2/60 px-4 py-3 text-xs text-muted">{% cms "privacy.006" %}সর্বশেষ হালনাগাদ:{% endcms %} {{ last_updated }} {% cms "privacy.007" %}· এই নীতিতে পরিবর্তন হলে ওয়েবসাইটে নোটিশ দেওয়া হবে।{% endcms %}</p>
 </section>
 {% endblock %}

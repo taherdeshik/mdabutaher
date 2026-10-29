@@ -1,24 +1,22 @@
-"""Read-only campaign content.
+"""Campaign content used by the public pages.
 
-The JSON documents in `content/data/` were generated from the original
-TypeScript content modules (`src/content/*.ts`). Editing them changes the
-public site without touching code. Loading is cached per process.
+Documents are stored in the database (``cms.ContentDocument``) and seeded from
+``content/data/*.json``. Edits made in the dashboard take effect within
+``CMS_CACHE_SECONDS``. Image references may be semantic keys (``"water"``),
+library references (``"asset:12"``), direct paths or remote URLs.
 """
 
 from __future__ import annotations
 
-import json
-from functools import lru_cache
 from typing import Any
 
-from django.conf import settings
 from django.templatetags.static import static
 
+from cms import store as cms_store
 
-@lru_cache(maxsize=None)
+
 def load(name: str) -> dict[str, Any]:
-    path = settings.BASE_DIR / "content" / "data" / f"{name}.json"
-    return json.loads(path.read_text(encoding="utf-8"))
+    return cms_store.load_document(name)
 
 
 def site() -> dict[str, Any]:
@@ -78,16 +76,16 @@ def image_map() -> dict[str, str]:
 
 
 def image_for(key: str | None) -> str | None:
-    """Resolve a semantic image key (e.g. "water") to a static URL.
-
-    Direct paths and remote URLs are returned unchanged, so new photos can be
-    used without editing the registry.
-    """
+    """Resolve an image reference to a URL (see module docstring)."""
     if not key:
         return None
     if key.startswith(("http://", "https://", "data:")):
         return key
+    if key.startswith("asset:"):
+        return cms_store.resolve_ref(key)
     src = image_map().get(key, key)
+    if src.startswith("asset:"):
+        return cms_store.resolve_ref(src)
     if src.startswith("/media/"):
         # Registry paths are written against the old Next.js public/ folder.
         return static(src.removeprefix("/"))

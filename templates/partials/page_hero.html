@@ -1,9 +1,10 @@
+{% load cms %}
 <section class="relative overflow-hidden mesh-dark text-cream">
   <div class="pointer-events-none absolute inset-0 opacity-[0.06]" style="background-image: radial-gradient(circle at 1px 1px, #fff 1px, transparent 0); background-size: 28px 28px"></div>
   <div class="container-x relative py-14 sm:py-20">
-    <nav aria-label="breadcrumb" class="mb-5 text-[0.75rem] text-cream/60">
+    <nav aria-label="{% cms_str "partials.page_hero.001" "breadcrumb" %}" class="mb-5 text-[0.75rem] text-cream/60">
       <ol class="flex flex-wrap items-center gap-2">
-        <li><a href="{% url 'core:home' %}" class="hover:text-gold">হোম</a></li>
+        <li><a href="{% url 'core:home' %}" class="hover:text-gold">{% cms "partials.page_hero.002" %}হোম{% endcms %}</a></li>
         {% for crumb in crumbs %}
         <li aria-hidden="true">/</li>
         <li>{% if crumb.href %}<a href="{{ crumb.href }}" class="hover:text-gold">{{ crumb.label }}</a>{% else %}<span class="text-cream/90">{{ crumb.label }}</span>{% endif %}</li>

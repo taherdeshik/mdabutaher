@@ -19,3 +19,6 @@ node_modules/
 .vscode/
 *.log
 tmp/
+
+# Uploaded site media (MEDIA_ROOT); back up separately
+/uploads/

@@ -1,12 +1,13 @@
 {% extends "base.html" %}
+{% load cms %}
 {% load civic_tags %}
 {% block content %}
-{% include "partials/page_hero.html" with eyebrow="জনমত" title="জনমত জরিপ" description=meta.description crumbs=meta.crumbs %}
+{% cms_str "polls.001" "জনমত" as cms_polls_001 %}{% cms_str "polls.002" "জনমত জরিপ" as cms_polls_002 %}{% include "partials/page_hero.html" with eyebrow=cms_polls_001 title=cms_polls_002 description=meta.description crumbs=meta.crumbs %}
 <section class="container-x py-12">
-  <p class="mb-8 text-sm text-muted">মোট {{ archive.totalPolls|bn_num }} টি জরিপ · {{ archive.totalVotes|bn_num }} ভোট · সর্বশেষ হালনাগাদ {{ archive.lastUpdated|bn_date }}</p>
+  <p class="mb-8 text-sm text-muted">{% cms "polls.003" %}মোট{% endcms %} {{ archive.totalPolls|bn_num }} {% cms "polls.004" %}টি জরিপ ·{% endcms %} {{ archive.totalVotes|bn_num }} {% cms "polls.005" %}ভোট · সর্বশেষ হালনাগাদ{% endcms %} {{ archive.lastUpdated|bn_date }}</p>
   <div class="grid gap-6 md:grid-cols-2">
     {% for poll in polls %}{% include "partials/poll_block.html" with poll=poll %}{% endfor %}
   </div>
-  <p class="mt-8 text-xs text-muted">জরিপটি অনানুষ্ঠানিক; প্রতি ডিভাইস থেকে একবার ভোট দেওয়া যায় এবং আইপি-ভিত্তিক সীমা প্রযোজ্য।</p>
+  <p class="mt-8 text-xs text-muted">{% cms "polls.006" %}জরিপটি অনানুষ্ঠানিক; প্রতি ডিভাইস থেকে একবার ভোট দেওয়া যায় এবং আইপি-ভিত্তিক সীমা প্রযোজ্য।{% endcms %}</p>
 </section>
 {% endblock %}

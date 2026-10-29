@@ -1,3 +1,4 @@
+{% load cms %}
 {% load civic_tags %}
 <footer class="relative mt-24 overflow-hidden mesh-dark text-cream">
   <div class="container-x grid gap-10 py-14 md:grid-cols-[1.3fr_1fr_1fr]">
@@ -10,29 +11,29 @@
       </div>
     </div>
     <div>
-      <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">দ্রুত লিংক</p>
+      <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">{% cms "partials.footer.001" %}দ্রুত লিংক{% endcms %}</p>
       <ul class="mt-4 space-y-2 text-sm text-cream/75">
-        <li><a href="{% url 'core:manifesto' %}" class="hover:text-gold">ম্যানিফেস্টো</a></li>
-        <li><a href="{% url 'core:events' %}" class="hover:text-gold">ইভেন্ট</a></li>
-        <li><a href="{% url 'core:feedback' %}" class="hover:text-gold">সমস্যা ও পরামর্শ</a></li>
-        <li><a href="{% url 'core:privacy' %}" class="hover:text-gold">গোপনীয়তা নীতি</a></li>
-        <li><a href="{% url 'dashboard:login' %}" class="hover:text-gold">ড্যাশবোর্ড</a></li>
+        <li><a href="{% url 'core:manifesto' %}" class="hover:text-gold">{% cms "partials.footer.002" %}ম্যানিফেস্টো{% endcms %}</a></li>
+        <li><a href="{% url 'core:events' %}" class="hover:text-gold">{% cms "partials.footer.003" %}ইভেন্ট{% endcms %}</a></li>
+        <li><a href="{% url 'core:feedback' %}" class="hover:text-gold">{% cms "partials.footer.004" %}সমস্যা ও পরামর্শ{% endcms %}</a></li>
+        <li><a href="{% url 'core:privacy' %}" class="hover:text-gold">{% cms "partials.footer.005" %}গোপনীয়তা নীতি{% endcms %}</a></li>
+        <li><a href="{% url 'dashboard:login' %}" class="hover:text-gold">{% cms "partials.footer.006" %}ড্যাশবোর্ড{% endcms %}</a></li>
       </ul>
     </div>
     <div>
-      <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">যোগাযোগ</p>
+      <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">{% cms "partials.footer.007" %}যোগাযোগ{% endcms %}</p>
       <ul class="mt-4 space-y-2 text-sm text-cream/75">
         <li>{{ site.phone }}</li>
         <li>{{ site.email }}</li>
         <li class="leading-relaxed">{{ site.office }}</li>
         <li class="text-cream/55">{{ site.officeHours }}</li>
       </ul>
-      <p class="mt-6 text-xs text-cream/50">জরুরি: {% for e in site.quickLinks.values %}{{ e|bn }}{% if not forloop.last %} · {% endif %}{% endfor %}</p>
+      <p class="mt-6 text-xs text-cream/50">{% cms "partials.footer.008" %}জরুরি:{% endcms %} {% for e in site.quickLinks.values %}{{ e|bn }}{% if not forloop.last %} · {% endif %}{% endfor %}</p>
     </div>
   </div>
   <div class="border-t border-white/10">
     <div class="container-x flex flex-col gap-2 py-5 text-xs text-cream/50 sm:flex-row sm:justify-between">
-      <p>© {{ current_year|bn }} {{ site.name }}। সর্বস্বত্ব সংরক্ষিত।</p>
+      <p>© {{ current_year|bn }} {{ site.name }}{% cms "partials.footer.009" %}। সর্বস্বত্ব সংরক্ষিত।{% endcms %}</p>
       <p>{{ photo_credit.source }} · {{ photo_credit.captured }}</p>
     </div>
   </div>

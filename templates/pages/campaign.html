@@ -1,18 +1,19 @@
 {% extends "base.html" %}
+{% load cms %}
 {% load civic_tags %}
 {% block content %}
-{% include "partials/page_hero.html" with eyebrow="প্রচারণা পরিকল্পনা" title=overview.title description=overview.subtitle crumbs=meta.crumbs %}
+{% cms_str "campaign.001" "প্রচারণা পরিকল্পনা" as cms_campaign_001 %}{% include "partials/page_hero.html" with eyebrow=cms_campaign_001 title=overview.title description=overview.subtitle crumbs=meta.crumbs %}
 <section class="container-x -mt-8 relative z-10">
   <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
     {% for k in kpis %}
     <div class="card-surface rounded-3xl p-5"><p class="font-display text-3xl font-bold text-forest">{{ k.value|bn_num }}{{ k.suffix }}</p><p class="mt-1 text-sm text-muted">{{ k.label }}</p></div>
     {% endfor %}
   </div>
-  <p class="mt-4 text-sm text-muted">সময়কাল: {{ overview.startDate|bn_date }} — {{ overview.endDate|bn_date }} · লক্ষ্য: {{ overview.goal }}</p>
+  <p class="mt-4 text-sm text-muted">{% cms "campaign.002" %}সময়কাল:{% endcms %} {{ overview.startDate|bn_date }} — {{ overview.endDate|bn_date }} {% cms "campaign.003" %}· লক্ষ্য:{% endcms %} {{ overview.goal }}</p>
 </section>
 
 <section class="container-x py-16">
-  <h2 class="text-2xl font-bold text-forest">ধাপসমূহ</h2>
+  <h2 class="text-2xl font-bold text-forest">{% cms "campaign.004" %}ধাপসমূহ{% endcms %}</h2>
   <div class="mt-8 grid gap-5 lg:grid-cols-2">
     {% for ph in phases %}
     <article class="card-surface rounded-3xl p-6">
@@ -20,7 +21,7 @@
       <h3 class="mt-3 text-lg font-bold text-forest">{{ ph.name }}</h3>
       <p class="mt-2 text-sm text-muted">{{ ph.objective }}</p>
       <ul class="mt-4 list-disc space-y-1 pl-5 text-sm text-forest/85">{% for a in ph.activities %}<li>{{ a }}</li>{% endfor %}</ul>
-      <p class="mt-4 text-xs text-muted">KPI: {{ ph.kpi }}</p>
+      <p class="mt-4 text-xs text-muted">{% cms "campaign.005" %}KPI:{% endcms %} {{ ph.kpi }}</p>
       <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-forest/10"><div class="h-full rounded-full bg-emerald" style="width: {{ ph.progress }}%"></div></div>
     </article>
     {% endfor %}
@@ -29,10 +30,10 @@
 
 <section class="bg-cream-2/50 py-16">
   <div class="container-x">
-    <h2 class="text-2xl font-bold text-forest">ওয়ার্ডভিত্তিক কভারেজ</h2>
+    <h2 class="text-2xl font-bold text-forest">{% cms "campaign.006" %}ওয়ার্ডভিত্তিক কভারেজ{% endcms %}</h2>
     <div class="mt-8 overflow-x-auto">
       <table class="w-full min-w-[640px] text-left text-sm">
-        <thead class="text-xs uppercase tracking-wider text-muted"><tr><th class="py-3 pr-4">ওয়ার্ড</th><th class="py-3 pr-4">এলাকা</th><th class="py-3 pr-4">পরিবার</th><th class="py-3 pr-4">বুথ</th><th class="py-3 pr-4">দলনেতা</th><th class="py-3">কভারেজ</th></tr></thead>
+        <thead class="text-xs uppercase tracking-wider text-muted"><tr><th class="py-3 pr-4">{% cms "campaign.007" %}ওয়ার্ড{% endcms %}</th><th class="py-3 pr-4">{% cms "campaign.008" %}এলাকা{% endcms %}</th><th class="py-3 pr-4">{% cms "campaign.009" %}পরিবার{% endcms %}</th><th class="py-3 pr-4">{% cms "campaign.010" %}বুথ{% endcms %}</th><th class="py-3 pr-4">{% cms "campaign.011" %}দলনেতা{% endcms %}</th><th class="py-3">{% cms "campaign.012" %}কভারেজ{% endcms %}</th></tr></thead>
         <tbody class="divide-y divide-forest/10">
           {% for z in zones %}
           <tr><td class="py-3 pr-4 font-semibold text-forest">{{ z.ward|bn }}</td><td class="py-3 pr-4">{{ z.name }}</td><td class="py-3 pr-4 tabular-nums">{{ z.households|bn_num }}</td><td class="py-3 pr-4 tabular-nums">{{ z.booths|bn }}</td><td class="py-3 pr-4">{{ z.leader }}</td><td class="py-3">{{ z.coverage|bn }}%</td></tr>
@@ -44,7 +45,7 @@
 </section>
 
 <section class="container-x py-16">
-  <h2 class="text-2xl font-bold text-forest">সাপ্তাহিক রুটিন</h2>
+  <h2 class="text-2xl font-bold text-forest">{% cms "campaign.013" %}সাপ্তাহিক রুটিন{% endcms %}</h2>
   <div class="mt-8 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
     {% for r in rhythm %}
     <div class="card-surface rounded-2xl p-5"><p class="text-xs font-bold text-gold-deep">{{ r.day }} · {{ r.time|bn }}</p><p class="mt-2 font-semibold text-forest">{{ r.title }}</p><p class="mt-1 text-sm text-muted">{{ r.place }}</p></div>
@@ -55,20 +56,20 @@
 <section id="volunteer" class="container-x pb-20">
   <div class="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
     <div>
-      <h2 class="text-2xl font-bold text-forest">স্বেচ্ছাসেবক হোন</h2>
-      <p class="mt-3 text-muted">আপনার ওয়ার্ড ও সময় জানান। দলপ্রধান ৪৮ ঘণ্টার মধ্যে যোগাযোগ করবেন।</p>
+      <h2 class="text-2xl font-bold text-forest">{% cms "campaign.014" %}স্বেচ্ছাসেবক হোন{% endcms %}</h2>
+      <p class="mt-3 text-muted">{% cms "campaign.015" %}আপনার ওয়ার্ড ও সময় জানান। দলপ্রধান ৪৮ ঘণ্টার মধ্যে যোগাযোগ করবেন।{% endcms %}</p>
       <ul class="mt-6 flex flex-wrap gap-2">{% for r in volunteer_roles %}<li class="rounded-full bg-forest/5 px-3 py-1.5 text-sm text-forest">{{ r }}</li>{% endfor %}</ul>
       <ul class="mt-8 space-y-3">{% for r in resources %}<li class="card-surface rounded-2xl p-4"><p class="font-semibold text-forest">{{ r.title }}</p><p class="text-sm text-muted">{{ r.desc }}</p></li>{% endfor %}</ul>
     </div>
     <form class="card-surface space-y-4 rounded-3xl p-6" data-api-form="/api/volunteers/" data-success-target="volunteer-msg" novalidate>
       <div class="grid gap-4 sm:grid-cols-2">
-        <label class="block"><span class="text-sm font-semibold text-forest">নাম *</span><input name="name" required minlength="3" maxlength="80" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></label>
-        <label class="block"><span class="text-sm font-semibold text-forest">মোবাইল *</span><input name="phone" required inputmode="tel" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></label>
-        <label class="block"><span class="text-sm font-semibold text-forest">ওয়ার্ড *</span><select name="ward" required class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field><option value="">বেছে নিন</option>{% for w in wards %}<option value="{{ w }}">{{ w }}</option>{% endfor %}</select></label>
-        <label class="block"><span class="text-sm font-semibold text-forest">ভূমিকা *</span><select name="role" required class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field><option value="">বেছে নিন</option>{% for r in volunteer_roles %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select></label>
-        <label class="block sm:col-span-2"><span class="text-sm font-semibold text-forest">সময় *</span><select name="availability" required class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field><option value="">বেছে নিন</option>{% for a in availability %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select></label>
+        <label class="block"><span class="text-sm font-semibold text-forest">{% cms "campaign.016" %}নাম *{% endcms %}</span><input name="name" required minlength="3" maxlength="80" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></label>
+        <label class="block"><span class="text-sm font-semibold text-forest">{% cms "campaign.017" %}মোবাইল *{% endcms %}</span><input name="phone" required inputmode="tel" class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field></label>
+        <label class="block"><span class="text-sm font-semibold text-forest">{% cms "campaign.018" %}ওয়ার্ড *{% endcms %}</span><select name="ward" required class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field><option value="">{% cms "campaign.019" %}বেছে নিন{% endcms %}</option>{% for w in wards %}<option value="{{ w }}">{{ w }}</option>{% endfor %}</select></label>
+        <label class="block"><span class="text-sm font-semibold text-forest">{% cms "campaign.020" %}ভূমিকা *{% endcms %}</span><select name="role" required class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field><option value="">{% cms "campaign.021" %}বেছে নিন{% endcms %}</option>{% for r in volunteer_roles %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select></label>
+        <label class="block sm:col-span-2"><span class="text-sm font-semibold text-forest">{% cms "campaign.022" %}সময় *{% endcms %}</span><select name="availability" required class="mt-1.5 w-full rounded-xl border border-forest/15 bg-white px-4 py-3" data-field><option value="">{% cms "campaign.023" %}বেছে নিন{% endcms %}</option>{% for a in availability %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select></label>
       </div>
-      <button type="submit" class="rounded-full bg-forest px-6 py-3 text-sm font-semibold text-cream">যুক্ত হোন</button>
+      <button type="submit" class="rounded-full bg-forest px-6 py-3 text-sm font-semibold text-cream">{% cms "campaign.024" %}যুক্ত হোন{% endcms %}</button>
       <p id="volunteer-msg" class="text-sm" role="status" aria-live="polite"></p>
     </form>
   </div>

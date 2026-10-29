@@ -16,6 +16,7 @@
         <a href="{% url 'dashboard:home' %}" class="hover:text-gold">CRM</a>
         <a href="{% url 'dashboard:analytics' %}" class="hover:text-gold">ভিজিটর</a>
         <a href="{% url 'dashboard:users' %}" class="hover:text-gold">ব্যবহারকারী</a>
+        <a href="{% url 'cms:content' %}" class="hover:text-gold">কনটেন্ট</a>
         <a href="/django-admin/" class="hover:text-gold">Django admin</a>
         <form method="post" action="{% url 'dashboard:logout' %}" class="inline">{% csrf_token %}<button class="rounded-full border border-white/20 px-3 py-1.5 hover:border-gold">লগআউট</button></form>
       </nav>

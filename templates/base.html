@@ -1,3 +1,4 @@
+{% load cms %}
 {% load static civic_tags %}<!doctype html>
 <html lang="bn" class="scroll-smooth">
 <head>
@@ -18,11 +19,11 @@
   <link rel="preload" href="{% static 'fonts/anek-bangla-bengali-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Person","name":"{{ site.name }}","jobTitle":"{{ site.role }}","url":"{{ site_url }}","telephone":"{{ site.phoneHref }}","email":"{{ site.email }}","address":{"@type":"PostalAddress","streetAddress":"{{ site.office }}","addressCountry":"BD"}}
+  {"@context":"https://schema.org","@type":"Person","name":"{{ site.name|escapejs }}","jobTitle":"{{ site.role|escapejs }}","url":"{{ site_url|escapejs }}","telephone":"{{ site.phoneHref|escapejs }}","email":"{{ site.email|escapejs }}","address":{"@type":"PostalAddress","streetAddress":"{{ site.office|escapejs }}","addressCountry":"BD"}}
   </script>
 </head>
 <body class="min-h-screen bg-cream font-sans text-ink antialiased">
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-gold focus:px-4 focus:py-2 focus:text-night">মূল কনটেন্টে যান</a>
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-gold focus:px-4 focus:py-2 focus:text-night">{% cms "base.001" %}মূল কনটেন্টে যান{% endcms %}</a>
 
   {% include "partials/header.html" %}
 

@@ -372,6 +372,13 @@ def blog_detail(request: HttpRequest, slug: str):
     )
 
 
+def _gallery_video(item: dict) -> dict:
+    """Gallery videos used to be bare YouTube ids; `video` (library file or link) wins."""
+    if item.get("video") or not item.get("id"):
+        return item
+    return {**item, "video": f"https://www.youtube.com/watch?v={item['id']}"}
+
+
 def gallery(request: HttpRequest):
     data = content.load("gallery")
     photos = data["galleryPhotos"]
@@ -393,7 +400,7 @@ def gallery(request: HttpRequest):
                 {**p, "src": content.image_for(p["key"]) or ""}
                 for p in data["galleryPosters"]
             ],
-            "videos": data["galleryVideos"],
+            "videos": [_gallery_video(v) for v in data["galleryVideos"]],
             "tags": tags,
             "active_tag": chosen,
         },
