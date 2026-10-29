@@ -5,34 +5,29 @@ from django.shortcuts import render
 from django.utils import timezone
 
 from civic.api import event_seats_for, poll_payload
-from civic.constants import (
-    APPOINTMENT_SLOTS,
-    APPOINTMENT_TYPES,
-    FEEDBACK_CATEGORIES,
-    VOLUNTEER_AVAILABILITY,
-    WARDS,
-)
+from cms.copy import option_list, page_text
 
 from . import content
 
 
-SECTION_LABELS = {
-    "about": "পরিচিতি",
-    "manifesto": "ম্যানিফেস্টো",
-    "campaign": "প্রচারণা",
-    "events": "ইভেন্ট",
-    "activities": "কার্যক্রম",
-    "news": "সংবাদ",
-    "blog": "ব্লগ",
-    "gallery": "গ্যালারি",
-    "polls": "জনমত জরিপ",
-    "appointment": "অ্যাপয়েন্টমেন্ট",
-    "feedback": "সমস্যা ও পরামর্শ",
-    "chat": "লাইভ চ্যাট",
-    "contact": "যোগাযোগ",
-    "media-kit": "মিডিয়া কিট",
-    "privacy": "গোপনীয়তা নীতি",
-}
+# Breadcrumb sections. Their labels are the `section.<name>` keys of the `pages` document.
+SECTION_NAMES = (
+    "about",
+    "manifesto",
+    "campaign",
+    "events",
+    "activities",
+    "news",
+    "blog",
+    "gallery",
+    "polls",
+    "appointment",
+    "feedback",
+    "chat",
+    "contact",
+    "media-kit",
+    "privacy",
+)
 
 
 def _crumbs(path: str, title: str) -> list[dict]:
@@ -41,7 +36,7 @@ def _crumbs(path: str, title: str) -> list[dict]:
     if not parts:
         return []
     section = parts[0]
-    label = SECTION_LABELS.get(section)
+    label = page_text(f"section.{section}") if section in SECTION_NAMES else None
     crumbs = []
     if label:
         crumbs.append(
@@ -84,8 +79,8 @@ def home(request: HttpRequest):
         "pages/home.html",
         {
             "meta": _meta(
-                f"{site['name']} — {site['role']}, {site['union']}",
-                "মানুষের পাশে, সবসময়। মহাদান ইউনিয়নের চেয়ারম্যান পদপ্রার্থী মোঃ আবু তাহেরের ম্যানিফেস্টো, প্রচারণা সময়সূচি, জনসেবা ও যোগাযোগের ডিজিটাল ঠিকানা।",
+                page_text("home.title", name=site["name"], role=site["role"], union=site["union"]),
+                page_text("home.description"),
                 "/",
                 content.image_for("heroPortrait"),
             ),
@@ -110,7 +105,7 @@ def about(request: HttpRequest):
         request,
         "pages/about.html",
         {
-            "meta": _meta(f"পরিচিতি — {site['name']}", site["intro"], "/about"),
+            "meta": _meta(page_text("about.title", name=site["name"]), site["intro"], "/about"),
             "bio": content.load("site")["bio"],
             "values": content.load("site")["values"],
             "faqs": content.load("site")["faqs"],
@@ -125,7 +120,7 @@ def manifesto(request: HttpRequest):
         "pages/manifesto.html",
         {
             "meta": _meta(
-                "ম্যানিফেস্টো", data["manifestoIntro"]["subtitle"], "/manifesto"
+                page_text("section.manifesto"), data["manifestoIntro"]["subtitle"], "/manifesto"
             ),
             "intro": data["manifestoIntro"],
             "pillars": data["pillars"],
@@ -141,7 +136,7 @@ def manifesto_print(request: HttpRequest):
         "pages/manifesto_print.html",
         {
             "meta": _meta(
-                "ম্যানিফেস্টো — প্রিন্ট সংস্করণ",
+                page_text("manifesto_print.title"),
                 data["manifestoIntro"]["subtitle"],
                 "/manifesto/print",
             ),
@@ -158,7 +153,7 @@ def campaign(request: HttpRequest):
         "pages/campaign.html",
         {
             "meta": _meta(
-                "প্রচারণা পরিকল্পনা", data["campaignOverview"]["subtitle"], "/campaign"
+                page_text("campaign.title"), data["campaignOverview"]["subtitle"], "/campaign"
             ),
             "overview": data["campaignOverview"],
             "kpis": data["campaignKpis"],
@@ -167,8 +162,8 @@ def campaign(request: HttpRequest):
             "rhythm": data["weeklyRhythm"],
             "volunteer_roles": data["volunteerRoles"],
             "resources": data["campaignResources"],
-            "wards": WARDS,
-            "availability": VOLUNTEER_AVAILABILITY,
+            "wards": option_list("wards"),
+            "availability": option_list("volunteerAvailability"),
         },
     )
 
@@ -189,8 +184,8 @@ def events(request: HttpRequest):
         "pages/events.html",
         {
             "meta": _meta(
-                "আসন্ন ইভেন্ট ও জনসভা",
-                "জনসভা, উঠান বৈঠক, মিছিল ও সেবা ক্যাম্পের সময়সূচি।",
+                page_text("events.title"),
+                page_text("events.description"),
                 "/events",
             ),
             "events": items,
@@ -215,7 +210,7 @@ def event_detail(request: HttpRequest, event_id: str):
             "event": event,
             "registered": registered,
             "seats_left": left,
-            "wards": WARDS,
+            "wards": option_list("wards"),
             "closed": event["status"] == "past",
         },
     )
@@ -232,7 +227,7 @@ def activities(request: HttpRequest):
         "pages/activities.html",
         {
             "meta": _meta(
-                "কার্যক্রম", "জনকল্যাণের বাস্তব কাজ — পানি, শিক্ষা, স্বাস্থ্য ও ত্রাণ।", "/activities"
+                page_text("section.activities"), page_text("activities.description"), "/activities"
             ),
             "activities": items,
             "categories": cats,
@@ -271,7 +266,7 @@ def news(request: HttpRequest):
         "pages/news.html",
         {
             "meta": _meta(
-                "সংবাদ — গণমাধ্যমে আমরা", "গণমাধ্যমে প্রকাশিত সংবাদ ও প্রেস কভারেজ।", "/news"
+                page_text("news.title"), page_text("news.description"), "/news"
             ),
             "items": content.news(),
         },
@@ -326,8 +321,8 @@ def blog(request: HttpRequest):
         "pages/blog.html",
         {
             "meta": _meta(
-                "ব্লগ — ভাবনা, বিশ্লেষণ ও আপডেট",
-                "মহাদান ইউনিয়ন নিয়ে ভাবনা, বিশ্লেষণ ও আপডেট।",
+                page_text("blog.title"),
+                page_text("blog.description"),
                 "/blog",
             ),
             "posts": items,
@@ -363,11 +358,7 @@ def blog_detail(request: HttpRequest, slug: str):
             ),
             "post": post,
             "related": related,
-            "reactions": [
-                {"id": "like", "label": "ভালো লেগেছে", "count": 128},
-                {"id": "love", "label": "অনুপ্রাণিত", "count": 64},
-                {"id": "clap", "label": "গুরুত্বপূর্ণ", "count": 41},
-            ],
+            "reactions": option_list("reactions"),
         },
     )
 
@@ -391,8 +382,8 @@ def gallery(request: HttpRequest):
         "pages/gallery.html",
         {
             "meta": _meta(
-                "গ্যালারি — ছবি, পোস্টার ও ভিডিও",
-                "বাস্তব ছবি, প্রচারণার পোস্টার ও ভিডিও।",
+                page_text("gallery.title"),
+                page_text("gallery.description"),
                 "/gallery",
             ),
             "photos": [{**p, "src": content.image_for(p["key"]) or ""} for p in photos],
@@ -418,7 +409,7 @@ def polls(request: HttpRequest):
         "pages/polls.html",
         {
             "meta": _meta(
-                "জনমত জরিপ", "জনমত জরিপে অংশ নিন এবং লাইভ ফলাফল দেখুন।", "/polls"
+                page_text("section.polls"), page_text("polls.description"), "/polls"
             ),
             "polls": [poll_payload(p) for p in content.polls()],
             "archive": content.load("polls")["pollArchiveSummary"],
@@ -432,18 +423,14 @@ def appointment(request: HttpRequest):
         "pages/appointment.html",
         {
             "meta": _meta(
-                "অ্যাপয়েন্টমেন্ট বুক করুন",
-                "অফিসে সাক্ষাৎ, ফোনে কথা বা বাড়ি পরিদর্শনের অনুরোধ।",
+                page_text("appointment.title"),
+                page_text("appointment.description"),
                 "/appointment",
             ),
-            "types": APPOINTMENT_TYPES,
-            "slots": APPOINTMENT_SLOTS,
-            "wards": WARDS,
-            "modes": [
-                {"id": "in-person", "label": "কার্যালয়ে", "desc": "সরাসরি সাক্ষাৎ"},
-                {"id": "phone", "label": "ফোনে", "desc": "নির্ধারিত সময়ে কল"},
-                {"id": "home-visit", "label": "বাড়ি পরিদর্শন", "desc": "বিশেষ প্রয়োজন"},
-            ],
+            "types": option_list("appointmentTypes"),
+            "slots": option_list("appointmentSlots"),
+            "wards": option_list("wards"),
+            "modes": option_list("appointmentModes"),
         },
     )
 
@@ -454,8 +441,8 @@ def appointment_status(request: HttpRequest):
         "pages/appointment_status.html",
         {
             "meta": _meta(
-                "অ্যাপয়েন্টমেন্ট স্ট্যাটাস",
-                "মোবাইল নম্বর দিয়ে আপনার অ্যাপয়েন্টমেন্ট দেখুন।",
+                page_text("appointment_status.title"),
+                page_text("appointment_status.description"),
                 "/appointment/status",
             ),
         },
@@ -468,31 +455,14 @@ def feedback(request: HttpRequest):
         "pages/feedback.html",
         {
             "meta": _meta(
-                "সমস্যা ও পরামর্শ",
-                "সমস্যা, পরামর্শ বা নিরাপত্তা-হুমকি রিপোর্ট করুন। ট্র্যাকিং আইডি দিয়ে অগ্রগতি দেখুন।",
+                page_text("section.feedback"),
+                page_text("feedback.description"),
                 "/feedback",
             ),
-            "kinds": [
-                {
-                    "id": "problem",
-                    "label": "স্থানীয় সমস্যা",
-                    "desc": "সড়ক, পানি, স্বাস্থ্য, শিক্ষা ইত্যাদি",
-                },
-                {"id": "advice", "label": "পরামর্শ", "desc": "উন্নয়নের নতুন ধারণা বা মতামত"},
-                {
-                    "id": "threat",
-                    "label": "হুমকি ও ঝুঁকি",
-                    "desc": "জরুরি নিরাপত্তা বা দুর্যোগ সংক্রান্ত",
-                },
-            ],
-            "categories": FEEDBACK_CATEGORIES,
-            "wards": WARDS,
-            "severities": [
-                {"id": "low", "label": "সাধারণ"},
-                {"id": "medium", "label": "মাঝারি"},
-                {"id": "high", "label": "জরুরি"},
-                {"id": "critical", "label": "অতি জরুরি"},
-            ],
+            "kinds": option_list("feedbackKinds"),
+            "categories": option_list("feedbackCategories"),
+            "wards": option_list("wards"),
+            "severities": option_list("feedbackSeverities"),
             "help": content.load("help")["helpArticles"],
         },
     )
@@ -504,9 +474,9 @@ def feedback_board(request: HttpRequest):
         "pages/feedback_board.html",
         {
             "meta": _meta(
-                "জনসমস্যা বোর্ড", "প্রকাশ্য বোর্ডে জনসমস্যার অগ্রগতি দেখুন।", "/feedback/board"
+                page_text("feedback_board.title"), page_text("feedback_board.description"), "/feedback/board"
             ),
-            "wards": WARDS,
+            "wards": option_list("wards"),
         },
     )
 
@@ -518,7 +488,7 @@ def chat(request: HttpRequest):
         "pages/chat.html",
         {
             "meta": _meta(
-                "লাইভ চ্যাট ও বার্তা", "প্রশ্ন করুন — অ্যাপয়েন্টমেন্ট, অভিযোগ বা ইভেন্ট নিয়ে।", "/chat"
+                page_text("chat.title"), page_text("chat.description"), "/chat"
             ),
             "suggestions": chat_data["suggestions"],
             "chat_rules": {
@@ -535,7 +505,7 @@ def contact(request: HttpRequest):
         request,
         "pages/contact.html",
         {
-            "meta": _meta("যোগাযোগ", "কার্যালয়, ফোন, ইমেইল ও বার্তা পাঠানোর ফর্ম।", "/contact"),
+            "meta": _meta(page_text("section.contact"), page_text("contact.description"), "/contact"),
             "site_contact": site,
             "map_url": site["mapUrl"],
         },
@@ -549,7 +519,7 @@ def media_kit(request: HttpRequest):
         request,
         "pages/media_kit.html",
         {
-            "meta": _meta("মিডিয়া কিট", "প্রেস ছবি, ফ্যাক্ট শিট ও জীবনী।", "/media-kit"),
+            "meta": _meta(page_text("section.media-kit"), page_text("media_kit.description"), "/media-kit"),
             "bio": kit,
             "site": site,
             "portrait": content.image_for("portrait"),
@@ -566,8 +536,8 @@ def privacy(request: HttpRequest):
         "pages/privacy.html",
         {
             "meta": _meta(
-                "গোপনীয়তা নীতি",
-                "এই প্ল্যাটফর্মে সংগৃহীত তথ্য কীভাবে ব্যবহার ও সুরক্ষিত রাখা হয়।",
+                page_text("section.privacy"),
+                page_text("privacy.description"),
                 "/privacy",
             ),
             "sections": data["sections"],
@@ -585,7 +555,7 @@ def not_found(
     request: HttpRequest, exception=None, template_name="pages/not_found.html"
 ):
     html = render(
-        request, template_name, {"meta": _meta("পাতাটি পাওয়া যায়নি", "", request.path)}
+        request, template_name, {"meta": _meta(page_text("not_found.title"), "", request.path)}
     ).content
     return HttpResponse(html, status=404, content_type="text/html; charset=utf-8")
 

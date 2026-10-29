@@ -19,7 +19,9 @@ from core import content
 from core.db import storage_label
 
 from . import forms as f
-from .constants import APPOINTMENT_SLOTS, APPOINTMENT_TYPES, SLOT_CAPACITY, WARDS
+from cms.copy import message_text, option_list
+
+from .constants import SLOT_CAPACITY
 from .http import fail, limit, ok, parse_json
 from .leads import push_lead
 from .models import (
@@ -86,7 +88,7 @@ def feedback_public_json(item: Feedback) -> dict:
         "ward": item.ward,
         "location": item.location or None,
         "severity": item.severity,
-        "name": item.name or "নাম প্রকাশে অনিচ্ছুক",
+        "name": item.name or message_text("api.anonymous_name"),
         "status": item.status,
         "supports": item.supports,
         "createdAt": _iso(item.created_at),
@@ -132,18 +134,18 @@ def appointments_get(request: HttpRequest):
                         "taken": taken.get(s, 0),
                         "available": taken.get(s, 0) < SLOT_CAPACITY,
                     }
-                    for s in APPOINTMENT_SLOTS
+                    for s in option_list("appointmentSlots")
                 ],
             }
         )
 
     if phone:
         if not f.PHONE_RE.match(phone):
-            return fail("সঠিক মোবাইল নম্বর দিন", 422)
+            return fail(message_text("api.bad_phone"), 422)
         mine = Appointment.objects.filter(phone__endswith=_tail(phone))
         return ok({"appointments": [appointment_json(a) for a in mine]})
 
-    return fail("phone অথবা date প্যারামিটার প্রয়োজন", 400)
+    return fail(message_text("api.need_phone_or_date"), 400)
 
 
 @require_POST
@@ -151,19 +153,19 @@ def appointments_get(request: HttpRequest):
 def appointments_post(request: HttpRequest):
     body = parse_json(request)
     if body is None:
-        return fail("অবৈধ অনুরোধ", 400)
+        return fail(message_text("api.invalid_request"), 400)
 
     form = f.AppointmentForm(body)
     if not form.is_valid():
-        return fail("ফর্মে ত্রুটি আছে", 422, form.flat_errors())
+        return fail(message_text("api.form_error"), 422, form.flat_errors())
     data = form.cleaned_data
 
     today = timezone.localdate()
     if data["date"] < today:
-        return fail("অতীত তারিখে অ্যাপয়েন্টমেন্ট নেওয়া যায় না", 422)
+        return fail(message_text("api.past_date"), 422)
     # Python: Monday=0 … Friday=4. The original blocks Friday (JS getDay()==5).
     if data["date"].weekday() == 4 and data["mode"] == "in-person":
-        return fail("শুক্রবার শুধু পূর্বনির্ধারিত সাক্ষাৎ — অন্য দিন বেছে নিন", 422)
+        return fail(message_text("api.friday_closed"), 422)
 
     with transaction.atomic():
         # Lock the day's rows so two bookings cannot race into the same slot.
@@ -174,7 +176,7 @@ def appointments_post(request: HttpRequest):
             .count()
         )
         if booked >= SLOT_CAPACITY:
-            return fail("এই সময়টি পূর্ণ — অন্য সময় বেছে নিন", 409)
+            return fail(message_text("api.slot_full"), 409)
 
         appointment = Appointment.objects.create(
             reference=tracking_code(),
@@ -200,7 +202,7 @@ def appointments_post(request: HttpRequest):
     return ok(
         {
             "appointment": appointment_json(appointment),
-            "message": f"অ্যাপয়েন্টমেন্ট অনুরোধ গৃহীত। রেফারেন্স: {appointment.reference}। ২৪ ঘণ্টার মধ্যে নিশ্চিতকরণ পাবেন।",
+            "message": message_text("api.appointment_received", ref=appointment.reference),
         },
         201,
     )
@@ -208,7 +210,13 @@ def appointments_post(request: HttpRequest):
 
 @require_GET
 def appointment_types_get(request: HttpRequest):
-    return ok({"types": APPOINTMENT_TYPES, "slots": APPOINTMENT_SLOTS, "wards": WARDS})
+    return ok(
+        {
+            "types": option_list("appointmentTypes"),
+            "slots": option_list("appointmentSlots"),
+            "wards": option_list("wards"),
+        }
+    )
 
 
 # --------------------------------------------------------------------------
@@ -256,17 +264,17 @@ def feedback_get(request: HttpRequest):
 def feedback_post(request: HttpRequest):
     body = parse_json(request)
     if body is None:
-        return fail("অবৈধ অনুরোধ", 400)
+        return fail(message_text("api.invalid_request"), 400)
 
     form = f.FeedbackForm(body)
     if not form.is_valid():
-        return fail("ফর্মে ত্রুটি আছে", 422, form.flat_errors())
+        return fail(message_text("api.form_error"), 422, form.flat_errors())
     data = form.cleaned_data
 
     if len(data.get("photo") or "") > MAX_PHOTO_BYTES:
-        return fail("ছবির আকার অনেক বড় (সর্বোচ্চ ১.৫ MB)", 413)
+        return fail(message_text("api.photo_too_large"), 413)
     if not data["anonymous"] and not data.get("phone"):
-        return fail("যোগাযোগের জন্য মোবাইল নম্বর দিন অথবা নাম গোপন রাখুন", 422)
+        return fail(message_text("api.contact_required"), 422)
 
     kind = data["kind"]
     with transaction.atomic():
@@ -290,11 +298,11 @@ def feedback_post(request: HttpRequest):
         FeedbackTimeline.objects.create(
             feedback=item,
             note=(
-                "হুমকি রিপোর্ট গ্রহণ করা হয়েছে — দায়িত্বপ্রাপ্ত দল দ্রুত পর্যালোচনা করবে।"
+                message_text("api.threat_timeline")
                 if kind == Feedback.Kind.THREAT
-                else "রিপোর্ট গ্রহণ করা হয়েছে এবং সংশ্লিষ্ট ওয়ার্ড সমন্বয়কের কাছে পাঠানো হয়েছে।"
+                else message_text("api.report_timeline")
             ),
-            by="সিস্টেম",
+            by=message_text("api.system_actor"),
         )
         if not data["anonymous"] and data.get("phone"):
             push_lead(
@@ -307,10 +315,10 @@ def feedback_post(request: HttpRequest):
 
     if kind == Feedback.Kind.THREAT:
         message = (
-            f"হুমকি রিপোর্ট গৃহীত। ট্র্যাকিং আইডি: {item.tracking_id}। জরুরি হলে ৯৯৯ কল করুন।"
+            message_text("api.threat_received", id=item.tracking_id)
         )
     else:
-        message = f"ধন্যবাদ! আপনার রিপোর্ট গৃহীত হয়েছে। ট্র্যাকিং আইডি: {item.tracking_id}"
+        message = message_text("api.report_received", id=item.tracking_id)
     return ok(
         {
             "item": {
@@ -329,7 +337,7 @@ def feedback_post(request: HttpRequest):
 def feedback_support(request: HttpRequest, feedback_id: str):
     updated = Feedback.objects.filter(id=feedback_id).update(supports=F("supports") + 1)
     if not updated:
-        return fail("রিপোর্টটি পাওয়া যায়নি", 404)
+        return fail(message_text("api.report_not_found"), 404)
     item = Feedback.objects.get(id=feedback_id)
     return ok({"id": item.id, "supports": item.supports})
 
@@ -362,32 +370,32 @@ def polls_get(request: HttpRequest):
 def poll_vote(request: HttpRequest, poll_id: str):
     poll = content.find_poll(poll_id)
     if poll is None:
-        return fail("জরিপটি পাওয়া যায়নি", 404)
+        return fail(message_text("api.poll_not_found"), 404)
     if poll["status"] == "closed":
-        return fail("এই জরিপটি বন্ধ হয়েছে", 409)
+        return fail(message_text("api.poll_closed"), 409)
 
     body = parse_json(request)
     if body is None:
-        return fail("অবৈধ অনুরোধ", 400)
+        return fail(message_text("api.invalid_request"), 400)
     form = f.VoteForm(body)
     if not form.is_valid():
-        return fail("অবৈধ ভোট", 422, form.flat_errors())
+        return fail(message_text("api.invalid_vote"), 422, form.flat_errors())
     data = form.cleaned_data
     if not any(o["id"] == data["optionId"] for o in poll["options"]):
-        return fail("বিকল্পটি সঠিক নয়", 422)
+        return fail(message_text("api.invalid_option"), 422)
 
     previous = PollVote.objects.filter(
         poll_id=poll_id, fingerprint=data["fingerprint"]
     ).first()
     if previous:
         return fail(
-            "আপনি ইতিমধ্যে এই জরিপে ভোট দিয়েছেন", 409, {"optionId": previous.option_id}
+            message_text("api.already_voted"), 409, {"optionId": previous.option_id}
         )
 
     PollVote.objects.create(
         poll_id=poll_id, option_id=data["optionId"], fingerprint=data["fingerprint"]
     )
-    return ok({"message": "ভোট গ্রহণ করা হয়েছে। অংশগ্রহণের জন্য ধন্যবাদ!"}, 201)
+    return ok({"message": message_text("api.vote_recorded")}, 201)
 
 
 # --------------------------------------------------------------------------
@@ -399,7 +407,7 @@ def poll_vote(request: HttpRequest, poll_id: str):
 def event_seats(request: HttpRequest, event_id: str):
     event = content.find_event(event_id)
     if event is None:
-        return fail("ইভেন্ট পাওয়া যায়নি", 404)
+        return fail(message_text("api.event_not_found"), 404)
     registered, left = event_seats_for(event)
     return ok(
         {"registered": registered, "capacity": event["capacity"], "seatsLeft": left}
@@ -411,16 +419,16 @@ def event_seats(request: HttpRequest, event_id: str):
 def event_register(request: HttpRequest, event_id: str):
     event = content.find_event(event_id)
     if event is None:
-        return fail("ইভেন্ট পাওয়া যায়নি", 404)
+        return fail(message_text("api.event_not_found"), 404)
     if event["status"] == "past":
-        return fail("এই ইভেন্টটি সম্পন্ন হয়েছে", 409)
+        return fail(message_text("api.event_past"), 409)
 
     body = parse_json(request)
     if body is None:
-        return fail("অবৈধ অনুরোধ", 400)
+        return fail(message_text("api.invalid_request"), 400)
     form = f.EventRegistrationForm(body)
     if not form.is_valid():
-        return fail("ফর্মে ত্রুটি আছে", 422, form.flat_errors())
+        return fail(message_text("api.form_error"), 422, form.flat_errors())
     data = form.cleaned_data
 
     with transaction.atomic():
@@ -428,7 +436,7 @@ def event_register(request: HttpRequest, event_id: str):
         seats_needed = 1 + data["guests"]
         # `registered` already includes the seeded count, so compare the total.
         if registered + seats_needed > event["capacity"]:
-            return fail("দুঃখিত, এই ইভেন্টের আসন পূর্ণ হয়েছে", 409)
+            return fail(message_text("api.event_full"), 409)
         reg = EventRegistration.objects.create(
             event_id=event_id,
             name=data["name"],
@@ -447,7 +455,7 @@ def event_register(request: HttpRequest, event_id: str):
     return ok(
         {
             "registration": {"id": reg.id, "eventId": event_id, "guests": reg.guests},
-            "message": "রেজিস্ট্রেশন সফল! ইভেন্টের আগে এসএমএসে মনে করিয়ে দেওয়া হবে।",
+            "message": message_text("api.registration_ok"),
         },
         201,
     )
@@ -474,9 +482,11 @@ def events_calendar(request: HttpRequest):
         "VERSION:2.0",
         "PRODID:-//Md Abu Taher Campaign//BN",
         "CALSCALE:GREGORIAN",
-        "X-WR-CALNAME:মহাদান প্রচারণা ২০২৭",
+        f"X-WR-CALNAME:{message_text('api.ics_calendar_name')}",
         "X-WR-TIMEZONE:Asia/Dhaka",
     ]
+    ward_label = message_text("api.ics_ward")
+    detail_label = message_text("api.ics_detail")
     for e in content.events():
         if e["status"] == "past":
             continue
@@ -488,7 +498,7 @@ def events_calendar(request: HttpRequest):
             f"DTEND;TZID=Asia/Dhaka:{stamp(e['date'], e['end'])}",
             f"SUMMARY:{esc(e['title'])}",
             f"LOCATION:{esc(e['venue'])}",
-            f"DESCRIPTION:{esc(e['description'] + chr(10) + 'ওয়ার্ড: ' + e['ward'] + chr(10) + 'বিস্তারিত: ' + settings.SITE_URL + '/events')}",
+            f"DESCRIPTION:{esc(e['description'] + chr(10) + ward_label + e['ward'] + chr(10) + detail_label + settings.SITE_URL + '/events')}",
             "END:VEVENT",
         ]
     lines.append("END:VCALENDAR")
@@ -509,10 +519,10 @@ def events_calendar(request: HttpRequest):
 def volunteers_post(request: HttpRequest):
     body = parse_json(request)
     if body is None:
-        return fail("অবৈধ অনুরোধ", 400)
+        return fail(message_text("api.invalid_request"), 400)
     form = f.VolunteerForm(body)
     if not form.is_valid():
-        return fail("ফর্মে ত্রুটি আছে", 422, form.flat_errors())
+        return fail(message_text("api.form_error"), 422, form.flat_errors())
     data = form.cleaned_data
     with transaction.atomic():
         Volunteer.objects.create(
@@ -529,7 +539,7 @@ def volunteers_post(request: HttpRequest):
             source="volunteer",
             note=data["role"],
         )
-    return ok({"message": "স্বাগতম! আপনার ওয়ার্ড সমন্বয়ক ৪৮ ঘণ্টার মধ্যে যোগাযোগ করবেন।"}, 201)
+    return ok({"message": message_text("api.volunteer_ok")}, 201)
 
 
 @require_POST
@@ -537,10 +547,10 @@ def volunteers_post(request: HttpRequest):
 def contact_post(request: HttpRequest):
     body = parse_json(request)
     if body is None:
-        return fail("অবৈধ অনুরোধ", 400)
+        return fail(message_text("api.invalid_request"), 400)
     form = f.ContactForm(body)
     if not form.is_valid():
-        return fail("ফর্মে ত্রুটি আছে", 422, form.flat_errors())
+        return fail(message_text("api.form_error"), 422, form.flat_errors())
     data = form.cleaned_data
     with transaction.atomic():
         Message.objects.create(
@@ -558,7 +568,7 @@ def contact_post(request: HttpRequest):
                 source="contact",
                 note=data["subject"],
             )
-    return ok({"message": "বার্তা পাঠানো হয়েছে। ২৪–৪৮ ঘণ্টার মধ্যে উত্তর দেওয়া হবে।"}, 201)
+    return ok({"message": message_text("api.contact_ok")}, 201)
 
 
 @require_POST
@@ -566,10 +576,10 @@ def contact_post(request: HttpRequest):
 def newsletter_post(request: HttpRequest):
     body = parse_json(request)
     if body is None:
-        return fail("অবৈধ অনুরোধ", 400)
+        return fail(message_text("api.invalid_request"), 400)
     form = f.NewsletterForm(body)
     if not form.is_valid():
-        return fail("সঠিক ইমেইল দিন", 422, form.flat_errors())
+        return fail(message_text("form.email"), 422, form.flat_errors())
     email = form.cleaned_data["email"].lower()
     with transaction.atomic():
         exists = Subscriber.objects.filter(email=email).exists()
@@ -582,7 +592,7 @@ def newsletter_post(request: HttpRequest):
                 source="newsletter",
                 note="নিউজলেটার সাবস্ক্রাইবার",
             )
-    msg = "আপনি আগে থেকেই সাবস্ক্রাইব করেছেন।" if exists else "সাবস্ক্রিপশন সফল হয়েছে।"
+    msg = message_text("api.already_subscribed") if exists else message_text("api.subscribed")
     return ok({"message": msg}, 201)
 
 
@@ -591,10 +601,10 @@ def newsletter_post(request: HttpRequest):
 def chat_post(request: HttpRequest):
     body = parse_json(request)
     if body is None:
-        return fail("বার্তা সঠিক নয়", 422)
+        return fail(message_text("api.bad_message"), 422)
     form = f.ChatForm(body)
     if not form.is_valid():
-        return fail("বার্তা সঠিক নয়", 422, form.flat_errors())
+        return fail(message_text("api.bad_message"), 422, form.flat_errors())
     data = form.cleaned_data
     Message.objects.create(
         channel=Message.Channel.WEB_CHAT,
@@ -725,11 +735,11 @@ def _header_value(request: HttpRequest, names) -> str:
 def track_post(request: HttpRequest):
     body = parse_json(request)
     if body is None:
-        return fail("অনুরোধ পড়া যায়নি", 400)
+        return fail(message_text("api.unreadable_request"), 400)
 
     path = str(body.get("path") or "")[:200].split("?")[0]
     if not path.startswith("/"):
-        return fail("পাথ ঠিক নয়", 400)
+        return fail(message_text("api.bad_path"), 400)
     if path.startswith(("/admin", "/api", "/static", "/login")):
         return HttpResponse(status=204)
 

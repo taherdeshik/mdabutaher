@@ -405,3 +405,104 @@ class SiteCopyTests(TestCase):
             ):
                 offenders.append(path.relative_to(root).as_posix())
         self.assertEqual(offenders, [])
+
+
+class CopyDocumentTests(TestCase):
+    """Server-side copy lives in the `messages`, `pages` and `options` documents."""
+
+    def _edit(self, name, mutate):
+        data = store.get_document(name)["data"]
+        mutate(data)
+        return store.save_document(name, data, "owner1", expected_version=_version(name))
+
+    def test_seeded_copy_documents_are_valid(self):
+        for name in ("messages", "pages", "options"):
+            self.assertEqual(store.validate_document(name, store.get_document(name)["data"]), [])
+
+    def test_options_must_keep_fixed_ids(self):
+        data = store.get_document("options")["data"]
+        data["feedbackKinds"] = [k for k in data["feedbackKinds"] if k["id"] != "threat"]
+        errors = store.validate_document("options", data)
+        self.assertTrue(any("threat" in e for e in errors), errors)
+
+    def test_flat_documents_accept_only_text(self):
+        data = store.get_document("messages")["data"]
+        data["api.bad_path"] = 5
+        errors = store.validate_document("messages", data)
+        self.assertTrue(errors)
+
+    def test_api_message_follows_the_document(self):
+        self._edit("messages", lambda d: d.__setitem__("api.bad_path", "নতুন বার্তা"))
+        response = Client().post(
+            "/api/track/", data=json.dumps({"path": "nope"}), content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["error"], "নতুন বার্তা")
+
+    def test_form_error_resolves_at_validation_time(self):
+        from civic.forms import NewsletterForm
+
+        self._edit("messages", lambda d: d.__setitem__("form.email", "ইমেইল ভুল"))
+        form = NewsletterForm({"email": "bad"})
+        self.assertFalse(form.is_valid())
+        self.assertEqual(str(form.errors["email"][0]), "ইমেইল ভুল")
+
+    def test_option_label_reaches_the_booking_page(self):
+        def rename(d):
+            d["appointmentModes"][0]["label"] = "অফিসে এসে"
+
+        self._edit("options", rename)
+        html = Client().get("/appointment").content.decode("utf-8")
+        self.assertIn("অফিসে এসে", html)
+
+    def test_page_title_follows_the_document(self):
+        self._edit("pages", lambda d: d.__setitem__("about.title", "আমাদের কথা — {name}"))
+        html = Client().get("/about").content.decode("utf-8")
+        self.assertIn("আমাদের কথা — ", html)
+        self.assertNotIn("{name}", html)
+
+    def test_converted_modules_have_no_bengali_literals(self):
+        """Only fixed values remain in code: filter values, stored labels and the no-DB fallback."""
+        import ast
+        import pathlib
+
+        allowed = {"সব", "অভিযোগকারী", "নিউজলেটার সাবস্ক্রাইবার", "অন্যান্য"}
+        root = pathlib.Path(__file__).resolve().parent.parent
+        modules = [
+            "core/views.py",
+            "core/seo.py",
+            "civic/api.py",
+            "civic/forms.py",
+            "civic/http.py",
+            "civic/urls.py",
+            "civic/constants.py",
+        ]
+        bengali = [chr(c) for c in range(0x0980, 0x0A00)]
+        for module in modules:
+            tree = ast.parse((root / module).read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                    text = node.value
+                    if not any(ch in text for ch in bengali):
+                        continue
+                    if text in allowed or text.startswith("<h1>দুঃখিত"):
+                        continue
+                    self.fail(f"{module}:{node.lineno} still hardcodes {text[:60]!r}")
+
+    def test_every_referenced_copy_key_exists(self):
+        import pathlib
+        import re
+
+        root = pathlib.Path(__file__).resolve().parent.parent
+        pattern = re.compile(r'(message_text_lazy|message_text|page_text|option_list)\("([^"]+)"')
+        seeds = {
+            "message_text": store._file_doc("messages"),
+            "message_text_lazy": store._file_doc("messages"),
+            "page_text": store._file_doc("pages"),
+            "option_list": store._file_doc("options"),
+        }
+        for path in list(root.glob("core/**/*.py")) + list(root.glob("civic/**/*.py")) + list(root.glob("cms/*.py")):
+            if "migrations" in path.parts or path.name == "tests.py":
+                continue
+            for func, key in pattern.findall(path.read_text(encoding="utf-8")):
+                self.assertIn(key, seeds[func], f"{path.name}: {key} missing from seed")

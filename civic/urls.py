@@ -3,6 +3,7 @@
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
+from cms.copy import message_text
 from . import api
 from .http import fail
 
@@ -18,7 +19,7 @@ def by_method(**handlers):
         handler = handlers.get(request.method or "GET")
         if handler is None:
             return fail(
-                "এই পদ্ধতি অনুমোদিত নয়", 405, headers={"Allow": ", ".join(handlers)}
+                message_text("http.method_not_allowed"), 405, headers={"Allow": ", ".join(handlers)}
             )
         return handler(request, *args, **kwargs)
 

@@ -39,9 +39,20 @@ DOC_LABELS = {
     "help": "সাহায্য কেন্দ্র",
     "chat": "চ্যাট সহায়ক",
     "privacy": "গোপনীয়তা নীতি",
+    "messages": "সিস্টেম বার্তা ও ফর্ম",
+    "pages": "পাতার শিরোনাম ও বিবরণ",
+    "options": "তালিকা ও বিকল্প",
 }
 
 MAX_DOC_BYTES = 2 * 1024 * 1024
+# Option ids that booking and feedback rules compare against. Labels can change, ids cannot.
+REQUIRED_OPTION_IDS = {
+    "appointmentModes": ("in-person", "phone", "home-visit"),
+    "feedbackKinds": ("problem", "advice", "threat"),
+    "feedbackSeverities": ("low", "medium", "high", "critical"),
+}
+# Flat text documents: every value is a single string.
+FLAT_TEXT_DOCUMENTS = ("messages", "pages")
 MAX_TEXT_CHARS = 2000
 ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,80}$")
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -151,6 +162,22 @@ def validate_document(name: str, data: Any) -> list[str]:
         for key in seed:
             if key in data and type(data[key]) is not type(seed[key]):
                 errors.append(f"«{key}» এর ধরন ভুল হয়েছে।")
+
+    if name == "options" and isinstance(data, dict):
+        for list_name, required in REQUIRED_OPTION_IDS.items():
+            items = data.get(list_name)
+            present = (
+                {item.get("id") for item in items if isinstance(item, dict)}
+                if isinstance(items, list)
+                else set()
+            )
+            for ident in required:
+                if ident not in present:
+                    errors.append(f"«{list_name}» তালিকায় «{ident}» আইডি থাকতে হবে।")
+    if name in FLAT_TEXT_DOCUMENTS and isinstance(data, dict):
+        for key, value in data.items():
+            if not isinstance(value, str):
+                errors.append(f"«{key}» এর মান লেখা হতে হবে।")
 
     def walk(node: Any, path: str) -> None:
         if isinstance(node, str):

@@ -14,6 +14,7 @@ from django import template
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+from cms.copy import message_text
 from cms import store
 
 register = template.Library()
@@ -56,7 +57,7 @@ def _video_html(value: str, title: str) -> str:
     url = store.resolve_ref(value)
     if not url:
         return ""
-    label = escape(title or "ভিডিও")
+    label = escape(title or message_text("media.video_label"))
     yt = YOUTUBE_ID.search(url)
     if yt and ("youtu" in url):
         src = f"https://www.youtube-nocookie.com/embed/{yt.group(1)}"
@@ -81,7 +82,7 @@ def _audio_html(value: str, title: str) -> str:
     url = store.resolve_ref(value)
     if not url:
         return ""
-    label = escape(title or "অডিও")
+    label = escape(title or message_text("media.audio_label"))
     return (
         f'<audio class="w-full" controls preload="none" src="{escape(url)}" '
         f'aria-label="{label}"></audio>'

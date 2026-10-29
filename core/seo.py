@@ -7,6 +7,8 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.html import strip_tags
 
+from cms.copy import page_text
+
 from . import content
 
 STATIC_PATHS = [
@@ -103,7 +105,7 @@ def manifest(request: HttpRequest):
     site = content.site()
     return JsonResponse(
         {
-            "name": f"{site['name']} — প্রচারণা",
+            "name": page_text("seo.campaign_name", name=site["name"]),
             "short_name": site["name"],
             "description": site["tagline"],
             "start_url": "/",

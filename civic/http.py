@@ -4,6 +4,7 @@ import json
 from functools import wraps
 
 from django.core.cache import cache
+from cms.copy import message_text
 from django.http import HttpRequest, JsonResponse
 
 
@@ -65,7 +66,7 @@ def limit(key: str, max_requests: int = 8, window: int = 60):
             allowed, retry = rate_limited(request, key, max_requests, window)
             if not allowed:
                 return fail(
-                    "অনেকবার অনুরোধ করা হয়েছে। কিছুক্ষণ পরে চেষ্টা করুন।",
+                    message_text("http.rate_limited"),
                     429,
                     headers={"Retry-After": str(retry)},
                 )
